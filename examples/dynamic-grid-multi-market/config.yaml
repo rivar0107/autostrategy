@@ -1,0 +1,77 @@
+# === 回测参数 ===
+initial_cash: 1000000
+start_date: "2024-01-01"
+end_date: "2025-12-31"
+benchmark: "HSI"               # 多标的策略用恒生指数作为综合基准
+market: "多市场"
+
+# === 交易成本 ===
+commission: 0.0005             # 综合平均费率
+stamp_tax: 0.0002              # A股收印花税，港美股不收，取加权平均
+slippage: 0.001
+
+# === 标的配置（多标的） ===
+symbols:
+  - code: "0700.HK"
+    name: "腾讯控股"
+    market: "港股"
+    lot_size: 100              # 港股每手股数
+    commission: 0.0005
+    stamp_tax: 0
+    t_plus_1: false
+
+  - code: "588000.SH"
+    name: "科创50ETF"
+    market: "A股"
+    lot_size: 100              # A股100股取整
+    commission: 0.0003
+    stamp_tax: 0.001
+    t_plus_1: true
+    price_limit_pct: 20        # 科创板 ±20%
+
+  - code: "563300.SH"
+    name: "中证2000ETF"
+    market: "A股"
+    lot_size: 100
+    commission: 0.0003
+    stamp_tax: 0.001
+    t_plus_1: true
+    price_limit_pct: 10        # 主板ETF ±10%
+
+  - code: "9868.HK"
+    name: "小鹏汽车"
+    market: "港股"
+    lot_size: 100
+    commission: 0.0005
+    stamp_tax: 0
+    t_plus_1: false
+
+  - code: "TSLA"
+    name: "特斯拉"
+    market: "美股"
+    lot_size: 1                # 美股不取整
+    commission: 0.005           # $0.005/股（按比例约）
+    stamp_tax: 0
+    t_plus_1: false
+
+# === 策略参数 ===
+indicators:
+  atr_period: 14              # ATR 计算周期
+  ma_period: 60               # 基准价格均线周期
+  grid_multiplier: 1.5        # 网格间距 = ATR × 此系数
+  grid_levels: 5              # 单侧网格层数
+  rebalance_days: 5           # 每N天重新计算网格线
+
+# === 风控参数 ===
+risk:
+  single_grid_pct: 5          # 每格仓位占总资金 %
+  stop_loss_pct: 5            # 单格止损 %
+  max_position_pct: 20        # 单只标的仓位上限 %
+  total_position_pct: 80      # 总仓位上限 %
+  max_drawdown_pct: 15        # 最大回撤容忍 %
+  max_loss_grids: 3           # 连续亏损N格后降仓
+  extreme_drop_pct: 10        # 标的单日跌幅暂停阈值 %
+
+# === 数据源 ===
+data_source: "akshare"
+data_cycle: "daily"

@@ -1,0 +1,50 @@
+{
+  "file": "/tmp/autostrategy/examples/dynamic-grid-multi-market/STRATEGY_DESIGN.md",
+  "score": 100,
+  "max_score": 100,
+  "passed": true,
+  "results": [
+    {
+      "id": "completeness",
+      "name": "文档完整性",
+      "weight": 20,
+      "passed": true,
+      "detail": "全部 section 存在"
+    },
+    {
+      "id": "no_placeholder",
+      "name": "无残留占位符",
+      "weight": 20,
+      "passed": true,
+      "detail": "无残留占位符"
+    },
+    {
+      "id": "signal_specificity",
+      "name": "信号精确性",
+      "weight": 20,
+      "passed": true,
+      "detail": "信号条件包含具体指标和阈值"
+    },
+    {
+      "id": "risk_concrete",
+      "name": "风控具体性",
+      "weight": 15,
+      "passed": true,
+      "detail": "风控规则包含具体数值"
+    },
+    {
+      "id": "indicator_formula",
+      "name": "指标公式",
+      "weight": 15,
+      "passed": true,
+      "detail": "指标包含数学公式"
+    },
+    {
+      "id": "prohibitions",
+      "name": "禁止事项",
+      "weight": 10,
+      "passed": true,
+      "detail": "禁止事项 section 存在且有条目"
+    }
+  ]
+}

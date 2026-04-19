@@ -1,0 +1,86 @@
+{
+  "backtest": {
+    "annual_return": -6.78,
+    "max_drawdown": 16.92,
+    "sharpe": -1.1,
+    "win_rate": 56.7,
+    "profit_loss_ratio": 0.53,
+    "total_trades": 379,
+    "initial_cash": 1000000,
+    "final_value": 864333.73,
+    "total_return": -13.57,
+    "sell_trades": 187,
+    "win_trades": 106,
+    "loss_trades": 81,
+    "first_half_return": -1.87,
+    "second_half_return": -11.92,
+    "period_returns": [
+      0.0,
+      0.0,
+      0.26,
+      -0.56,
+      -0.11,
+      -0.01,
+      0.2,
+      -0.2,
+      -0.07,
+      -0.05,
+      -2.2
+    ]
+  },
+  "score": 0,
+  "criteria": [
+    {
+      "metric": "年化收益率",
+      "value": "-6.78%",
+      "criteria": "> 无风险利率 × 2（约3%）",
+      "passed": false
+    },
+    {
+      "metric": "最大回撤",
+      "value": "16.92%",
+      "criteria": "< 20%",
+      "passed": true
+    },
+    {
+      "metric": "夏普比率",
+      "value": "-1.10",
+      "criteria": "> 1.0",
+      "passed": false
+    },
+    {
+      "metric": "胜率",
+      "value": "56.70%",
+      "criteria": "> 45%",
+      "passed": true
+    },
+    {
+      "metric": "盈亏比",
+      "value": "0.53",
+      "criteria": "> 1.5",
+      "passed": false
+    }
+  ],
+  "diagnostics": [
+    {
+      "item": "过拟合",
+      "status": "✅",
+      "detail": "收益波动系数 2.6，各时期表现较稳定"
+    },
+    {
+      "item": "未来函数",
+      "status": "✅",
+      "detail": "未检测到未来数据使用（需人工复核）"
+    },
+    {
+      "item": "流动性",
+      "status": "✅",
+      "detail": "交易量与市场流动性匹配"
+    },
+    {
+      "item": "稳定性",
+      "status": "⚠️",
+      "detail": "前后半段收益差异 84%"
+    }
+  ]
+}
