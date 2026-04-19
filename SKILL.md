@@ -364,20 +364,22 @@ python3 scripts/quality_check.py ~/策略研究/[策略名称]/STRATEGY_DESIGN.m
 ```
 # Step 1: 创建策略目录结构
 ~/策略研究/[策略名称]/
-  ├── STRATEGY_DESIGN.md
-  ├── README.md
-  ├── strategy.py
-  ├── config.yaml
-  ├── requirements.txt
+  ├── STRATEGY_DESIGN.md    ← 📋 策略设计文档（核心！所有逻辑先写在这里）
+  ├── README.md             ← 📖 策略简介（从 DESIGN 自动生成）
+  ├── strategy.py           ← 💻 策略代码（从 DESIGN 严格翻译，不是自由发挥）
+  ├── config.yaml           ← ⚙️ 参数配置（所有可调参数都在这里，改参数不用改代码）
+  ├── requirements.txt      ← 📦 Python 依赖包列表
   ├── data/
-  │   ├── fetch_data.py
+  │   ├── fetch_data.py     ← 🔌 数据获取脚本（从 FTShare/FutuAPI 拉取行情数据）
+  │   ├── [标的代码].csv    ← 📊 获取到的历史K线数据（自动生成）
   │   └── .gitkeep
   ├── backtest/
-  │   ├── run_backtest.py
-  │   └── results/
+  │   ├── run_backtest.py   ← 🏃 回测执行脚本（调用 strategy.py + 计算 score）
+  │   └── results/          ← 📁 回测结果输出目录
+  │       └── backtest_result.json  ← 📈 回测结果（年化收益、回撤、夏普等）
   ├── logs/
   └── docs/
-      └── changelog.md
+      └── changelog.md      ← 📝 策略修改记录
 
 # Step 2: 读 STRATEGY_DESIGN.md → 严格翻译生成 strategy.py
   - 每个指标按「数学公式」翻译为函数
@@ -715,6 +717,31 @@ MAX_CONSECUTIVE_FAIL = 2 # 连续N轮无有效改进时触发探索性重做
 
 > 本文档是策略的精确设计规格，供 AI 生成代码时读取。
 > 所有规则必须被严格翻译为代码，不可遗漏、不可简化、不可"创造性发挥"。
+
+## 0. 项目文件说明
+
+> 策略由以下文件组成，每个文件各司其职：
+
+```
+策略目录/
+  ├── STRATEGY_DESIGN.md    ← 📋 你正在看的这个文件（策略的施工图纸）
+  ├── README.md             ← 📖 策略简介（看一眼就知道这策略做什么）
+  ├── strategy.py           ← 💻 策略代码（根据本文件自动生成，不要手动改）
+  ├── config.yaml           ← ⚙️ 参数配置（想调参数？改这里，不用动代码）
+  ├── requirements.txt      ← 📦 需要安装的 Python 包
+  ├── data/
+  │   ├── fetch_data.py     ← 🔌 获取行情数据的脚本
+  │   └── *.csv             ← 📊 下载好的历史K线数据
+  └── backtest/
+      └── results/
+          └── *.json        ← 📈 回测结果（自动生成）
+```
+
+**新手提示**：
+- 想了解策略逻辑 → 看 `STRATEGY_DESIGN.md`（本文件）
+- 想调整参数（如止损比例、仓位大小）→ 改 `config.yaml`
+- 想看回测赚了多少钱 → 看 `backtest/results/` 下的 JSON 文件
+- `strategy.py` 是自动生成的，一般不需要手动修改
 
 ## 1. 策略元信息
 
