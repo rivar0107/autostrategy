@@ -5,10 +5,9 @@ Autostrategy 环境检测与一键安装脚本
 用法:
     python3 env_setup.py                  # 检测当前环境
     python3 env_setup.py --market A股     # 安装A股所需依赖
-    python3 env_setup.py --market 港美股   # 安装港美股所需依赖
-    python3 env_setup.py --market 期货     # 安装期货所需依赖
-    python3 env_setup.py --market 期权     # 安装期权所需依赖
-    python3 env_setup.py --install all     # 安装全部依赖
+    python3 env_setup.py --market 港股    # 安装港股所需依赖
+    python3 env_setup.py --market 美股    # 安装美股所需依赖
+    python3 env_setup.py --install all    # 安装全部依赖
 """
 
 import argparse
@@ -30,8 +29,6 @@ MARKET_PACKAGES = {
     "A股": ["akshare", "backtrader", "pandas", "numpy", "matplotlib"],
     "港股": ["futu-api", "backtrader", "pandas", "numpy", "matplotlib"],
     "美股": ["futu-api", "backtrader", "pandas", "numpy", "matplotlib"],
-    "期货": ["futu-api", "backtrader", "pandas", "numpy", "matplotlib"],
-    "期权": ["futu-api", "backtrader", "pandas", "numpy", "matplotlib"],
 }
 
 # 通用依赖（所有市场都需要）
@@ -39,11 +36,9 @@ COMMON_PACKAGES = ["backtrader", "pandas", "numpy", "matplotlib", "pyyaml"]
 
 # 各市场需要的 Skill
 MARKET_SKILLS = {
-    "A股": ["feitu-data"],
-    "港股": [],
-    "美股": [],
-    "期货": [],
-    "期权": [],
+    "A股": ["ftshare-all-in-one"],
+    "港股": ["futuapi"],
+    "美股": ["futuapi"],
 }
 
 # ── 工具函数 ──────────────────────────────────────────
@@ -95,7 +90,7 @@ def check_skill_installed(skill_name: str) -> dict:
     """检测 Claude Code Skill 是否已安装"""
     # 常见 Skill 目录名映射
     skill_dirs = {
-        "feitu-data": SKILLS_DIR / "feitu-data",
+        "ftshare-all-in-one": SKILLS_DIR / "ftshare-all-in-one",
         "futuapi": SKILLS_DIR / "futuapi",
     }
     skill_dir = skill_dirs.get(skill_name, SKILLS_DIR / skill_name)
@@ -174,7 +169,7 @@ def install(market: str = None) -> dict:
                 print(f"   请在 Claude Code 中使用 /install-skill 或手动安装到: {check['path']}")
 
     # 检查是否需要 OpenD
-    if market in ("港股", "美股", "期货", "期权"):
+    if market in ("港股", "美股"):
         opend = check_opend_running()
         if not opend["running"]:
             print(f"\n⚠️  Futu OpenD 未运行（端口 33333 无监听）")
@@ -223,16 +218,16 @@ def print_report(env: dict):
     if missing_pkgs:
         print(f"   python3 env_setup.py --install all")
     if not opend["running"]:
-        print(f"   (如需港美股/期货/期权) 启动 Futu OpenD")
+        print(f"   (如需港美股) 启动 Futu OpenD")
 
     print()
 
 
 def main():
     parser = argparse.ArgumentParser(description="Autostrategy 环境检测与安装")
-    parser.add_argument("--market", choices=["A股", "港股", "美股", "期货", "期权"],
+    parser.add_argument("--market", choices=["A股", "港股", "美股"],
                         help="目标市场")
-    parser.add_argument("--install", choices=["all"] + ["A股", "港股", "美股", "期货", "期权"],
+    parser.add_argument("--install", choices=["all"] + ["A股", "港股", "美股"],
                         help="安装指定市场依赖 (all = 全部)")
     args = parser.parse_args()
 
