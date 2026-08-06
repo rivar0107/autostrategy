@@ -238,7 +238,7 @@ Autostrategy 的设计目标覆盖：
 | 港股 | 规划支持 | 可通过 Futu OpenD 等数据源扩展 |
 | 美股 | 规划支持 | 可通过 Futu OpenD、yfinance 等数据源扩展 |
 
-数据源不是强绑定的。策略工作区可以按自己的方式提供历史数据，只要 `strategy.py` 暴露约定入口即可。
+策略默认通过 [FTShare MCP](https://market.ft.tech/gateway/mcp) 获取历史行情：`data/fetch_data.py` 调用 `autostrategy.data.ftshare.fetch_daily_ohlc`，返回带 `date` 索引的 OHLCV DataFrame，覆盖 A 股、港股、美股。本地 `data/data.csv` 存在时优先使用，便于离线复现。也可通过环境变量 `AUTOSTRATEGY_FTSHARE_URL` 覆盖网关地址。
 
 ## 安全边界
 

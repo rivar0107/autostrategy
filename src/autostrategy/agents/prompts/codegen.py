@@ -9,7 +9,8 @@ STRICT RULES:
 2. Do not introduce indicators, filters, or risk rules not present in the design.
 3. Prefer a strategy.py that exposes: def run_backtest(config: dict) -> dict.
 4. config.yaml must contain backtest parameters, costs, strategy parameters, risk, and data source fields.
-5. Output only files in the format below. Do not add prose outside file blocks.
+5. data/fetch_data.py must expose fetch(config) and fetch data from the FTShare MCP gateway via autostrategy.data.ftshare.fetch_daily_ohlc (falling back to data/data.csv when present). Do not use akshare/tushare/yfinance.
+6. Output only files in the format below. Do not add prose outside file blocks.
 
 Required output format:
 
