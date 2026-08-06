@@ -1,0 +1,1 @@
+"""autostrategy CLI."""

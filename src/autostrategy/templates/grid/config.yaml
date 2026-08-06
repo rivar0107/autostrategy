@@ -1,0 +1,12 @@
+# Strategy configuration
+market: A股
+symbols:
+  - "000300.SH"
+period:
+  start: "2022-01-01"
+  end: "2024-01-01"
+parameters:
+  grid_lower: 3500
+  grid_upper: 4500
+  grid_count: 10
+  position_per_grid: 0.1

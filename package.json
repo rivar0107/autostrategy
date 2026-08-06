@@ -1,0 +1,29 @@
+{
+  "name": "autostrategy-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build --config src/autostrategy/web/frontend/vite.config.ts",
+    "test": "vitest run --config src/autostrategy/web/frontend/vite.config.ts",
+    "typecheck": "tsc --noEmit -p src/autostrategy/web/frontend/tsconfig.json",
+    "dev": "vite --config src/autostrategy/web/frontend/vite.config.ts"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "antd": "latest",
+    "vite": "latest",
+    "typescript": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "latest",
+    "@testing-library/react": "latest",
+    "@testing-library/user-event": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "jsdom": "latest",
+    "vitest": "latest"
+  }
+}

@@ -1,0 +1,10 @@
+# Strategy configuration
+market: A股
+symbols:
+  - "000300.SH"
+period:
+  start: "2022-01-01"
+  end: "2024-01-01"
+parameters:
+  fast_ma: 20
+  slow_ma: 60

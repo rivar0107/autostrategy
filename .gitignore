@@ -1,0 +1,44 @@
+__pycache__/
+*.pyc
+env_report.json
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+
+# Frontend dependencies
+node_modules/
+
+# Test / coverage artifacts
+.pytest_cache/
+.coverage/
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# autostrategy runtime artifacts
+.autostrategy/
+examples/*/backtest/results/
+examples/*/quality_report.json
+
+# Superpowers / gstack workspace artifacts
+.superpowers/
+.progress/
+completed/
+
+# Private per-user config (project-level CLAUDE.md should be committed if shared)
+.claude/settings.json
+.claude/CLAUDE.md
+.claude/worktrees/
+node_modules

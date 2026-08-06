@@ -1,0 +1,97 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "autostrategy"
+version = "0.1.0"
+description = "面向个人投资者的本地开源量化策略平台"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [
+    { name = "autostrategy contributors" },
+]
+keywords = ["quant", "trading", "backtest", "agent", "strategy"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+dependencies = [
+    "typer>=0.12.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "click>=8.0.0",
+]
+
+[project.optional-dependencies]
+backtest = [
+    "backtrader>=1.9.78",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+]
+data = [
+    "akshare>=1.14.0",
+    "yfinance>=0.2.0",
+]
+llm = [
+    "openai>=1.30.0",
+]
+api = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.30.0",
+]
+web = [
+    "jinja2>=3.1.0",
+]
+mcp = [
+    "mcp>=1.0.0",
+]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.4.0",
+    "mypy>=1.10.0",
+    "openai>=1.30.0",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.30.0",
+    "jinja2>=3.1.0",
+    "mcp>=1.0.0",
+]
+all = [
+    "autostrategy[backtest,data,llm,dev,api,web,mcp]",
+]
+
+[project.scripts]
+autostrategy = "autostrategy.cli.main:app"
+
+[project.urls]
+Homepage = "https://github.com/Zach0911/autostrategy"
+Documentation = "https://github.com/Zach0911/autostrategy#readme"
+Repository = "https://github.com/Zach0911/autostrategy"
+Issues = "https://github.com/Zach0911/autostrategy/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/autostrategy"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

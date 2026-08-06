@@ -1,0 +1,11 @@
+# Strategy configuration
+market: A股
+symbols:
+  - "000300.SH"
+period:
+  start: "2022-01-01"
+  end: "2024-01-01"
+parameters:
+  lookback_days: 20
+  top_n: 5
+  rebalance_freq: 20
