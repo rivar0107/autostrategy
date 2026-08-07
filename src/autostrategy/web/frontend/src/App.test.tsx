@@ -241,6 +241,10 @@ test('shows submitted paper run status', async () => {
           },
           summary: { paper_return: 1, paper_max_drawdown: 0.5, trade_count: 1, final_value: 1010000 },
           latest_decision: { action: 'buy', reason: 'signal' },
+          review: {
+            metrics: { total_return: 1, max_drawdown: 0.5, realized_pnl: 10000, turnover: 100000 },
+            key_events: [{ type: 'buy', timestamp: '2024-01-02', symbol: 'A', price: 10, size: 100, reason: 'signal' }],
+          },
         },
       })
     }
@@ -276,6 +280,9 @@ test('shows submitted paper run status', async () => {
   expect(await screen.findByText('模拟运行任务：running')).toBeInTheDocument()
   expect(await screen.findByText('Replay 数据源')).toBeInTheDocument()
   expect(screen.getByText('data/feed.csv')).toBeInTheDocument()
+  expect(await screen.findByText('复盘收益')).toBeInTheDocument()
+  expect(screen.getByText('关键事件')).toBeInTheDocument()
+  expect(screen.getByText(/A 100 @ 10/)).toBeInTheDocument()
 })
 
 test('refreshes paper run result while job is running', async () => {

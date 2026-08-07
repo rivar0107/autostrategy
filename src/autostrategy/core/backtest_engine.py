@@ -17,6 +17,7 @@ import numpy as np
 import yaml
 
 from autostrategy.core.paper_account import PaperAccount
+from autostrategy.core.review import build_review
 from autostrategy.data.feed import LocalFeed
 
 MARKET_BENCHMARKS = {
@@ -545,6 +546,12 @@ def _write_paper_artifacts(
     result: dict,
     events: list[dict],
 ) -> None:
+    if result.get("run_status") in {"completed", "stopped"} and events:
+        review = build_review(result, events)
+        result["review"] = {"metrics": review["metrics"], "key_events": review["key_events"]}
+        review_path = result_path.parent / "paper_run_review.md"
+        review_path.parent.mkdir(parents=True, exist_ok=True)
+        review_path.write_text(review["markdown"], encoding="utf-8")
     save_json(result_path, result)
     events_path.parent.mkdir(parents=True, exist_ok=True)
     events_path.write_text("".join(json.dumps(event, ensure_ascii=False) + "\n" for event in events), encoding="utf-8")

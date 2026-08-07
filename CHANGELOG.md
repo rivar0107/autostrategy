@@ -9,6 +9,7 @@
 - Paper run 结果新增 `paper` 账户快照（initial_cash/final_value/cash/equity/positions），前端 Paper Run 面板展示账户摘要与持仓明细。
 - Phase 5D 本地 mock 行情 feed：`autostrategy.data.feed.LocalFeed` 从本地 CSV/JSONL 读取 bar 事件（at/symbol/OHLCV），支持 symbol 过滤与时间窗口；paper run config 支持 `feed.path/start/end/symbols`，策略未暴露 `run_paper` 时按 feed 自动 mark-to-market 重放；结果 `replay.feed` 携带数据源元信息并在前端展示。
 - 示例策略 dynamic-grid-multi-market 改为 feed 驱动 replay（`data/feed.csv`，2456 根 bar），不再依赖外部网络。
+- Phase 5E 复盘与优化前置：`autostrategy.core.review.build_review` 从 paper run 结果与事件流生成复盘摘要（收益/回撤/成交/胜率口径指标、关键买卖与拒绝事件、可读 markdown），完成时写入 `paper_run_review.md` 并在结果中携带 `review` 块；前端展示复盘指标与关键事件。复盘只读不改策略代码。
 
 
 ## [0.1.0.0] - 2026-07-05

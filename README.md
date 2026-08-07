@@ -213,6 +213,8 @@ feed:
 
 模拟运行会同步维护一个虚拟账户：`paper_run_result.json` 中的 `paper` 字段给出账户快照（`initial_cash`、`cash`、`equity`、`final_value` 和 `positions` 持仓明细），买入/卖出决策会按事件价格成交并更新现金与持仓；现金不足或持仓不足的委托会被拒绝并记录在事件流中。前端 Paper Run 面板会直接展示账户摘要与持仓表。
 
+运行结束后自动生成复盘摘要：`paper_run/results/paper_run_review.md` 汇总收益、回撤、成交笔数、已实现/未实现盈亏与关键买卖/拒绝事件，可直接阅读，也可作为后续优化（Learning Agent）的结构化输入；复盘过程只读，不会修改策略代码。
+
 ## 工作流
 
 ```text

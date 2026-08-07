@@ -718,6 +718,9 @@ function PaperRunSummary({ result }: { result: PaperRunResponse | null }) {
   const positions = Array.isArray(paper.positions) ? paper.positions : []
   const latestDecision = payload.latest_decision
   const feed = replay.feed || null
+  const review = payload.review || null
+  const reviewMetrics = review?.metrics || null
+  const keyEvents = Array.isArray(review?.key_events) ? review.key_events : []
   return (
     <Card title={<Space><span>模拟运行摘要</span><Tag color="cyan">Paper Run</Tag><Tag>{payload.run_status || 'unknown'}</Tag></Space>}>
       <Row gutter={[16, 16]}>
@@ -756,6 +759,27 @@ function PaperRunSummary({ result }: { result: PaperRunResponse | null }) {
         <Descriptions.Item label="最近动作">{latestDecision?.action || 'N/A'}</Descriptions.Item>
         <Descriptions.Item label="原因">{latestDecision?.reason || 'N/A'}</Descriptions.Item>
       </Descriptions>
+      {reviewMetrics && (
+        <>
+          <Row gutter={[16, 16]} className="mt-16">
+            <Col span={6}><Statistic title="复盘收益" value={formatMetric(reviewMetrics.total_return, '%')} /></Col>
+            <Col span={6}><Statistic title="复盘回撤" value={formatMetric(reviewMetrics.max_drawdown, '%')} /></Col>
+            <Col span={6}><Statistic title="已实现盈亏" value={formatMetric(reviewMetrics.realized_pnl)} /></Col>
+            <Col span={6}><Statistic title="成交额" value={formatMetric(reviewMetrics.turnover)} /></Col>
+          </Row>
+          {keyEvents.length > 0 && (
+            <Descriptions bordered column={1} className="mt-16" size="small" title="关键事件">
+              {keyEvents.slice(0, 10).map((event: any, index: number) => (
+                <Descriptions.Item key={index} label={`${event.timestamp || ''} ${event.type || ''}`}>
+                  {event.type === 'rejected'
+                    ? `拒绝 ${event.action} ${event.symbol}: ${event.reason}`
+                    : `${event.symbol} ${event.size} @ ${event.price} — ${event.reason || ''}`}
+                </Descriptions.Item>
+              ))}
+            </Descriptions>
+          )}
+        </>
+      )}
     </Card>
   )
 }

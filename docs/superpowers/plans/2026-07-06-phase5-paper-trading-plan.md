@@ -215,7 +215,7 @@ npm test -- --run src/App.test.tsx
 
 ## 7. Phase 5E 计划: 复盘与优化前置
 
-**状态:** 规划中  
+**状态:** 已完成（2026-08-07）  
 **优先级:** P3  
 **建议顺序:** Phase 5C/5D 之后。
 
@@ -245,10 +245,10 @@ npm test -- --run src/App.test.tsx
 
 ### 7.3 验收清单
 
-- [ ] 每次 paper run 生成 summary。
-- [ ] summary 可被人直接阅读。
-- [ ] summary 可作为 Learning Agent 输入。
-- [ ] 不自动修改策略代码。
+- [x] 每次 paper run 生成 summary。
+- [x] summary 可被人直接阅读。
+- [x] summary 可作为 Learning Agent 输入。
+- [x] 不自动修改策略代码。
 
 ---
 

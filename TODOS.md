@@ -4,6 +4,8 @@
 
 ## Completed
 
+- **复盘与优化前置（Phase 5E）** — Completed: 2026-08-07
+
 - **本地 mock 行情 feed（Phase 5D）** — Completed: 2026-08-07
 
 - **虚拟账户与持仓模型（Phase 5C）** — Completed: 2026-08-07

@@ -1,8 +1,8 @@
 {
   "mode": "paper_run",
   "run_status": "completed",
-  "started_at": "2026-08-07T04:00:17.640267+00:00",
-  "updated_at": "2026-08-07T04:00:33.698949+00:00",
+  "started_at": "2026-08-07T04:07:35.547208+00:00",
+  "updated_at": "2026-08-07T04:07:52.870532+00:00",
   "replay": {
     "current_at": "2025-12-31T00:00:00",
     "bars_processed": 2456,
@@ -93,5 +93,4366 @@
     "progress": 1.0
   },
   "diagnostics": [],
-  "error": null
+  "error": null,
+  "review": {
+    "metrics": {
+      "initial_cash": 1000000.0,
+      "final_value": 1705372.74,
+      "total_return": 70.54,
+      "max_drawdown": 9.81,
+      "trade_count": 543,
+      "buy_count": 122,
+      "sell_count": 421,
+      "rejected_count": 0,
+      "realized_pnl": 705908.12,
+      "unrealized_pnl": -535.27,
+      "turnover": 11676980.78
+    },
+    "key_events": [
+      {
+        "type": "buy",
+        "timestamp": "2024-03-28T00:00:00",
+        "symbol": "9868.HK",
+        "price": 32.1,
+        "size": 1500,
+        "reason": "grid -2 below base 38.17"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-03-28T00:00:00",
+        "symbol": "TSLA",
+        "price": 175.79,
+        "size": 284,
+        "reason": "grid -2 below base 194.49"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-01T00:00:00",
+        "symbol": "TSLA",
+        "price": 175.22,
+        "size": 285,
+        "reason": "grid -2 below base 193.44"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-02T00:00:00",
+        "symbol": "9868.HK",
+        "price": 30.3,
+        "size": 1600,
+        "reason": "grid -2 below base 37.76"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-02T00:00:00",
+        "symbol": "TSLA",
+        "price": 166.63,
+        "size": 300,
+        "reason": "grid -3 below base 192.25"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-03T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.794,
+        "size": 62900,
+        "reason": "grid -1 below base 0.81"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-03T00:00:00",
+        "symbol": "9868.HK",
+        "price": 28.75,
+        "size": 1700,
+        "reason": "grid -3 below base 37.33"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-03T00:00:00",
+        "symbol": "TSLA",
+        "price": 168.38,
+        "size": 296,
+        "reason": "grid -3 below base 191.10"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-04T00:00:00",
+        "symbol": "TSLA",
+        "price": 171.11,
+        "size": 292,
+        "reason": "grid -2 below base 189.94"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-05T00:00:00",
+        "symbol": "9868.HK",
+        "price": 28.95,
+        "size": 1700,
+        "reason": "grid -3 below base 36.93"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-08T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.778,
+        "size": 64200,
+        "reason": "grid -2 below base 0.81"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-08T00:00:00",
+        "symbol": "9868.HK",
+        "price": 28.15,
+        "size": 1700,
+        "reason": "grid -3 below base 36.59"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-09T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.785,
+        "size": 63600,
+        "reason": "grid -1 below base 0.81"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-10T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.773,
+        "size": 64600,
+        "reason": "grid -2 below base 0.81"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-11T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.774,
+        "size": 64500,
+        "reason": "grid -2 below base 0.81"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-15T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.86,
+        "size": 58100,
+        "reason": "grid -1 below base 0.88"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-16T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.827,
+        "size": 60400,
+        "reason": "grid -2 below base 0.88"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-17T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.864,
+        "size": 57800,
+        "reason": "grid -1 below base 0.88"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-18T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.851,
+        "size": 58700,
+        "reason": "grid -1 below base 0.88"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-04-19T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.85,
+        "size": 58800,
+        "reason": "grid -1 below base 0.88"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-04-29T00:00:00",
+        "symbol": "TSLA",
+        "price": 194.05,
+        "size": 291,
+        "reason": "grid 1 above base 177.60"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-05-06T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.911,
+        "size": 58700,
+        "reason": "grid 1 above base 0.87"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-05-07T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.915,
+        "size": 47000,
+        "reason": "grid 1 above base 0.87"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-05-09T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.912,
+        "size": 37600,
+        "reason": "grid 1 above base 0.87"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-05-10T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.903,
+        "size": 30100,
+        "reason": "grid 1 above base 0.88"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-05-10T00:00:00",
+        "symbol": "TSLA",
+        "price": 168.47,
+        "size": 296,
+        "reason": "grid -1 below base 176.21"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-05-21T00:00:00",
+        "symbol": "TSLA",
+        "price": 186.6,
+        "size": 292,
+        "reason": "grid 1 above base 173.87"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-05-23T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.884,
+        "size": 56500,
+        "reason": "grid -1 below base 0.89"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-05-24T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.875,
+        "size": 57100,
+        "reason": "grid -1 below base 0.89"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-06-04T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.854,
+        "size": 58500,
+        "reason": "grid -2 below base 0.89"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-06-11T00:00:00",
+        "symbol": "TSLA",
+        "price": 170.66,
+        "size": 292,
+        "reason": "grid -1 below base 172.41"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-06-17T00:00:00",
+        "symbol": "TSLA",
+        "price": 187.44,
+        "size": 292,
+        "reason": "grid 1 above base 172.94"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-06-18T00:00:00",
+        "symbol": "TSLA",
+        "price": 184.86,
+        "size": 234,
+        "reason": "grid 1 above base 173.17"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-06-25T00:00:00",
+        "symbol": "TSLA",
+        "price": 187.35,
+        "size": 187,
+        "reason": "grid 1 above base 173.65"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-06-26T00:00:00",
+        "symbol": "TSLA",
+        "price": 196.37,
+        "size": 149,
+        "reason": "grid 1 above base 174.00"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-06-27T00:00:00",
+        "symbol": "TSLA",
+        "price": 197.42,
+        "size": 120,
+        "reason": "grid 2 above base 174.51"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-06-28T00:00:00",
+        "symbol": "TSLA",
+        "price": 197.88,
+        "size": 96,
+        "reason": "grid 1 above base 175.00"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-01T00:00:00",
+        "symbol": "TSLA",
+        "price": 209.86,
+        "size": 76,
+        "reason": "grid 2 above base 175.65"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-02T00:00:00",
+        "symbol": "TSLA",
+        "price": 231.26,
+        "size": 61,
+        "reason": "grid 3 above base 176.76"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-03T00:00:00",
+        "symbol": "TSLA",
+        "price": 246.39,
+        "size": 49,
+        "reason": "grid 4 above base 177.98"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-05T00:00:00",
+        "symbol": "TSLA",
+        "price": 251.52,
+        "size": 39,
+        "reason": "grid 5 above base 179.22"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-08T00:00:00",
+        "symbol": "TSLA",
+        "price": 252.94,
+        "size": 31,
+        "reason": "grid 4 above base 180.58"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-09T00:00:00",
+        "symbol": "TSLA",
+        "price": 262.33,
+        "size": 25,
+        "reason": "grid 5 above base 182.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-10T00:00:00",
+        "symbol": "TSLA",
+        "price": 263.26,
+        "size": 20,
+        "reason": "grid 5 above base 183.58"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-11T00:00:00",
+        "symbol": "TSLA",
+        "price": 241.03,
+        "size": 16,
+        "reason": "grid 3 above base 184.90"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-12T00:00:00",
+        "symbol": "9868.HK",
+        "price": 34.45,
+        "size": 1600,
+        "reason": "grid 1 above base 30.95"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-12T00:00:00",
+        "symbol": "TSLA",
+        "price": 248.23,
+        "size": 13,
+        "reason": "grid 3 above base 186.42"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-15T00:00:00",
+        "symbol": "TSLA",
+        "price": 252.64,
+        "size": 10,
+        "reason": "grid 2 above base 188.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-16T00:00:00",
+        "symbol": "TSLA",
+        "price": 256.56,
+        "size": 8,
+        "reason": "grid 2 above base 189.82"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-17T00:00:00",
+        "symbol": "9868.HK",
+        "price": 34.6,
+        "size": 1300,
+        "reason": "grid 1 above base 31.21"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-17T00:00:00",
+        "symbol": "TSLA",
+        "price": 248.5,
+        "size": 7,
+        "reason": "grid 2 above base 191.51"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-07-18T00:00:00",
+        "symbol": "0700.HK",
+        "price": 364.7,
+        "size": 100,
+        "reason": "grid -1 below base 368.09"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-18T00:00:00",
+        "symbol": "TSLA",
+        "price": 249.23,
+        "size": 5,
+        "reason": "grid 2 above base 193.29"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-07-19T00:00:00",
+        "symbol": "0700.HK",
+        "price": 359.5,
+        "size": 100,
+        "reason": "grid -1 below base 368.87"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-19T00:00:00",
+        "symbol": "TSLA",
+        "price": 239.2,
+        "size": 4,
+        "reason": "grid 1 above base 194.87"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-07-22T00:00:00",
+        "symbol": "0700.HK",
+        "price": 368.7,
+        "size": 100,
+        "reason": "grid -1 below base 369.61"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-22T00:00:00",
+        "symbol": "TSLA",
+        "price": 251.51,
+        "size": 4,
+        "reason": "grid 2 above base 196.36"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-07-23T00:00:00",
+        "symbol": "0700.HK",
+        "price": 361.7,
+        "size": 100,
+        "reason": "grid -1 below base 370.03"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-23T00:00:00",
+        "symbol": "TSLA",
+        "price": 246.38,
+        "size": 3,
+        "reason": "grid 2 above base 197.63"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-07-24T00:00:00",
+        "symbol": "0700.HK",
+        "price": 358.7,
+        "size": 100,
+        "reason": "grid -1 below base 370.48"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-07-25T00:00:00",
+        "symbol": "0700.HK",
+        "price": 346.7,
+        "size": 100,
+        "reason": "grid -2 below base 370.59"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-07-25T00:00:00",
+        "symbol": "9868.HK",
+        "price": 31.65,
+        "size": 1500,
+        "reason": "grid -1 below base 31.70"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-29T00:00:00",
+        "symbol": "TSLA",
+        "price": 232.1,
+        "size": 2,
+        "reason": "grid 1 above base 200.34"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-07-31T00:00:00",
+        "symbol": "TSLA",
+        "price": 232.07,
+        "size": 2,
+        "reason": "grid 1 above base 201.90"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-08-05T00:00:00",
+        "symbol": "9868.HK",
+        "price": 28.65,
+        "size": 1700,
+        "reason": "grid -2 below base 31.43"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-08-05T00:00:00",
+        "symbol": "TSLA",
+        "price": 198.88,
+        "size": 251,
+        "reason": "grid -1 below base 203.33"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-08-06T00:00:00",
+        "symbol": "TSLA",
+        "price": 200.64,
+        "size": 249,
+        "reason": "grid -1 below base 203.81"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-04T00:00:00",
+        "symbol": "9868.HK",
+        "price": 32.7,
+        "size": 1700,
+        "reason": "grid 1 above base 30.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-05T00:00:00",
+        "symbol": "9868.HK",
+        "price": 33.2,
+        "size": 1300,
+        "reason": "grid 1 above base 30.14"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-09-06T00:00:00",
+        "symbol": "TSLA",
+        "price": 210.73,
+        "size": 237,
+        "reason": "grid -1 below base 216.65"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-09-09T00:00:00",
+        "symbol": "TSLA",
+        "price": 216.27,
+        "size": 231,
+        "reason": "grid -1 below base 217.30"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-10T00:00:00",
+        "symbol": "9868.HK",
+        "price": 33.05,
+        "size": 1100,
+        "reason": "grid 1 above base 30.27"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-11T00:00:00",
+        "symbol": "9868.HK",
+        "price": 34.15,
+        "size": 800,
+        "reason": "grid 1 above base 30.37"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-12T00:00:00",
+        "symbol": "9868.HK",
+        "price": 34.6,
+        "size": 700,
+        "reason": "grid 1 above base 30.47"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-13T00:00:00",
+        "symbol": "9868.HK",
+        "price": 34.15,
+        "size": 500,
+        "reason": "grid 1 above base 30.55"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-16T00:00:00",
+        "symbol": "9868.HK",
+        "price": 35.1,
+        "size": 400,
+        "reason": "grid 1 above base 30.64"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-17T00:00:00",
+        "symbol": "9868.HK",
+        "price": 35.5,
+        "size": 400,
+        "reason": "grid 2 above base 30.74"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-19T00:00:00",
+        "symbol": "0700.HK",
+        "price": 384.3,
+        "size": 100,
+        "reason": "grid 1 above base 368.38"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-19T00:00:00",
+        "symbol": "9868.HK",
+        "price": 35.6,
+        "size": 300,
+        "reason": "grid 1 above base 30.83"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-19T00:00:00",
+        "symbol": "TSLA",
+        "price": 243.92,
+        "size": 195,
+        "reason": "grid 1 above base 223.52"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-20T00:00:00",
+        "symbol": "0700.HK",
+        "price": 384.1,
+        "size": 100,
+        "reason": "grid 1 above base 368.49"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-20T00:00:00",
+        "symbol": "9868.HK",
+        "price": 38.05,
+        "size": 200,
+        "reason": "grid 2 above base 30.95"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-23T00:00:00",
+        "symbol": "0700.HK",
+        "price": 383.1,
+        "size": 100,
+        "reason": "grid 1 above base 368.58"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-23T00:00:00",
+        "symbol": "9868.HK",
+        "price": 37.2,
+        "size": 200,
+        "reason": "grid 2 above base 31.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-23T00:00:00",
+        "symbol": "TSLA",
+        "price": 250.0,
+        "size": 156,
+        "reason": "grid 1 above base 225.09"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-24T00:00:00",
+        "symbol": "0700.HK",
+        "price": 397.7,
+        "size": 100,
+        "reason": "grid 2 above base 369.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-24T00:00:00",
+        "symbol": "9868.HK",
+        "price": 39.6,
+        "size": 100,
+        "reason": "grid 3 above base 31.21"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-24T00:00:00",
+        "symbol": "TSLA",
+        "price": 254.27,
+        "size": 125,
+        "reason": "grid 1 above base 226.03"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-25T00:00:00",
+        "symbol": "0700.HK",
+        "price": 400.9,
+        "size": 100,
+        "reason": "grid 2 above base 369.59"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-25T00:00:00",
+        "symbol": "9868.HK",
+        "price": 39.0,
+        "size": 100,
+        "reason": "grid 2 above base 31.36"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-25T00:00:00",
+        "symbol": "TSLA",
+        "price": 257.02,
+        "size": 100,
+        "reason": "grid 1 above base 226.82"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-26T00:00:00",
+        "symbol": "0700.HK",
+        "price": 425.5,
+        "size": 100,
+        "reason": "grid 3 above base 370.61"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-26T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.809,
+        "size": 58500,
+        "reason": "grid 1 above base 0.76"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-26T00:00:00",
+        "symbol": "9868.HK",
+        "price": 43.3,
+        "size": 100,
+        "reason": "grid 3 above base 31.59"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-26T00:00:00",
+        "symbol": "TSLA",
+        "price": 254.22,
+        "size": 80,
+        "reason": "grid 1 above base 227.20"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-27T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.881,
+        "size": 46800,
+        "reason": "grid 3 above base 0.77"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-27T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.792,
+        "size": 63900,
+        "reason": "grid 2 above base 0.73"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-27T00:00:00",
+        "symbol": "9868.HK",
+        "price": 47.25,
+        "size": 100,
+        "reason": "grid 4 above base 31.87"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-27T00:00:00",
+        "symbol": "TSLA",
+        "price": 260.46,
+        "size": 64,
+        "reason": "grid 2 above base 227.43"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-30T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.958,
+        "size": 37400,
+        "reason": "grid 4 above base 0.77"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-30T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.95,
+        "size": 51100,
+        "reason": "grid 4 above base 0.73"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-30T00:00:00",
+        "symbol": "9868.HK",
+        "price": 52.95,
+        "size": 100,
+        "reason": "grid 5 above base 32.23"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-09-30T00:00:00",
+        "symbol": "TSLA",
+        "price": 261.63,
+        "size": 51,
+        "reason": "grid 2 above base 227.60"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-01T00:00:00",
+        "symbol": "TSLA",
+        "price": 258.02,
+        "size": 41,
+        "reason": "grid 2 above base 227.69"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-02T00:00:00",
+        "symbol": "9868.HK",
+        "price": 55.0,
+        "size": 100,
+        "reason": "grid 4 above base 32.64"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-02T00:00:00",
+        "symbol": "TSLA",
+        "price": 249.02,
+        "size": 33,
+        "reason": "grid 1 above base 227.46"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-03T00:00:00",
+        "symbol": "9868.HK",
+        "price": 50.4,
+        "size": 100,
+        "reason": "grid 3 above base 32.99"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-04T00:00:00",
+        "symbol": "9868.HK",
+        "price": 50.25,
+        "size": 100,
+        "reason": "grid 3 above base 33.34"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-04T00:00:00",
+        "symbol": "TSLA",
+        "price": 250.08,
+        "size": 26,
+        "reason": "grid 1 above base 227.24"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-07T00:00:00",
+        "symbol": "9868.HK",
+        "price": 51.9,
+        "size": 100,
+        "reason": "grid 3 above base 33.72"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-08T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.037,
+        "size": 29900,
+        "reason": "grid 4 above base 0.77"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-08T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.14,
+        "size": 40900,
+        "reason": "grid 6 above base 0.74"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-08T00:00:00",
+        "symbol": "TSLA",
+        "price": 244.5,
+        "size": 21,
+        "reason": "grid 1 above base 226.98"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-09T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.933,
+        "size": 23900,
+        "reason": "grid 2 above base 0.78"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-09T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.096,
+        "size": 32700,
+        "reason": "grid 4 above base 0.75"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-10T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.92,
+        "size": 19200,
+        "reason": "grid 2 above base 0.78"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-10T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.026,
+        "size": 26200,
+        "reason": "grid 2 above base 0.75"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-11T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.886,
+        "size": 15300,
+        "reason": "grid 1 above base 0.78"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-11T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.951,
+        "size": 21000,
+        "reason": "grid 1 above base 0.75"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-10-11T00:00:00",
+        "symbol": "TSLA",
+        "price": 217.8,
+        "size": 229,
+        "reason": "grid -1 below base 226.03"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-14T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.917,
+        "size": 12300,
+        "reason": "grid 1 above base 0.78"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-14T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.974,
+        "size": 16800,
+        "reason": "grid 1 above base 0.76"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-10-14T00:00:00",
+        "symbol": "TSLA",
+        "price": 219.16,
+        "size": 228,
+        "reason": "grid -1 below base 225.70"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-15T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.903,
+        "size": 9800,
+        "reason": "grid 1 above base 0.78"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-15T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.946,
+        "size": 13400,
+        "reason": "grid 1 above base 0.76"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-10-15T00:00:00",
+        "symbol": "TSLA",
+        "price": 219.57,
+        "size": 227,
+        "reason": "grid -1 below base 225.17"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-16T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.91,
+        "size": 7800,
+        "reason": "grid 1 above base 0.79"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-16T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.923,
+        "size": 10700,
+        "reason": "grid 1 above base 0.76"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-10-16T00:00:00",
+        "symbol": "TSLA",
+        "price": 221.33,
+        "size": 225,
+        "reason": "grid -1 below base 224.75"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-17T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.907,
+        "size": 6300,
+        "reason": "grid 1 above base 0.79"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-17T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.926,
+        "size": 8600,
+        "reason": "grid 1 above base 0.77"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-18T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.945,
+        "size": 5000,
+        "reason": "grid 1 above base 0.79"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-18T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.041,
+        "size": 6900,
+        "reason": "grid 2 above base 0.77"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-21T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.961,
+        "size": 4000,
+        "reason": "grid 1 above base 0.80"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-21T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.05,
+        "size": 5500,
+        "reason": "grid 1 above base 0.78"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-22T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.968,
+        "size": 3200,
+        "reason": "grid 1 above base 0.80"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-22T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.037,
+        "size": 4400,
+        "reason": "grid 1 above base 0.78"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-23T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.967,
+        "size": 2600,
+        "reason": "grid 1 above base 0.80"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-23T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.032,
+        "size": 3500,
+        "reason": "grid 1 above base 0.79"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-24T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.966,
+        "size": 2100,
+        "reason": "grid 2 above base 0.81"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-24T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.029,
+        "size": 2800,
+        "reason": "grid 1 above base 0.79"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-24T00:00:00",
+        "symbol": "TSLA",
+        "price": 260.48,
+        "size": 198,
+        "reason": "grid 2 above base 224.91"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-25T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.992,
+        "size": 1600,
+        "reason": "grid 2 above base 0.81"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-25T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.045,
+        "size": 2200,
+        "reason": "grid 2 above base 0.79"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-25T00:00:00",
+        "symbol": "TSLA",
+        "price": 269.19,
+        "size": 159,
+        "reason": "grid 2 above base 225.78"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-28T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.024,
+        "size": 1300,
+        "reason": "grid 3 above base 0.81"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-28T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.039,
+        "size": 1800,
+        "reason": "grid 2 above base 0.80"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-28T00:00:00",
+        "symbol": "TSLA",
+        "price": 262.51,
+        "size": 127,
+        "reason": "grid 2 above base 226.70"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-29T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.998,
+        "size": 1100,
+        "reason": "grid 3 above base 0.82"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-29T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.028,
+        "size": 1400,
+        "reason": "grid 2 above base 0.80"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-29T00:00:00",
+        "symbol": "TSLA",
+        "price": 259.52,
+        "size": 102,
+        "reason": "grid 1 above base 227.71"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-30T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.005,
+        "size": 800,
+        "reason": "grid 3 above base 0.82"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-30T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.008,
+        "size": 1200,
+        "reason": "grid 2 above base 0.81"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-30T00:00:00",
+        "symbol": "TSLA",
+        "price": 257.55,
+        "size": 81,
+        "reason": "grid 1 above base 228.66"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-31T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.028,
+        "size": 700,
+        "reason": "grid 4 above base 0.83"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-31T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.02,
+        "size": 900,
+        "reason": "grid 2 above base 0.81"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-10-31T00:00:00",
+        "symbol": "TSLA",
+        "price": 249.85,
+        "size": 65,
+        "reason": "grid 1 above base 229.63"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-01T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.981,
+        "size": 500,
+        "reason": "grid 3 above base 0.83"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-01T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.99,
+        "size": 700,
+        "reason": "grid 2 above base 0.82"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-01T00:00:00",
+        "symbol": "TSLA",
+        "price": 248.98,
+        "size": 52,
+        "reason": "grid 1 above base 230.46"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-04T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.008,
+        "size": 400,
+        "reason": "grid 3 above base 0.83"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-04T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.004,
+        "size": 600,
+        "reason": "grid 2 above base 0.82"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-05T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.037,
+        "size": 400,
+        "reason": "grid 4 above base 0.84"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-05T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.05,
+        "size": 500,
+        "reason": "grid 3 above base 0.83"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-05T00:00:00",
+        "symbol": "TSLA",
+        "price": 251.44,
+        "size": 42,
+        "reason": "grid 1 above base 232.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-06T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.05,
+        "size": 300,
+        "reason": "grid 4 above base 0.84"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-06T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.053,
+        "size": 400,
+        "reason": "grid 3 above base 0.83"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-06T00:00:00",
+        "symbol": "TSLA",
+        "price": 288.53,
+        "size": 33,
+        "reason": "grid 2 above base 233.42"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-07T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.074,
+        "size": 200,
+        "reason": "grid 4 above base 0.85"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-07T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.087,
+        "size": 300,
+        "reason": "grid 4 above base 0.84"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-07T00:00:00",
+        "symbol": "TSLA",
+        "price": 296.91,
+        "size": 27,
+        "reason": "grid 2 above base 235.01"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-08T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.077,
+        "size": 200,
+        "reason": "grid 4 above base 0.85"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-08T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.081,
+        "size": 200,
+        "reason": "grid 4 above base 0.84"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-08T00:00:00",
+        "symbol": "TSLA",
+        "price": 321.22,
+        "size": 21,
+        "reason": "grid 3 above base 236.80"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-11T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.103,
+        "size": 100,
+        "reason": "grid 5 above base 0.86"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-11T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.13,
+        "size": 200,
+        "reason": "grid 5 above base 0.85"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-11T00:00:00",
+        "symbol": "TSLA",
+        "price": 350.0,
+        "size": 17,
+        "reason": "grid 3 above base 239.03"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-11-12T00:00:00",
+        "symbol": "0700.HK",
+        "price": 399.3,
+        "size": 100,
+        "reason": "grid -1 below base 401.20"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-12T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.083,
+        "size": 100,
+        "reason": "grid 4 above base 0.86"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-12T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.105,
+        "size": 200,
+        "reason": "grid 4 above base 0.85"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-12T00:00:00",
+        "symbol": "TSLA",
+        "price": 328.49,
+        "size": 14,
+        "reason": "grid 2 above base 240.79"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-11-13T00:00:00",
+        "symbol": "0700.HK",
+        "price": 399.3,
+        "size": 100,
+        "reason": "grid -1 below base 401.79"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-13T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.087,
+        "size": 100,
+        "reason": "grid 4 above base 0.87"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-13T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.116,
+        "size": 100,
+        "reason": "grid 4 above base 0.86"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-13T00:00:00",
+        "symbol": "TSLA",
+        "price": 330.24,
+        "size": 11,
+        "reason": "grid 3 above base 242.61"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-11-14T00:00:00",
+        "symbol": "0700.HK",
+        "price": 398.9,
+        "size": 100,
+        "reason": "grid -1 below base 402.30"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-14T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.052,
+        "size": 100,
+        "reason": "grid 3 above base 0.87"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-14T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.08,
+        "size": 100,
+        "reason": "grid 3 above base 0.87"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-14T00:00:00",
+        "symbol": "TSLA",
+        "price": 311.18,
+        "size": 9,
+        "reason": "grid 2 above base 244.08"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-11-15T00:00:00",
+        "symbol": "0700.HK",
+        "price": 396.5,
+        "size": 100,
+        "reason": "grid -1 below base 402.78"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-15T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.036,
+        "size": 100,
+        "reason": "grid 3 above base 0.88"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-15T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.04,
+        "size": 100,
+        "reason": "grid 2 above base 0.87"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-15T00:00:00",
+        "symbol": "TSLA",
+        "price": 320.72,
+        "size": 7,
+        "reason": "grid 2 above base 245.91"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-11-18T00:00:00",
+        "symbol": "0700.HK",
+        "price": 399.7,
+        "size": 100,
+        "reason": "grid -1 below base 403.34"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-18T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.002,
+        "size": 100,
+        "reason": "grid 2 above base 0.88"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-18T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.02,
+        "size": 100,
+        "reason": "grid 2 above base 0.88"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-18T00:00:00",
+        "symbol": "TSLA",
+        "price": 338.74,
+        "size": 5,
+        "reason": "grid 3 above base 247.88"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-19T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.033,
+        "size": 100,
+        "reason": "grid 2 above base 0.89"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-19T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.052,
+        "size": 100,
+        "reason": "grid 2 above base 0.88"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-19T00:00:00",
+        "symbol": "TSLA",
+        "price": 346.0,
+        "size": 4,
+        "reason": "grid 3 above base 250.10"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-20T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.061,
+        "size": 100,
+        "reason": "grid 3 above base 0.89"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-20T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.055,
+        "size": 100,
+        "reason": "grid 2 above base 0.89"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-20T00:00:00",
+        "symbol": "TSLA",
+        "price": 342.03,
+        "size": 4,
+        "reason": "grid 2 above base 252.31"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-21T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.061,
+        "size": 100,
+        "reason": "grid 3 above base 0.90"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-21T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.064,
+        "size": 100,
+        "reason": "grid 2 above base 0.89"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-21T00:00:00",
+        "symbol": "TSLA",
+        "price": 339.64,
+        "size": 3,
+        "reason": "grid 2 above base 254.54"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-11-22T00:00:00",
+        "symbol": "0700.HK",
+        "price": 396.1,
+        "size": 100,
+        "reason": "grid -1 below base 405.31"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-22T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.022,
+        "size": 100,
+        "reason": "grid 2 above base 0.90"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-22T00:00:00",
+        "symbol": "TSLA",
+        "price": 352.56,
+        "size": 2,
+        "reason": "grid 2 above base 256.98"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-25T00:00:00",
+        "symbol": "TSLA",
+        "price": 338.59,
+        "size": 2,
+        "reason": "grid 2 above base 259.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-26T00:00:00",
+        "symbol": "TSLA",
+        "price": 338.23,
+        "size": 1,
+        "reason": "grid 2 above base 261.18"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-27T00:00:00",
+        "symbol": "TSLA",
+        "price": 332.89,
+        "size": 1,
+        "reason": "grid 2 above base 263.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-11-29T00:00:00",
+        "symbol": "TSLA",
+        "price": 345.16,
+        "size": 1,
+        "reason": "grid 2 above base 264.99"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-12-02T00:00:00",
+        "symbol": "TSLA",
+        "price": 357.09,
+        "size": 1,
+        "reason": "grid 3 above base 267.43"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-12-03T00:00:00",
+        "symbol": "TSLA",
+        "price": 351.42,
+        "size": 1,
+        "reason": "grid 3 above base 269.68"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-12-04T00:00:00",
+        "symbol": "TSLA",
+        "price": 357.93,
+        "size": 1,
+        "reason": "grid 3 above base 271.88"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-12-05T00:00:00",
+        "symbol": "TSLA",
+        "price": 369.49,
+        "size": 1,
+        "reason": "grid 4 above base 274.23"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-12-06T00:00:00",
+        "symbol": "TSLA",
+        "price": 389.22,
+        "size": 1,
+        "reason": "grid 4 above base 276.89"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2024-12-09T00:00:00",
+        "symbol": "TSLA",
+        "price": 389.79,
+        "size": 1,
+        "reason": "grid 4 above base 279.55"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-12-30T00:00:00",
+        "symbol": "9868.HK",
+        "price": 46.5,
+        "size": 1000,
+        "reason": "grid -1 below base 48.13"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-12-31T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.016,
+        "size": 49200,
+        "reason": "grid -1 below base 1.04"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2024-12-31T00:00:00",
+        "symbol": "9868.HK",
+        "price": 46.65,
+        "size": 1000,
+        "reason": "grid -1 below base 48.07"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-01-02T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.003,
+        "size": 49800,
+        "reason": "grid -1 below base 1.04"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-01-02T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.009,
+        "size": 49500,
+        "reason": "grid -1 below base 1.04"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-01-02T00:00:00",
+        "symbol": "9868.HK",
+        "price": 45.0,
+        "size": 1100,
+        "reason": "grid -2 below base 47.98"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-01-03T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.96,
+        "size": 52000,
+        "reason": "grid -2 below base 1.04"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-01-03T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.993,
+        "size": 50300,
+        "reason": "grid -2 below base 1.04"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-01-03T00:00:00",
+        "symbol": "9868.HK",
+        "price": 44.7,
+        "size": 1100,
+        "reason": "grid -2 below base 47.86"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-01-06T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.952,
+        "size": 52500,
+        "reason": "grid -2 below base 1.04"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-01-06T00:00:00",
+        "symbol": "588000.SH",
+        "price": 0.989,
+        "size": 50500,
+        "reason": "grid -2 below base 1.04"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-01-06T00:00:00",
+        "symbol": "9868.HK",
+        "price": 46.2,
+        "size": 1000,
+        "reason": "grid -1 below base 47.88"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-01-07T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.98,
+        "size": 51000,
+        "reason": "grid -2 below base 1.04"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-01-07T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.018,
+        "size": 49100,
+        "reason": "grid -1 below base 1.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-01-16T00:00:00",
+        "symbol": "9868.HK",
+        "price": 53.6,
+        "size": 1000,
+        "reason": "grid 1 above base 48.41"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-01-17T00:00:00",
+        "symbol": "9868.HK",
+        "price": 54.2,
+        "size": 800,
+        "reason": "grid 1 above base 48.61"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-01-20T00:00:00",
+        "symbol": "9868.HK",
+        "price": 56.35,
+        "size": 600,
+        "reason": "grid 2 above base 48.82"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-01-21T00:00:00",
+        "symbol": "9868.HK",
+        "price": 59.7,
+        "size": 500,
+        "reason": "grid 2 above base 49.10"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-01-22T00:00:00",
+        "symbol": "9868.HK",
+        "price": 57.85,
+        "size": 400,
+        "reason": "grid 2 above base 49.37"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-01-23T00:00:00",
+        "symbol": "9868.HK",
+        "price": 55.75,
+        "size": 300,
+        "reason": "grid 1 above base 49.55"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-01-24T00:00:00",
+        "symbol": "9868.HK",
+        "price": 57.2,
+        "size": 300,
+        "reason": "grid 1 above base 49.74"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-01-27T00:00:00",
+        "symbol": "9868.HK",
+        "price": 58.15,
+        "size": 200,
+        "reason": "grid 2 above base 49.97"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-01-28T00:00:00",
+        "symbol": "9868.HK",
+        "price": 59.0,
+        "size": 200,
+        "reason": "grid 2 above base 50.20"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-03T00:00:00",
+        "symbol": "9868.HK",
+        "price": 58.45,
+        "size": 100,
+        "reason": "grid 1 above base 50.44"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-02-03T00:00:00",
+        "symbol": "TSLA",
+        "price": 383.68,
+        "size": 130,
+        "reason": "grid -1 below base 384.86"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-04T00:00:00",
+        "symbol": "0700.HK",
+        "price": 416.3,
+        "size": 100,
+        "reason": "grid 1 above base 398.00"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-04T00:00:00",
+        "symbol": "9868.HK",
+        "price": 65.7,
+        "size": 100,
+        "reason": "grid 3 above base 50.74"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-05T00:00:00",
+        "symbol": "0700.HK",
+        "price": 413.3,
+        "size": 100,
+        "reason": "grid 1 above base 397.83"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-05T00:00:00",
+        "symbol": "9868.HK",
+        "price": 64.85,
+        "size": 100,
+        "reason": "grid 2 above base 50.99"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-02-05T00:00:00",
+        "symbol": "TSLA",
+        "price": 378.17,
+        "size": 132,
+        "reason": "grid -1 below base 388.70"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-06T00:00:00",
+        "symbol": "0700.HK",
+        "price": 415.9,
+        "size": 100,
+        "reason": "grid 1 above base 397.84"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-06T00:00:00",
+        "symbol": "9868.HK",
+        "price": 67.3,
+        "size": 100,
+        "reason": "grid 3 above base 51.29"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-02-06T00:00:00",
+        "symbol": "TSLA",
+        "price": 374.32,
+        "size": 133,
+        "reason": "grid -1 below base 389.99"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-07T00:00:00",
+        "symbol": "0700.HK",
+        "price": 423.7,
+        "size": 100,
+        "reason": "grid 1 above base 397.84"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-07T00:00:00",
+        "symbol": "9868.HK",
+        "price": 68.45,
+        "size": 100,
+        "reason": "grid 3 above base 51.60"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-02-07T00:00:00",
+        "symbol": "TSLA",
+        "price": 361.62,
+        "size": 138,
+        "reason": "grid -2 below base 390.67"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-10T00:00:00",
+        "symbol": "0700.HK",
+        "price": 432.5,
+        "size": 100,
+        "reason": "grid 2 above base 398.11"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-10T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.094,
+        "size": 39800,
+        "reason": "grid 1 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-10T00:00:00",
+        "symbol": "9868.HK",
+        "price": 67.75,
+        "size": 100,
+        "reason": "grid 3 above base 51.77"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-02-10T00:00:00",
+        "symbol": "TSLA",
+        "price": 350.73,
+        "size": 142,
+        "reason": "grid -2 below base 390.68"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-11T00:00:00",
+        "symbol": "0700.HK",
+        "price": 422.9,
+        "size": 100,
+        "reason": "grid 1 above base 398.34"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-11T00:00:00",
+        "symbol": "9868.HK",
+        "price": 61.65,
+        "size": 100,
+        "reason": "grid 1 above base 51.80"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-12T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.097,
+        "size": 50900,
+        "reason": "grid 1 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-12T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.099,
+        "size": 31900,
+        "reason": "grid 1 above base 1.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-12T00:00:00",
+        "symbol": "9868.HK",
+        "price": 62.35,
+        "size": 100,
+        "reason": "grid 1 above base 51.90"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-13T00:00:00",
+        "symbol": "9868.HK",
+        "price": 60.6,
+        "size": 100,
+        "reason": "grid 1 above base 52.00"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-17T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.101,
+        "size": 40700,
+        "reason": "grid 1 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-17T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.093,
+        "size": 25500,
+        "reason": "grid 1 above base 1.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-19T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.101,
+        "size": 32500,
+        "reason": "grid 1 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-19T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.092,
+        "size": 20400,
+        "reason": "grid 1 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-20T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.115,
+        "size": 26000,
+        "reason": "grid 1 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-20T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.091,
+        "size": 16300,
+        "reason": "grid 1 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-21T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.129,
+        "size": 20800,
+        "reason": "grid 1 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-21T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.157,
+        "size": 13100,
+        "reason": "grid 2 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-24T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.125,
+        "size": 16700,
+        "reason": "grid 1 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-24T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.161,
+        "size": 10400,
+        "reason": "grid 2 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-25T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.127,
+        "size": 13300,
+        "reason": "grid 1 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-25T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.162,
+        "size": 8400,
+        "reason": "grid 2 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-26T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.146,
+        "size": 10700,
+        "reason": "grid 2 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-26T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.186,
+        "size": 6700,
+        "reason": "grid 2 above base 1.05"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-02-26T00:00:00",
+        "symbol": "TSLA",
+        "price": 290.8,
+        "size": 171,
+        "reason": "grid -4 below base 391.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-27T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.139,
+        "size": 8500,
+        "reason": "grid 2 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-27T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.185,
+        "size": 5300,
+        "reason": "grid 2 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-02-28T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.133,
+        "size": 4300,
+        "reason": "grid 1 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-03T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.119,
+        "size": 3400,
+        "reason": "grid 1 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-04T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.112,
+        "size": 6800,
+        "reason": "grid 1 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-04T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.139,
+        "size": 2700,
+        "reason": "grid 1 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-05T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.118,
+        "size": 5500,
+        "reason": "grid 1 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-05T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.142,
+        "size": 2200,
+        "reason": "grid 1 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-06T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.142,
+        "size": 4400,
+        "reason": "grid 1 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-06T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.181,
+        "size": 1800,
+        "reason": "grid 2 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-07T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.131,
+        "size": 3500,
+        "reason": "grid 1 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-07T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.167,
+        "size": 1400,
+        "reason": "grid 1 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-10T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.137,
+        "size": 2800,
+        "reason": "grid 1 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-10T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.163,
+        "size": 1100,
+        "reason": "grid 1 above base 1.07"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-03-10T00:00:00",
+        "symbol": "TSLA",
+        "price": 222.15,
+        "size": 225,
+        "reason": "grid -5 below base 378.80"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-11T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.141,
+        "size": 2200,
+        "reason": "grid 1 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-11T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.158,
+        "size": 900,
+        "reason": "grid 1 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-12T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.146,
+        "size": 1800,
+        "reason": "grid 2 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-12T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.15,
+        "size": 700,
+        "reason": "grid 1 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-13T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.128,
+        "size": 1400,
+        "reason": "grid 1 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-13T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.126,
+        "size": 600,
+        "reason": "grid 1 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-14T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.147,
+        "size": 1200,
+        "reason": "grid 2 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-14T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.146,
+        "size": 500,
+        "reason": "grid 1 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-17T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.154,
+        "size": 900,
+        "reason": "grid 2 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-17T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.14,
+        "size": 400,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-18T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.162,
+        "size": 700,
+        "reason": "grid 2 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-18T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.146,
+        "size": 300,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-19T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.156,
+        "size": 600,
+        "reason": "grid 2 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-19T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.131,
+        "size": 200,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-20T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.156,
+        "size": 500,
+        "reason": "grid 2 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-20T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.119,
+        "size": 200,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-21T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.134,
+        "size": 400,
+        "reason": "grid 2 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-24T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.115,
+        "size": 300,
+        "reason": "grid 1 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-25T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.104,
+        "size": 200,
+        "reason": "grid 1 above base 1.07"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-03-25T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.083,
+        "size": 46100,
+        "reason": "grid -1 below base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-26T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.116,
+        "size": 200,
+        "reason": "grid 1 above base 1.07"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-03-26T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.081,
+        "size": 46200,
+        "reason": "grid -1 below base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-03-27T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.11,
+        "size": 200,
+        "reason": "grid 1 above base 1.07"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-03-28T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.081,
+        "size": 46200,
+        "reason": "grid -1 below base 1.08"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-03-31T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.074,
+        "size": 46500,
+        "reason": "grid -1 below base 1.08"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-02T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.074,
+        "size": 46500,
+        "reason": "grid -1 below base 1.08"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-07T00:00:00",
+        "symbol": "0700.HK",
+        "price": 430.9,
+        "size": 100,
+        "reason": "grid -1 below base 457.91"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-07T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.974,
+        "size": 51300,
+        "reason": "grid -3 below base 1.07"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-07T00:00:00",
+        "symbol": "9868.HK",
+        "price": 65.0,
+        "size": 700,
+        "reason": "grid -1 below base 71.97"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-08T00:00:00",
+        "symbol": "0700.HK",
+        "price": 435.9,
+        "size": 100,
+        "reason": "grid -1 below base 459.10"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-08T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.945,
+        "size": 52900,
+        "reason": "grid -3 below base 1.07"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-08T00:00:00",
+        "symbol": "9868.HK",
+        "price": 67.35,
+        "size": 700,
+        "reason": "grid -1 below base 72.29"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-09T00:00:00",
+        "symbol": "0700.HK",
+        "price": 436.7,
+        "size": 100,
+        "reason": "grid -1 below base 460.23"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-09T00:00:00",
+        "symbol": "563300.SH",
+        "price": 0.972,
+        "size": 51400,
+        "reason": "grid -2 below base 1.07"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-09T00:00:00",
+        "symbol": "9868.HK",
+        "price": 68.2,
+        "size": 700,
+        "reason": "grid -1 below base 72.64"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-10T00:00:00",
+        "symbol": "0700.HK",
+        "price": 440.3,
+        "size": 100,
+        "reason": "grid -1 below base 461.48"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-10T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.002,
+        "size": 49900,
+        "reason": "grid -2 below base 1.08"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-10T00:00:00",
+        "symbol": "9868.HK",
+        "price": 71.2,
+        "size": 700,
+        "reason": "grid -1 below base 73.05"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-04-11T00:00:00",
+        "symbol": "0700.HK",
+        "price": 438.9,
+        "size": 100,
+        "reason": "grid -1 below base 462.77"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-09T00:00:00",
+        "symbol": "TSLA",
+        "price": 298.26,
+        "size": 214,
+        "reason": "grid 1 above base 272.87"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-12T00:00:00",
+        "symbol": "0700.HK",
+        "price": 513.0,
+        "size": 100,
+        "reason": "grid 1 above base 485.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-12T00:00:00",
+        "symbol": "TSLA",
+        "price": 318.38,
+        "size": 171,
+        "reason": "grid 1 above base 272.25"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-13T00:00:00",
+        "symbol": "TSLA",
+        "price": 334.07,
+        "size": 137,
+        "reason": "grid 2 above base 271.88"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-14T00:00:00",
+        "symbol": "0700.HK",
+        "price": 516.5,
+        "size": 100,
+        "reason": "grid 1 above base 487.63"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-14T00:00:00",
+        "symbol": "TSLA",
+        "price": 347.68,
+        "size": 109,
+        "reason": "grid 3 above base 271.78"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-15T00:00:00",
+        "symbol": "0700.HK",
+        "price": 515.5,
+        "size": 100,
+        "reason": "grid 1 above base 488.93"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-15T00:00:00",
+        "symbol": "TSLA",
+        "price": 342.82,
+        "size": 88,
+        "reason": "grid 3 above base 271.48"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-16T00:00:00",
+        "symbol": "TSLA",
+        "price": 349.98,
+        "size": 70,
+        "reason": "grid 3 above base 271.41"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-19T00:00:00",
+        "symbol": "0700.HK",
+        "price": 514.0,
+        "size": 100,
+        "reason": "grid 1 above base 489.98"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-19T00:00:00",
+        "symbol": "TSLA",
+        "price": 342.09,
+        "size": 56,
+        "reason": "grid 3 above base 271.48"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-20T00:00:00",
+        "symbol": "0700.HK",
+        "price": 517.0,
+        "size": 100,
+        "reason": "grid 1 above base 490.28"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-20T00:00:00",
+        "symbol": "TSLA",
+        "price": 343.82,
+        "size": 45,
+        "reason": "grid 3 above base 271.70"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-21T00:00:00",
+        "symbol": "TSLA",
+        "price": 334.62,
+        "size": 36,
+        "reason": "grid 2 above base 272.23"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-22T00:00:00",
+        "symbol": "TSLA",
+        "price": 341.04,
+        "size": 29,
+        "reason": "grid 3 above base 273.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-23T00:00:00",
+        "symbol": "TSLA",
+        "price": 339.34,
+        "size": 23,
+        "reason": "grid 2 above base 274.03"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-27T00:00:00",
+        "symbol": "TSLA",
+        "price": 362.89,
+        "size": 18,
+        "reason": "grid 3 above base 275.19"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-28T00:00:00",
+        "symbol": "TSLA",
+        "price": 356.9,
+        "size": 15,
+        "reason": "grid 3 above base 276.40"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-29T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.113,
+        "size": 41200,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-29T00:00:00",
+        "symbol": "TSLA",
+        "price": 358.43,
+        "size": 12,
+        "reason": "grid 3 above base 277.83"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-05-30T00:00:00",
+        "symbol": "TSLA",
+        "price": 346.46,
+        "size": 9,
+        "reason": "grid 2 above base 278.96"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-02T00:00:00",
+        "symbol": "TSLA",
+        "price": 342.69,
+        "size": 7,
+        "reason": "grid 2 above base 280.28"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-03T00:00:00",
+        "symbol": "TSLA",
+        "price": 344.27,
+        "size": 6,
+        "reason": "grid 2 above base 281.64"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-04T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.112,
+        "size": 33000,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-04T00:00:00",
+        "symbol": "TSLA",
+        "price": 332.05,
+        "size": 5,
+        "reason": "grid 2 above base 283.47"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-05T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.116,
+        "size": 26400,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-06T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.113,
+        "size": 21100,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-09T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.129,
+        "size": 16900,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-10T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.118,
+        "size": 13500,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-10T00:00:00",
+        "symbol": "TSLA",
+        "price": 326.09,
+        "size": 4,
+        "reason": "grid 1 above base 287.56"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-11T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.122,
+        "size": 10800,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-11T00:00:00",
+        "symbol": "TSLA",
+        "price": 326.43,
+        "size": 3,
+        "reason": "grid 1 above base 289.03"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-12T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.127,
+        "size": 8600,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-13T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.106,
+        "size": 6900,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-13T00:00:00",
+        "symbol": "TSLA",
+        "price": 325.31,
+        "size": 2,
+        "reason": "grid 1 above base 292.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-16T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.117,
+        "size": 5500,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-16T00:00:00",
+        "symbol": "TSLA",
+        "price": 329.13,
+        "size": 2,
+        "reason": "grid 1 above base 293.63"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-17T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.117,
+        "size": 4400,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-18T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.115,
+        "size": 3600,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-23T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.104,
+        "size": 2800,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-23T00:00:00",
+        "symbol": "TSLA",
+        "price": 348.68,
+        "size": 2,
+        "reason": "grid 1 above base 297.33"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-24T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.13,
+        "size": 2300,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-24T00:00:00",
+        "symbol": "TSLA",
+        "price": 340.47,
+        "size": 1,
+        "reason": "grid 1 above base 298.45"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-25T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.138,
+        "size": 1800,
+        "reason": "grid 2 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-26T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.133,
+        "size": 1500,
+        "reason": "grid 1 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-27T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.137,
+        "size": 1200,
+        "reason": "grid 2 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-06-30T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.156,
+        "size": 900,
+        "reason": "grid 2 above base 1.08"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-06-30T00:00:00",
+        "symbol": "9868.HK",
+        "price": 70.6,
+        "size": 700,
+        "reason": "grid -2 below base 76.36"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-01T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.16,
+        "size": 700,
+        "reason": "grid 2 above base 1.08"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-07-01T00:00:00",
+        "symbol": "TSLA",
+        "price": 300.71,
+        "size": 166,
+        "reason": "grid -1 below base 302.69"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-02T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.151,
+        "size": 600,
+        "reason": "grid 2 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-03T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.158,
+        "size": 500,
+        "reason": "grid 2 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-04T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.145,
+        "size": 400,
+        "reason": "grid 2 above base 1.09"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-07T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.151,
+        "size": 300,
+        "reason": "grid 2 above base 1.09"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-07-07T00:00:00",
+        "symbol": "TSLA",
+        "price": 293.94,
+        "size": 170,
+        "reason": "grid -1 below base 306.53"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-08T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.17,
+        "size": 200,
+        "reason": "grid 2 above base 1.09"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-07-08T00:00:00",
+        "symbol": "TSLA",
+        "price": 297.81,
+        "size": 167,
+        "reason": "grid -1 below base 306.95"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-09T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.166,
+        "size": 200,
+        "reason": "grid 2 above base 1.09"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-07-09T00:00:00",
+        "symbol": "TSLA",
+        "price": 295.88,
+        "size": 168,
+        "reason": "grid -1 below base 307.68"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-07-10T00:00:00",
+        "symbol": "0700.HK",
+        "price": 496.6,
+        "size": 100,
+        "reason": "grid -1 below base 497.37"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-10T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.167,
+        "size": 200,
+        "reason": "grid 2 above base 1.10"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-07-11T00:00:00",
+        "symbol": "0700.HK",
+        "price": 496.6,
+        "size": 100,
+        "reason": "grid -1 below base 498.33"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-11T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.175,
+        "size": 100,
+        "reason": "grid 3 above base 1.10"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-14T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.178,
+        "size": 100,
+        "reason": "grid 3 above base 1.10"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-15T00:00:00",
+        "symbol": "0700.HK",
+        "price": 517.5,
+        "size": 100,
+        "reason": "grid 1 above base 500.27"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-15T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.171,
+        "size": 100,
+        "reason": "grid 2 above base 1.10"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-16T00:00:00",
+        "symbol": "0700.HK",
+        "price": 516.5,
+        "size": 100,
+        "reason": "grid 1 above base 501.49"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-16T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.177,
+        "size": 100,
+        "reason": "grid 3 above base 1.11"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-17T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.19,
+        "size": 100,
+        "reason": "grid 3 above base 1.11"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-18T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.19,
+        "size": 100,
+        "reason": "grid 3 above base 1.11"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-21T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.208,
+        "size": 100,
+        "reason": "grid 4 above base 1.12"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-22T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.209,
+        "size": 100,
+        "reason": "grid 4 above base 1.12"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-22T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.069,
+        "size": 46400,
+        "reason": "grid 1 above base 1.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-23T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.074,
+        "size": 37200,
+        "reason": "grid 1 above base 1.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-24T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.086,
+        "size": 29700,
+        "reason": "grid 2 above base 1.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-25T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.109,
+        "size": 23800,
+        "reason": "grid 2 above base 1.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-28T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.11,
+        "size": 19000,
+        "reason": "grid 3 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-29T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.125,
+        "size": 15200,
+        "reason": "grid 3 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-30T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.112,
+        "size": 12200,
+        "reason": "grid 2 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-07-31T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.101,
+        "size": 9700,
+        "reason": "grid 2 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-01T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.091,
+        "size": 7800,
+        "reason": "grid 1 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-04T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.104,
+        "size": 6200,
+        "reason": "grid 2 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-05T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.109,
+        "size": 5000,
+        "reason": "grid 2 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-06T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.113,
+        "size": 4000,
+        "reason": "grid 2 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-07T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.112,
+        "size": 3200,
+        "reason": "grid 2 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-08T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.096,
+        "size": 2600,
+        "reason": "grid 1 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-08T00:00:00",
+        "symbol": "9868.HK",
+        "price": 79.35,
+        "size": 700,
+        "reason": "grid 1 above base 74.56"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-11T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.103,
+        "size": 2000,
+        "reason": "grid 1 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-11T00:00:00",
+        "symbol": "9868.HK",
+        "price": 83.6,
+        "size": 500,
+        "reason": "grid 2 above base 74.62"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-12T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.124,
+        "size": 1600,
+        "reason": "grid 2 above base 1.05"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-12T00:00:00",
+        "symbol": "9868.HK",
+        "price": 82.0,
+        "size": 400,
+        "reason": "grid 1 above base 74.69"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-13T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.133,
+        "size": 1300,
+        "reason": "grid 2 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-13T00:00:00",
+        "symbol": "9868.HK",
+        "price": 79.8,
+        "size": 300,
+        "reason": "grid 1 above base 74.73"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-14T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.142,
+        "size": 1100,
+        "reason": "grid 2 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-15T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.158,
+        "size": 800,
+        "reason": "grid 3 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-18T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.183,
+        "size": 700,
+        "reason": "grid 3 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-19T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.17,
+        "size": 500,
+        "reason": "grid 3 above base 1.06"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-20T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.208,
+        "size": 400,
+        "reason": "grid 4 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-20T00:00:00",
+        "symbol": "9868.HK",
+        "price": 80.45,
+        "size": 300,
+        "reason": "grid 1 above base 74.76"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-21T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.208,
+        "size": 400,
+        "reason": "grid 3 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-21T00:00:00",
+        "symbol": "9868.HK",
+        "price": 80.9,
+        "size": 200,
+        "reason": "grid 1 above base 74.83"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-22T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.323,
+        "size": 300,
+        "reason": "grid 5 above base 1.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-22T00:00:00",
+        "symbol": "9868.HK",
+        "price": 91.9,
+        "size": 200,
+        "reason": "grid 2 above base 75.03"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-25T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.356,
+        "size": 200,
+        "reason": "grid 5 above base 1.08"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-25T00:00:00",
+        "symbol": "9868.HK",
+        "price": 91.5,
+        "size": 100,
+        "reason": "grid 2 above base 75.28"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-25T00:00:00",
+        "symbol": "TSLA",
+        "price": 346.6,
+        "size": 135,
+        "reason": "grid 1 above base 322.12"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-26T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.336,
+        "size": 200,
+        "reason": "grid 4 above base 1.09"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-26T00:00:00",
+        "symbol": "9868.HK",
+        "price": 94.15,
+        "size": 100,
+        "reason": "grid 2 above base 75.60"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-26T00:00:00",
+        "symbol": "TSLA",
+        "price": 351.67,
+        "size": 108,
+        "reason": "grid 1 above base 322.20"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-27T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.337,
+        "size": 100,
+        "reason": "grid 4 above base 1.09"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-27T00:00:00",
+        "symbol": "9868.HK",
+        "price": 92.5,
+        "size": 100,
+        "reason": "grid 2 above base 75.86"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-27T00:00:00",
+        "symbol": "TSLA",
+        "price": 349.6,
+        "size": 87,
+        "reason": "grid 1 above base 322.32"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-28T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.433,
+        "size": 100,
+        "reason": "grid 4 above base 1.10"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-28T00:00:00",
+        "symbol": "9868.HK",
+        "price": 84.9,
+        "size": 100,
+        "reason": "grid 1 above base 75.96"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-28T00:00:00",
+        "symbol": "TSLA",
+        "price": 345.98,
+        "size": 69,
+        "reason": "grid 1 above base 322.35"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-29T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.412,
+        "size": 100,
+        "reason": "grid 4 above base 1.10"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-08-29T00:00:00",
+        "symbol": "9868.HK",
+        "price": 83.9,
+        "size": 100,
+        "reason": "grid 1 above base 76.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-01T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.431,
+        "size": 100,
+        "reason": "grid 4 above base 1.11"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-01T00:00:00",
+        "symbol": "9868.HK",
+        "price": 83.1,
+        "size": 100,
+        "reason": "grid 1 above base 76.13"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-02T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.394,
+        "size": 100,
+        "reason": "grid 3 above base 1.12"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-03T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.365,
+        "size": 100,
+        "reason": "grid 3 above base 1.12"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-04T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.282,
+        "size": 100,
+        "reason": "grid 1 above base 1.12"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-05T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.326,
+        "size": 100,
+        "reason": "grid 2 above base 1.13"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-05T00:00:00",
+        "symbol": "TSLA",
+        "price": 350.84,
+        "size": 55,
+        "reason": "grid 1 above base 324.68"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-08T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.328,
+        "size": 100,
+        "reason": "grid 2 above base 1.14"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-08T00:00:00",
+        "symbol": "TSLA",
+        "price": 346.4,
+        "size": 44,
+        "reason": "grid 1 above base 325.01"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-09T00:00:00",
+        "symbol": "TSLA",
+        "price": 346.97,
+        "size": 36,
+        "reason": "grid 1 above base 325.48"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-10T00:00:00",
+        "symbol": "TSLA",
+        "price": 347.79,
+        "size": 28,
+        "reason": "grid 1 above base 325.85"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-11T00:00:00",
+        "symbol": "TSLA",
+        "price": 368.81,
+        "size": 23,
+        "reason": "grid 2 above base 326.52"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-12T00:00:00",
+        "symbol": "TSLA",
+        "price": 395.94,
+        "size": 18,
+        "reason": "grid 3 above base 327.84"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-15T00:00:00",
+        "symbol": "9868.HK",
+        "price": 82.7,
+        "size": 100,
+        "reason": "grid 1 above base 76.87"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-15T00:00:00",
+        "symbol": "TSLA",
+        "price": 410.04,
+        "size": 15,
+        "reason": "grid 3 above base 329.31"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-16T00:00:00",
+        "symbol": "9868.HK",
+        "price": 83.3,
+        "size": 100,
+        "reason": "grid 1 above base 77.02"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-16T00:00:00",
+        "symbol": "TSLA",
+        "price": 421.62,
+        "size": 12,
+        "reason": "grid 4 above base 330.97"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-17T00:00:00",
+        "symbol": "9868.HK",
+        "price": 84.9,
+        "size": 100,
+        "reason": "grid 1 above base 77.15"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-17T00:00:00",
+        "symbol": "TSLA",
+        "price": 425.86,
+        "size": 9,
+        "reason": "grid 3 above base 332.25"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-18T00:00:00",
+        "symbol": "TSLA",
+        "price": 416.85,
+        "size": 7,
+        "reason": "grid 3 above base 333.53"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-19T00:00:00",
+        "symbol": "TSLA",
+        "price": 426.07,
+        "size": 6,
+        "reason": "grid 3 above base 335.17"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-22T00:00:00",
+        "symbol": "TSLA",
+        "price": 434.21,
+        "size": 5,
+        "reason": "grid 3 above base 336.97"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-23T00:00:00",
+        "symbol": "TSLA",
+        "price": 425.85,
+        "size": 4,
+        "reason": "grid 3 above base 338.68"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-24T00:00:00",
+        "symbol": "TSLA",
+        "price": 442.79,
+        "size": 3,
+        "reason": "grid 3 above base 340.76"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-25T00:00:00",
+        "symbol": "TSLA",
+        "price": 423.39,
+        "size": 2,
+        "reason": "grid 3 above base 342.81"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-26T00:00:00",
+        "symbol": "TSLA",
+        "price": 440.4,
+        "size": 2,
+        "reason": "grid 3 above base 344.89"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-29T00:00:00",
+        "symbol": "TSLA",
+        "price": 443.21,
+        "size": 2,
+        "reason": "grid 3 above base 347.02"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-09-30T00:00:00",
+        "symbol": "TSLA",
+        "price": 444.72,
+        "size": 1,
+        "reason": "grid 3 above base 349.53"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-10-01T00:00:00",
+        "symbol": "TSLA",
+        "price": 459.46,
+        "size": 1,
+        "reason": "grid 3 above base 352.23"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-10-02T00:00:00",
+        "symbol": "TSLA",
+        "price": 436.0,
+        "size": 1,
+        "reason": "grid 2 above base 354.56"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-10-03T00:00:00",
+        "symbol": "TSLA",
+        "price": 429.83,
+        "size": 1,
+        "reason": "grid 2 above base 356.56"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-10-06T00:00:00",
+        "symbol": "TSLA",
+        "price": 453.25,
+        "size": 1,
+        "reason": "grid 3 above base 358.89"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-10-07T00:00:00",
+        "symbol": "TSLA",
+        "price": 433.09,
+        "size": 1,
+        "reason": "grid 2 above base 360.83"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-10-08T00:00:00",
+        "symbol": "TSLA",
+        "price": 438.69,
+        "size": 1,
+        "reason": "grid 2 above base 362.96"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-10-09T00:00:00",
+        "symbol": "TSLA",
+        "price": 435.54,
+        "size": 1,
+        "reason": "grid 2 above base 364.86"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-10-17T00:00:00",
+        "symbol": "0700.HK",
+        "price": 608.0,
+        "size": 100,
+        "reason": "grid -1 below base 609.94"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-10-17T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.256,
+        "size": 39800,
+        "reason": "grid -1 below base 1.28"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-10-17T00:00:00",
+        "symbol": "9868.HK",
+        "price": 79.2,
+        "size": 600,
+        "reason": "grid -1 below base 82.35"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-10-20T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.28,
+        "size": 39000,
+        "reason": "grid -1 below base 1.28"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-10-20T00:00:00",
+        "symbol": "9868.HK",
+        "price": 81.35,
+        "size": 600,
+        "reason": "grid -1 below base 82.44"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-10-23T00:00:00",
+        "symbol": "9868.HK",
+        "price": 82.15,
+        "size": 600,
+        "reason": "grid -1 below base 82.84"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-10-27T00:00:00",
+        "symbol": "0700.HK",
+        "price": 656.0,
+        "size": 100,
+        "reason": "grid 1 above base 618.12"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-11-03T00:00:00",
+        "symbol": "9868.HK",
+        "price": 91.2,
+        "size": 300,
+        "reason": "grid 1 above base 84.22"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-11-10T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.337,
+        "size": 15700,
+        "reason": "grid 1 above base 1.31"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-11-10T00:00:00",
+        "symbol": "9868.HK",
+        "price": 92.0,
+        "size": 300,
+        "reason": "grid 1 above base 85.00"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-11-11T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.34,
+        "size": 12600,
+        "reason": "grid 1 above base 1.31"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-11-11T00:00:00",
+        "symbol": "9868.HK",
+        "price": 108.5,
+        "size": 200,
+        "reason": "grid 2 above base 85.52"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-11-12T00:00:00",
+        "symbol": "9868.HK",
+        "price": 105.2,
+        "size": 200,
+        "reason": "grid 2 above base 85.98"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-11-13T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.349,
+        "size": 10100,
+        "reason": "grid 1 above base 1.31"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-11-13T00:00:00",
+        "symbol": "9868.HK",
+        "price": 105.9,
+        "size": 100,
+        "reason": "grid 2 above base 86.44"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-13T00:00:00",
+        "symbol": "TSLA",
+        "price": 401.99,
+        "size": 124,
+        "reason": "grid -1 below base 413.66"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-11-14T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.344,
+        "size": 8000,
+        "reason": "grid 1 above base 1.31"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-11-14T00:00:00",
+        "symbol": "9868.HK",
+        "price": 98.7,
+        "size": 100,
+        "reason": "grid 1 above base 86.80"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-14T00:00:00",
+        "symbol": "TSLA",
+        "price": 404.35,
+        "size": 123,
+        "reason": "grid -1 below base 415.07"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-11-17T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.345,
+        "size": 6400,
+        "reason": "grid 1 above base 1.31"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-17T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.422,
+        "size": 35100,
+        "reason": "grid -1 below base 1.44"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-17T00:00:00",
+        "symbol": "TSLA",
+        "price": 408.92,
+        "size": 122,
+        "reason": "grid -1 below base 416.21"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-18T00:00:00",
+        "symbol": "0700.HK",
+        "price": 623.5,
+        "size": 100,
+        "reason": "grid -1 below base 634.97"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-18T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.427,
+        "size": 35000,
+        "reason": "grid -1 below base 1.44"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-18T00:00:00",
+        "symbol": "9868.HK",
+        "price": 85.95,
+        "size": 500,
+        "reason": "grid -1 below base 87.14"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-18T00:00:00",
+        "symbol": "TSLA",
+        "price": 401.25,
+        "size": 124,
+        "reason": "grid -1 below base 417.12"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-19T00:00:00",
+        "symbol": "0700.HK",
+        "price": 622.5,
+        "size": 100,
+        "reason": "grid -1 below base 635.34"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-19T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.413,
+        "size": 35300,
+        "reason": "grid -1 below base 1.44"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-19T00:00:00",
+        "symbol": "9868.HK",
+        "price": 85.7,
+        "size": 500,
+        "reason": "grid -1 below base 87.04"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-19T00:00:00",
+        "symbol": "TSLA",
+        "price": 403.99,
+        "size": 123,
+        "reason": "grid -1 below base 418.00"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-20T00:00:00",
+        "symbol": "0700.HK",
+        "price": 621.0,
+        "size": 100,
+        "reason": "grid -1 below base 635.45"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-20T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.304,
+        "size": 38300,
+        "reason": "grid -1 below base 1.31"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-20T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.396,
+        "size": 35800,
+        "reason": "grid -1 below base 1.45"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-20T00:00:00",
+        "symbol": "9868.HK",
+        "price": 81.85,
+        "size": 600,
+        "reason": "grid -1 below base 86.88"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-21T00:00:00",
+        "symbol": "0700.HK",
+        "price": 610.0,
+        "size": 100,
+        "reason": "grid -2 below base 635.46"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-21T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.25,
+        "size": 40000,
+        "reason": "grid -2 below base 1.31"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-21T00:00:00",
+        "symbol": "588000.SH",
+        "price": 1.351,
+        "size": 37000,
+        "reason": "grid -2 below base 1.45"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-21T00:00:00",
+        "symbol": "9868.HK",
+        "price": 78.5,
+        "size": 600,
+        "reason": "grid -1 below base 86.62"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-24T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.271,
+        "size": 39300,
+        "reason": "grid -2 below base 1.31"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-11-25T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.293,
+        "size": 38600,
+        "reason": "grid -1 below base 1.31"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-12T00:00:00",
+        "symbol": "TSLA",
+        "price": 458.96,
+        "size": 123,
+        "reason": "grid 1 above base 435.92"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-15T00:00:00",
+        "symbol": "TSLA",
+        "price": 475.31,
+        "size": 98,
+        "reason": "grid 1 above base 436.74"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-16T00:00:00",
+        "symbol": "TSLA",
+        "price": 489.88,
+        "size": 79,
+        "reason": "grid 2 above base 437.67"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-17T00:00:00",
+        "symbol": "TSLA",
+        "price": 467.26,
+        "size": 63,
+        "reason": "grid 1 above base 438.36"
+      },
+      {
+        "type": "buy",
+        "timestamp": "2025-12-18T00:00:00",
+        "symbol": "9868.HK",
+        "price": 71.2,
+        "size": 700,
+        "reason": "grid -4 below base 85.21"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-18T00:00:00",
+        "symbol": "TSLA",
+        "price": 483.37,
+        "size": 50,
+        "reason": "grid 1 above base 439.04"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-19T00:00:00",
+        "symbol": "TSLA",
+        "price": 481.2,
+        "size": 40,
+        "reason": "grid 1 above base 440.00"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-22T00:00:00",
+        "symbol": "TSLA",
+        "price": 488.73,
+        "size": 32,
+        "reason": "grid 1 above base 440.80"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-23T00:00:00",
+        "symbol": "TSLA",
+        "price": 485.56,
+        "size": 26,
+        "reason": "grid 1 above base 441.51"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-24T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.357,
+        "size": 36400,
+        "reason": "grid 1 above base 1.31"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-24T00:00:00",
+        "symbol": "TSLA",
+        "price": 485.4,
+        "size": 21,
+        "reason": "grid 1 above base 442.19"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-25T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.372,
+        "size": 29100,
+        "reason": "grid 1 above base 1.31"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-26T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.366,
+        "size": 23300,
+        "reason": "grid 1 above base 1.32"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-26T00:00:00",
+        "symbol": "TSLA",
+        "price": 475.19,
+        "size": 16,
+        "reason": "grid 1 above base 442.45"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-29T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.365,
+        "size": 18600,
+        "reason": "grid 1 above base 1.32"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-30T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.366,
+        "size": 14900,
+        "reason": "grid 1 above base 1.32"
+      },
+      {
+        "type": "sell",
+        "timestamp": "2025-12-31T00:00:00",
+        "symbol": "563300.SH",
+        "price": 1.368,
+        "size": 11900,
+        "reason": "grid 1 above base 1.32"
+      }
+    ]
+  }
 }
