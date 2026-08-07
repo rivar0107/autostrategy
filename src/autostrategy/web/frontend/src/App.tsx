@@ -78,6 +78,10 @@ function errorMessage(error: unknown): string {
   return 'Unknown error'
 }
 
+function isJobGone(error: unknown): boolean {
+  return error instanceof ApiError && (error.code === 'job_not_found' || error.status === 404)
+}
+
 function formatMetric(value: unknown, suffix = ''): string {
   if (typeof value === 'number') {
     return `${value.toFixed(2)}${suffix}`
@@ -205,6 +209,10 @@ function App() {
           messageApi.error(backtestJobMessage(nextJob))
         }
       } catch (err) {
+        if (isJobGone(err)) {
+          setBacktestJob(null)
+          return
+        }
         messageApi.error(errorMessage(err))
       }
     }, 1000)
@@ -240,6 +248,10 @@ function App() {
           }
         }
       } catch (err) {
+        if (isJobGone(err)) {
+          setPaperRunJob(null)
+          return
+        }
         messageApi.error(errorMessage(err))
       }
     }, 1000)
@@ -423,6 +435,10 @@ function App() {
       setPaperRunJob(job)
       messageApi.success('已请求停止模拟运行')
     } catch (err) {
+      if (isJobGone(err)) {
+        setPaperRunJob(null)
+        return
+      }
       messageApi.error(errorMessage(err))
     } finally {
       setActionLoading(null)

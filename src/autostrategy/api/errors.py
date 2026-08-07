@@ -12,6 +12,7 @@ from autostrategy.services.exceptions import (
     ArtifactNotFoundError,
     AutostrategyServiceError,
     BacktestServiceError,
+    JobNotFoundError,
     LLMConfigurationRequiredError,
     PaperRunServiceError,
     StrategyAlreadyExistsError,
@@ -25,6 +26,7 @@ _ERROR_STATUS = {
     ValidationServiceError: 400,
     BacktestServiceError: 400,
     ArtifactNotFoundError: 404,
+    JobNotFoundError: 404,
     LLMConfigurationRequiredError: 428,
     PaperRunServiceError: 400,
 }

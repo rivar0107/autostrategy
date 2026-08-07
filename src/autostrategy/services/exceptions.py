@@ -73,3 +73,9 @@ class ArtifactNotFoundError(AutostrategyServiceError):
     """Raised when a strategy artifact cannot be previewed."""
 
     code = "artifact_not_found"
+
+
+class JobNotFoundError(AutostrategyServiceError):
+    """Raised when a backtest or paper run job cannot be found."""
+
+    code = "job_not_found"

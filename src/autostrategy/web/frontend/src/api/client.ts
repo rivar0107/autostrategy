@@ -15,12 +15,14 @@ const API_PREFIX = '/api/v1'
 
 export class ApiError extends Error {
   code: string
+  status: number
   details: Record<string, unknown>
 
-  constructor(message: string, code = 'api_error', details: Record<string, unknown> = {}) {
+  constructor(message: string, code = 'api_error', details: Record<string, unknown> = {}, status = 0) {
     super(message)
     this.name = 'ApiError'
     this.code = code
+    this.status = status
     this.details = details
   }
 }
@@ -44,7 +46,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   }
   if (!response.ok) {
     const error = data?.error || {}
-    throw new ApiError(error.message || text || `HTTP ${response.status}`, error.code || 'api_error', error.details || {})
+    throw new ApiError(
+      error.message || text || `HTTP ${response.status}`,
+      error.code || 'api_error',
+      error.details || {},
+      response.status,
+    )
   }
   return data as T
 }

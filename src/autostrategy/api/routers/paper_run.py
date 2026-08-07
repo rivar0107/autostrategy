@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, status
 
 from autostrategy.api.dependencies import get_paper_run_job_service, get_paper_run_service
 from autostrategy.api.schemas import BacktestJobResponse, PaperRunResponse, StrategyResponse
-from autostrategy.services.exceptions import PaperRunServiceError
+from autostrategy.services.exceptions import JobNotFoundError
 from autostrategy.services.models import BacktestJob
 from autostrategy.services.paper_run_job_service import PaperRunJobService
 from autostrategy.services.paper_run_service import PaperRunService
@@ -37,7 +37,7 @@ def get_paper_run_job(
     try:
         return _job_response(service.get_job(slug, job_id))
     except FileNotFoundError as exc:
-        raise PaperRunServiceError(str(exc)) from exc
+        raise JobNotFoundError(str(exc)) from exc
 
 
 @router.post("/strategies/{slug}/paper-run-jobs/{job_id}/stop", response_model=BacktestJobResponse)
@@ -50,7 +50,7 @@ def stop_paper_run_job(
     try:
         return _job_response(service.request_stop(slug, job_id))
     except FileNotFoundError as exc:
-        raise PaperRunServiceError(str(exc)) from exc
+        raise JobNotFoundError(str(exc)) from exc
 
 
 @router.get("/strategies/{slug}/paper-run-result", response_model=PaperRunResponse)

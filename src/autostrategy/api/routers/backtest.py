@@ -8,7 +8,7 @@ from autostrategy.api.dependencies import get_backtest_job_service, get_backtest
 from autostrategy.api.schemas import BacktestJobResponse, BacktestResponse, StrategyResponse
 from autostrategy.services.backtest_job_service import BacktestJobService
 from autostrategy.services.backtest_service import BacktestService
-from autostrategy.services.exceptions import BacktestServiceError
+from autostrategy.services.exceptions import JobNotFoundError
 from autostrategy.services.models import BacktestJob
 
 router = APIRouter(tags=["backtest"])
@@ -41,7 +41,7 @@ def get_backtest_job(
     try:
         return _job_response(service.get_job(slug, job_id))
     except FileNotFoundError as exc:
-        raise BacktestServiceError(str(exc)) from exc
+        raise JobNotFoundError(str(exc)) from exc
 
 
 @router.get("/strategies/{slug}/backtest-result", response_model=BacktestResponse)

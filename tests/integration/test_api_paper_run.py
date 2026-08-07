@@ -123,3 +123,17 @@ def test_api_paper_run_exposes_running_partial_result(tmp_path):
     assert partial["latest_decision"]["action"] == "buy"
     job = _wait_for_job(client, "demo", job_id)
     assert job["status"] == "succeeded"
+
+
+def test_api_paper_run_missing_job_returns_404(tmp_path):
+    client = TestClient(create_app(workspace_root=tmp_path))
+    create = client.post("/api/v1/strategies", json={"name": "demo"})
+    assert create.status_code == 200
+
+    response = client.get("/api/v1/strategies/demo/paper-run-jobs/missing-job-id")
+    assert response.status_code == 404
+    assert response.json()["error"]["code"] == "job_not_found"
+
+    stop = client.post("/api/v1/strategies/demo/paper-run-jobs/missing-job-id/stop")
+    assert stop.status_code == 404
+    assert stop.json()["error"]["code"] == "job_not_found"
