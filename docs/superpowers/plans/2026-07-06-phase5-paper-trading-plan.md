@@ -168,7 +168,7 @@ npm test -- --run src/App.test.tsx
 
 ## 6. Phase 5D 计划: 本地 mock 行情 feed
 
-**状态:** 未开始  
+**状态:** 已完成（2026-08-07）  
 **优先级:** P2  
 **建议顺序:** Phase 5C 之后。
 
@@ -205,11 +205,11 @@ npm test -- --run src/App.test.tsx
 
 ### 6.3 验收清单
 
-- [ ] 本地 feed 可按时间窗口输出 bar events。
-- [ ] workflow 可消费 feed events。
-- [ ] 测试 fixture 不依赖外部网络。
-- [ ] README 说明如何准备本地 replay 数据。
-- [ ] 前端显示数据源和 replay 时间范围。
+- [x] 本地 feed 可按时间窗口输出 bar events。
+- [x] workflow 可消费 feed events。
+- [x] 测试 fixture 不依赖外部网络。
+- [x] README 说明如何准备本地 replay 数据。
+- [x] 前端显示数据源和 replay 时间范围。
 
 ---
 

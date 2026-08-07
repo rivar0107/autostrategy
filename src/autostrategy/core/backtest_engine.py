@@ -17,6 +17,7 @@ import numpy as np
 import yaml
 
 from autostrategy.core.paper_account import PaperAccount
+from autostrategy.data.feed import LocalFeed
 
 MARKET_BENCHMARKS = {
     "A股": {"index": "000300.SH", "avg_annual_return": 8.0},
@@ -206,7 +207,19 @@ def run_paper_replay_workflow(strategy_dir: Path, stop_requested=None) -> dict:
         _write_paper_artifacts(result_path, events_path, log_path, result, [])
         return result
 
+    feed = _load_configured_feed(config, strategy_dir)
+    if feed is not None:
+        config = dict(config)
+        config["feed_bars"] = feed.bars
+        config["feed"] = feed.metadata()
+
     if not hasattr(module, "run_paper"):
+        if feed is not None:
+            result = _run_feed_driven_replay(
+                feed, config, started_at, result_path, events_path, log_path, stop_requested
+            )
+            result = _attach_feed_metadata(result, feed)
+            return result
         result = _paper_failed_result(started_at, "strategy.py 未暴露 run_paper(config) 函数")
         _write_paper_artifacts(result_path, events_path, log_path, result, [])
         return result
@@ -230,7 +243,86 @@ def run_paper_replay_workflow(strategy_dir: Path, stop_requested=None) -> dict:
     except Exception as exc:
         result = _paper_failed_result(started_at, f"replay 执行失败: {exc}")
         _write_paper_artifacts(result_path, events_path, log_path, result, [])
+    if feed is not None:
+        result = _attach_feed_metadata(result, feed)
+        save_json(result_path, result)
     return result
+
+
+def _load_configured_feed(config: dict, strategy_dir: Path) -> LocalFeed | None:
+    """Build a LocalFeed from config.feed, or None when not configured."""
+    feed_config = config.get("feed")
+    if not isinstance(feed_config, dict) or not feed_config.get("path"):
+        return None
+    feed_path = Path(feed_config["path"])
+    if not feed_path.is_absolute():
+        feed_path = strategy_dir / feed_path
+    symbols = feed_config.get("symbols") or config.get("symbols")
+    if isinstance(symbols, str):
+        symbols = [symbols]
+    if isinstance(symbols, list):
+        symbols = [s.get("code") if isinstance(s, dict) else s for s in symbols]
+    period = config.get("period") if isinstance(config.get("period"), dict) else {}
+    return LocalFeed(
+        feed_path,
+        symbols=symbols,
+        start=feed_config.get("start") or period.get("start"),
+        end=feed_config.get("end") or period.get("end"),
+    )
+
+
+def _attach_feed_metadata(result: dict, feed: LocalFeed) -> dict:
+    merged = dict(result)
+    replay = dict(merged.get("replay") if isinstance(merged.get("replay"), dict) else {})
+    replay["feed"] = feed.metadata()
+    merged["replay"] = replay
+    return merged
+
+
+def _run_feed_driven_replay(
+    feed: LocalFeed,
+    config: dict,
+    started_at: str,
+    result_path: Path,
+    events_path: Path,
+    log_path: Path,
+    stop_requested=None,
+) -> dict:
+    """Replay feed bars through a PaperAccount when strategy has no run_paper.
+
+    Every bar marks open positions to market and records a ``hold``
+    event, so the account snapshot evolves with the feed even when the
+    strategy emits no explicit decisions.
+    """
+    account = PaperAccount.from_config({**config, "initial_cash": config.get("initial_cash", 0)})
+
+    def bar_events() -> Iterable[dict]:
+        total = len(feed)
+        yield {
+            "replay": {"feed": feed.metadata(), "bars_processed": 0, "progress": 0.0},
+            "paper": account.snapshot(),
+        }
+        for index, bar in enumerate(feed):
+            if stop_requested and stop_requested():
+                return
+            account.mark_price(bar["symbol"], bar["close"])
+            event = account.apply(
+                {
+                    "timestamp": bar["at"],
+                    "symbol": bar["symbol"],
+                    "action": "hold",
+                    "price": bar["close"],
+                    "size": 0,
+                    "reason": "feed bar",
+                }
+            )
+            event["progress"] = round((index + 1) / total, 4) if total else 1.0
+            yield event
+        yield {"paper": account.snapshot()}
+
+    return _run_incremental_paper_replay(
+        bar_events(), started_at, result_path, events_path, log_path, stop_requested
+    )
 
 
 def _run_incremental_paper_replay(
@@ -404,10 +496,12 @@ def _ensure_account_snapshot(paper: dict, raw: dict) -> dict:
     numbers. Otherwise the account is replayed from the decision events
     so every paper run exposes cash, positions and equity.
     """
-    # A strategy that already reports a complete account (final_value or
-    # explicit cash/positions) keeps its own numbers; we only replay when
-    # the account fields are missing.
-    if "final_value" in paper or ("cash" in paper and "positions" in paper):
+    # A strategy that reports a complete account (final_value or equity,
+    # or explicit cash/positions with the account totals) keeps its own
+    # numbers; we only replay when the account fields are missing.
+    if "final_value" in paper or "equity" in paper or (
+        "cash" in paper and "positions" in paper and "trade_count" in paper
+    ):
         return paper
     events = _paper_events_from_raw(raw)
     decisions = [e for e in events if isinstance(e, dict) and e.get("action")]

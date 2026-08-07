@@ -2,13 +2,9 @@
 
 ## Phase 5 — Paper Trading / 模拟盘
 
-- **本地 mock 行情 feed**
-  - Priority: P2
-  - 接入历史行情数据作为 replay 数据源
-  - 支持按时间窗口推进
-  - Status: 未开始
-
 ## Completed
+
+- **本地 mock 行情 feed（Phase 5D）** — Completed: 2026-08-07
 
 - **虚拟账户与持仓模型（Phase 5C）** — Completed: 2026-08-07
 

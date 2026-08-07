@@ -2,6 +2,8 @@
 
 import json
 
+import pytest
+
 from autostrategy.core.backtest_engine import run_paper_replay_workflow
 
 
@@ -157,3 +159,82 @@ def test_paper_run_incremental_account_updates(tmp_path):
     # bought 1000 @10, marked @11 => equity 1,001,000
     assert summary["final_value"] == 1_001_000
     assert summary["position_count"] == 1
+
+
+# --- Phase 5D: local feed driven paper runs ---
+
+
+def _write_feed_fixture(strategy_dir) -> None:
+    data_dir = strategy_dir / "data"
+    data_dir.mkdir(exist_ok=True)
+    (data_dir / "bars.csv").write_text(
+        "date,symbol,open,high,low,close,volume\n"
+        "2024-01-02,000300.SH,10,10.5,9.8,10.0,1000\n"
+        "2024-01-03,000300.SH,10,11,9.9,11.0,1200\n"
+        "2024-01-04,000300.SH,11,11.5,10.5,10.5,900\n",
+        encoding="utf-8",
+    )
+
+
+def test_feed_driven_replay_without_run_paper(tmp_path):
+    _write_feed_fixture(tmp_path)
+    (tmp_path / "strategy.py").write_text("def run_backtest(config):\n    return {}\n", encoding="utf-8")
+    (tmp_path / "config.yaml").write_text(
+        "market: A股\ninitial_cash: 100000\nsymbols: ['000300.SH']\nfeed:\n  path: data/bars.csv\n",
+        encoding="utf-8",
+    )
+
+    result = run_paper_replay_workflow(tmp_path)
+
+    assert result["run_status"] == "completed"
+    assert result["paper"]["cash"] == 100000
+    assert result["paper"]["equity"] == 100000
+    assert result["replay"]["bars_processed"] == 3
+    feed_meta = result["replay"]["feed"]
+    assert feed_meta["bar_count"] == 3
+    assert feed_meta["symbols"] == ["000300.SH"]
+    assert feed_meta["start"] == "2024-01-02T00:00:00"
+    assert feed_meta["end"] == "2024-01-04T00:00:00"
+    events = (tmp_path / "paper_run" / "results" / "paper_run_events.jsonl").read_text(
+        encoding="utf-8"
+    ).strip().splitlines()
+    assert len(events) == 3
+    assert all(json.loads(line)["action"] == "hold" for line in events)
+
+
+def test_feed_injected_into_run_paper_config(tmp_path):
+    _write_feed_fixture(tmp_path)
+    (tmp_path / "strategy.py").write_text(
+        "def run_paper(config):\n"
+        "    bars = config['feed_bars']\n"
+        "    return {\n"
+        "        'paper': {'initial_cash': 100000, 'final_value': 100000},\n"
+        "        'events': [\n"
+        "            {'timestamp': b['at'], 'symbol': b['symbol'], 'action': 'hold',\n"
+        "             'price': b['close'], 'size': 0, 'reason': 'from feed'}\n"
+        "            for b in bars\n"
+        "        ],\n"
+        "    }\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "config.yaml").write_text(
+        "market: A股\ninitial_cash: 100000\nfeed:\n  path: data/bars.csv\n  start: '2024-01-03'\n",
+        encoding="utf-8",
+    )
+
+    result = run_paper_replay_workflow(tmp_path)
+
+    assert result["run_status"] == "completed"
+    # start filter applied: only 2 of the 3 bars reached the strategy
+    assert result["replay"]["bars_processed"] == 2
+    assert result["replay"]["feed"]["bar_count"] == 2
+
+
+def test_feed_missing_file_fails_gracefully(tmp_path):
+    (tmp_path / "strategy.py").write_text("def run_backtest(config):\n    return {}\n", encoding="utf-8")
+    (tmp_path / "config.yaml").write_text(
+        "market: A股\nfeed:\n  path: data/missing.csv\n", encoding="utf-8"
+    )
+
+    with pytest.raises(FileNotFoundError):
+        run_paper_replay_workflow(tmp_path)

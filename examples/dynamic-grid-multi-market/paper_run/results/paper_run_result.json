@@ -1,0 +1,97 @@
+{
+  "mode": "paper_run",
+  "run_status": "completed",
+  "started_at": "2026-08-07T04:00:17.640267+00:00",
+  "updated_at": "2026-08-07T04:00:33.698949+00:00",
+  "replay": {
+    "current_at": "2025-12-31T00:00:00",
+    "bars_processed": 2456,
+    "progress": 1.0,
+    "feed": {
+      "source": "examples/dynamic-grid-multi-market/data/feed.csv",
+      "bar_count": 2456,
+      "symbol_count": 5,
+      "symbols": [
+        "0700.HK",
+        "563300.SH",
+        "588000.SH",
+        "9868.HK",
+        "TSLA"
+      ],
+      "start": "2024-01-02T00:00:00",
+      "end": "2025-12-31T00:00:00"
+    }
+  },
+  "summary": {
+    "paper_return": 70.54,
+    "paper_max_drawdown": 0.0,
+    "trade_count": 543,
+    "position_count": 5,
+    "final_value": 1705372.74
+  },
+  "paper": {
+    "initial_cash": 1000000.0,
+    "cash": 839293.38,
+    "positions": [
+      {
+        "symbol": "563300.SH",
+        "quantity": 48000.0,
+        "avg_price": 1.2775,
+        "last_price": 1.368,
+        "market_value": 65664.0,
+        "unrealized_pnl": 4341.99
+      },
+      {
+        "symbol": "9868.HK",
+        "quantity": 3500.0,
+        "avg_price": 80.1186,
+        "last_price": 79.35,
+        "market_value": 277725.0,
+        "unrealized_pnl": -2690.0
+      },
+      {
+        "symbol": "TSLA",
+        "quantity": 68.0,
+        "avg_price": 404.0841,
+        "last_price": 449.72,
+        "market_value": 30580.96,
+        "unrealized_pnl": 3103.24
+      },
+      {
+        "symbol": "588000.SH",
+        "quantity": 178200.0,
+        "avg_price": 1.4012,
+        "last_price": 1.417,
+        "market_value": 252509.4,
+        "unrealized_pnl": 2809.5
+      },
+      {
+        "symbol": "0700.HK",
+        "quantity": 400.0,
+        "avg_price": 619.25,
+        "last_price": 599.0,
+        "market_value": 239600.0,
+        "unrealized_pnl": -8100.0
+      }
+    ],
+    "equity": 1705372.74,
+    "final_value": 1705372.74,
+    "realized_pnl": 705908.12,
+    "unrealized_pnl": -535.27,
+    "trade_count": 543,
+    "position_count": 5
+  },
+  "latest_decision": {
+    "timestamp": "2025-12-31T00:00:00",
+    "symbol": "TSLA",
+    "action": "hold",
+    "price": 449.72,
+    "size": 0,
+    "reason": "no grid signal",
+    "cash_after": 839293.38,
+    "equity_after": 1705372.74,
+    "progress": 1.0
+  },
+  "diagnostics": [],
+  "error": null
+}

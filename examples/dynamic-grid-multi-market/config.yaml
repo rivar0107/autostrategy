@@ -73,5 +73,13 @@ risk:
   extreme_drop_pct: 10        # 标的单日跌幅暂停阈值 %
 
 # === 数据源 ===
-data_source: "akshare"
+# Phase 5D: paper run 使用本地 feed 作为 replay 数据源（无网络依赖）。
+# 行情下载统一走 FTShare MCP（见 templates/_shared/fetch_data.py）。
+data_source: "ftshare"
 data_cycle: "daily"
+
+# === Paper Run 本地 feed ===
+feed:
+  path: "data/feed.csv"
+  start: "2024-01-01"
+  end: "2025-12-31"

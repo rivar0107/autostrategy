@@ -717,6 +717,7 @@ function PaperRunSummary({ result }: { result: PaperRunResponse | null }) {
   const paper = payload.paper || {}
   const positions = Array.isArray(paper.positions) ? paper.positions : []
   const latestDecision = payload.latest_decision
+  const feed = replay.feed || null
   return (
     <Card title={<Space><span>模拟运行摘要</span><Tag color="cyan">Paper Run</Tag><Tag>{payload.run_status || 'unknown'}</Tag></Space>}>
       <Row gutter={[16, 16]}>
@@ -741,6 +742,14 @@ function PaperRunSummary({ result }: { result: PaperRunResponse | null }) {
         </Descriptions>
       )}
       <Progress percent={Math.round((replay.progress || 0) * 100)} className="mt-16" />
+      {feed && (
+        <Descriptions bordered column={2} className="mt-16" size="small" title="Replay 数据源">
+          <Descriptions.Item label="数据文件">{feed.source || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="bars / 标的数">{`${formatMetric(feed.bar_count)} / ${formatMetric(feed.symbol_count)}`}</Descriptions.Item>
+          <Descriptions.Item label="时间范围">{`${feed.start || 'N/A'} ~ ${feed.end || 'N/A'}`}</Descriptions.Item>
+          <Descriptions.Item label="标的">{(feed.symbols || []).join(', ') || 'N/A'}</Descriptions.Item>
+        </Descriptions>
+      )}
       <Descriptions bordered column={2} className="mt-16" size="small">
         <Descriptions.Item label="当前时间">{replay.current_at || 'N/A'}</Descriptions.Item>
         <Descriptions.Item label="已处理 bars">{formatMetric(replay.bars_processed)}</Descriptions.Item>

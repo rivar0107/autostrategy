@@ -198,6 +198,19 @@ paper_run/logs/paper_run.log
 
 当前模拟运行是 replay-first，本地重放历史数据和策略决策。它还不是实盘交易，也不连接真实 broker。
 
+#### 本地 replay 数据（feed）
+
+模拟运行的行情来源可以配置为本地 feed，完全不依赖网络。在 `config.yaml` 中加：
+
+```yaml
+feed:
+  path: "data/feed.csv"     # 支持 .csv / .jsonl，列：date,symbol,open,high,low,close,volume
+  start: "2024-01-01"       # 可选，时间窗口
+  end: "2025-12-31"
+```
+
+配置后 workflow 会把 bar 事件注入 `config['feed_bars']` 供 `run_paper(config)` 消费；策略没有 `run_paper` 时会按 feed 自动逐 bar 重放虚拟账户。行情数据本身用 FTShare MCP 下载（见策略目录下的 `fetch_data.py`）。示例见 `examples/dynamic-grid-multi-market`。
+
 模拟运行会同步维护一个虚拟账户：`paper_run_result.json` 中的 `paper` 字段给出账户快照（`initial_cash`、`cash`、`equity`、`final_value` 和 `positions` 持仓明细），买入/卖出决策会按事件价格成交并更新现金与持仓；现金不足或持仓不足的委托会被拒绝并记录在事件流中。前端 Paper Run 面板会直接展示账户摘要与持仓表。
 
 ## 工作流

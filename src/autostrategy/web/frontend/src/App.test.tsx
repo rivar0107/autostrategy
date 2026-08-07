@@ -226,7 +226,19 @@ test('shows submitted paper run status', async () => {
         result: {
           mode: 'paper_run',
           run_status: 'completed',
-          replay: { current_at: '2024-01-02', bars_processed: 1, progress: 1 },
+          replay: {
+            current_at: '2024-01-02',
+            bars_processed: 1,
+            progress: 1,
+            feed: {
+              source: 'data/feed.csv',
+              bar_count: 2456,
+              symbol_count: 5,
+              symbols: ['0700.HK', '563300.SH', '588000.SH', '9868_HK', 'TSLA'],
+              start: '2024-01-02T00:00:00',
+              end: '2025-12-31T00:00:00',
+            },
+          },
           summary: { paper_return: 1, paper_max_drawdown: 0.5, trade_count: 1, final_value: 1010000 },
           latest_decision: { action: 'buy', reason: 'signal' },
         },
@@ -262,6 +274,8 @@ test('shows submitted paper run status', async () => {
   expect(await screen.findByText('模拟运行摘要')).toBeInTheDocument()
   await user.click(await screen.findByText('启动模拟运行'))
   expect(await screen.findByText('模拟运行任务：running')).toBeInTheDocument()
+  expect(await screen.findByText('Replay 数据源')).toBeInTheDocument()
+  expect(screen.getByText('data/feed.csv')).toBeInTheDocument()
 })
 
 test('refreshes paper run result while job is running', async () => {

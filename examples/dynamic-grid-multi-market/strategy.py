@@ -405,3 +405,112 @@ def _empty_result() -> dict:
         "win_rate": 0, "profit_loss_ratio": 0, "total_trades": 0,
         "error": "无可用数据",
     }
+
+
+def run_paper(config: dict):
+    """Phase 5D: feed-driven paper replay over the local bar feed.
+
+    Consumes ``config['feed_bars']`` (normalized bar events from the
+    configured local feed) and replays the grid strategy decision by
+    decision. Each bar yields one event so the workflow can stream
+    progress; buy/sell decisions follow the grid lines around the
+    moving-average base price.
+    """
+    import math
+
+    bars = config.get("feed_bars") or []
+    symbols_cfg = {
+        s["code"]: s for s in config.get("symbols", []) if isinstance(s, dict) and s.get("code")
+    }
+    initial_cash = float(config.get("initial_cash", 1_000_000))
+    risk = config.get("risk", {})
+    single_grid_pct = float(risk.get("single_grid_pct", 5)) / 100
+    max_position_pct = float(risk.get("max_position_pct", 20)) / 100
+    indicators = config.get("indicators", {})
+    ma_period = int(indicators.get("ma_period", 60))
+    grid_multiplier = float(indicators.get("grid_multiplier", 1.5))
+    grid_levels = int(indicators.get("grid_levels", 5))
+    atr_period = int(indicators.get("atr_period", 14))
+
+    cash = initial_cash
+    positions: dict[str, dict] = {}
+    history: dict[str, list] = {}
+    total = len(bars)
+
+    yield {
+        "replay": {"bars_processed": 0, "progress": 0.0},
+        "paper": {"initial_cash": initial_cash, "cash": cash, "positions": []},
+    }
+
+    for index, bar in enumerate(bars):
+        symbol = bar["symbol"]
+        close = float(bar["close"])
+        hist = history.setdefault(symbol, [])
+        hist.append(bar)
+        cfg = symbols_cfg.get(symbol, {})
+        lot = int(cfg.get("lot_size", 100) or 100)
+
+        action, size, reason = "hold", 0, ""
+        if len(hist) > ma_period:
+            closes = [b["close"] for b in hist]
+            base = sum(closes[-ma_period:]) / ma_period
+            highs = [b["high"] for b in hist]
+            lows = [b["low"] for b in hist]
+            trs = [max(highs[i] - lows[i], abs(highs[i] - closes[i - 1]), abs(lows[i] - closes[i - 1]))
+                   for i in range(1, len(hist))]
+            atr = sum(trs[-atr_period:]) / atr_period if len(trs) >= atr_period else 0
+            step = atr * grid_multiplier
+            if step > 0:
+                grid_index = math.floor((close - base) / step)
+                pos = positions.get(symbol, {"quantity": 0, "avg_price": 0})
+                market_value = pos["quantity"] * close
+                if grid_index <= -1 and market_value < initial_cash * max_position_pct:
+                    budget = initial_cash * single_grid_pct
+                    size = max(lot, int(budget / close / lot) * lot)
+                    if cash >= size * close:
+                        action, reason = "buy", f"grid {grid_index} below base {base:.2f}"
+                    else:
+                        size = 0
+                elif grid_index >= 1 and pos["quantity"] > 0:
+                    size = min(pos["quantity"], max(lot, int(pos["quantity"] / grid_levels / lot) * lot))
+                    if size > 0:
+                        action, reason = "sell", f"grid {grid_index} above base {base:.2f}"
+
+        if action == "buy" and size > 0:
+            pos = positions.setdefault(symbol, {"quantity": 0, "avg_price": 0})
+            total_qty = pos["quantity"] + size
+            pos["avg_price"] = (pos["avg_price"] * pos["quantity"] + close * size) / total_qty
+            pos["quantity"] = total_qty
+            cash -= close * size
+        elif action == "sell" and size > 0:
+            pos = positions[symbol]
+            pos["quantity"] -= size
+            cash += close * size
+            if pos["quantity"] <= 0:
+                del positions[symbol]
+
+        equity = cash + sum(p["quantity"] * float(latest["close"])
+                            for sym, p in positions.items()
+                            for latest in [history[sym][-1]])
+        yield {
+            "timestamp": bar["at"],
+            "symbol": symbol,
+            "action": action,
+            "price": close,
+            "size": size,
+            "reason": reason or "no grid signal",
+            "cash_after": round(cash, 2),
+            "equity_after": round(equity, 2),
+            "progress": round((index + 1) / total, 4) if total else 1.0,
+        }
+
+    yield {
+        "paper": {
+            "initial_cash": initial_cash,
+            "cash": round(cash, 2),
+            "positions": [
+                {"symbol": sym, "quantity": p["quantity"], "avg_price": round(p["avg_price"], 4)}
+                for sym, p in positions.items()
+            ],
+        }
+    }
