@@ -198,6 +198,8 @@ paper_run/logs/paper_run.log
 
 当前模拟运行是 replay-first，本地重放历史数据和策略决策。它还不是实盘交易，也不连接真实 broker。
 
+模拟运行会同步维护一个虚拟账户：`paper_run_result.json` 中的 `paper` 字段给出账户快照（`initial_cash`、`cash`、`equity`、`final_value` 和 `positions` 持仓明细），买入/卖出决策会按事件价格成交并更新现金与持仓；现金不足或持仓不足的委托会被拒绝并记录在事件流中。前端 Paper Run 面板会直接展示账户摘要与持仓表。
+
 ## 工作流
 
 ```text

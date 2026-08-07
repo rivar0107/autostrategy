@@ -110,7 +110,7 @@ npm test -- --run src/App.test.tsx
 
 ## 5. Phase 5C 计划: 虚拟账户与持仓模型
 
-**状态:** 未开始  
+**状态:** 已完成（2026-08-07）  
 **优先级:** P2  
 **建议先做:** 是。它是 mock feed 和复盘能力之前最关键的产品增量。
 
@@ -156,13 +156,13 @@ npm test -- --run src/App.test.tsx
 
 ### 5.3 验收清单
 
-- [ ] paper run result 包含 cash、positions、equity。
-- [ ] buy/sell/hold 事件写入 events jsonl。
-- [ ] cash 不足不会产生非法负现金，除非未来显式支持融资。
-- [ ] sell 超过持仓不会产生非法负持仓，除非未来显式支持融券。
-- [ ] 前端能展示账户摘要和持仓表。
-- [ ] 单元测试覆盖正常路径和边界情况。
-- [ ] 集成测试覆盖 API 结果结构。
+- [x] paper run result 包含 cash、positions、equity。
+- [x] buy/sell/hold 事件写入 events jsonl。
+- [x] cash 不足不会产生非法负现金，除非未来显式支持融资。
+- [x] sell 超过持仓不会产生非法负持仓，除非未来显式支持融券。
+- [x] 前端能展示账户摘要和持仓表。
+- [x] 单元测试覆盖正常路径和边界情况。
+- [x] 集成测试覆盖 API 结果结构。
 
 ---
 

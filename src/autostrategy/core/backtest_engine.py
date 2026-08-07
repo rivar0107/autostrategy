@@ -16,6 +16,8 @@ from typing import Any
 import numpy as np
 import yaml
 
+from autostrategy.core.paper_account import PaperAccount
+
 MARKET_BENCHMARKS = {
     "A股": {"index": "000300.SH", "avg_annual_return": 8.0},
     "港股": {"index": "HSI", "avg_annual_return": 5.0},
@@ -367,6 +369,7 @@ def _paper_failed_result(started_at: str, error: str, raw: dict | None = None) -
 def _paper_result_from_raw(raw: dict, started_at: str, run_status: str) -> dict:
     updated_at = _utc_now()
     paper = raw.get("paper") if isinstance(raw.get("paper"), dict) else raw
+    paper = _ensure_account_snapshot(paper, raw)
     summary = raw.get("summary") if isinstance(raw.get("summary"), dict) else _paper_summary(paper)
     events = _paper_events_from_raw(raw)
     latest_decision = raw.get("latest_decision") or (events[-1] if events else None)
@@ -387,10 +390,38 @@ def _paper_result_from_raw(raw: dict, started_at: str, run_status: str) -> dict:
         "updated_at": updated_at,
         "replay": replay,
         "summary": summary,
+        "paper": paper,
         "latest_decision": latest_decision,
         "diagnostics": raw.get("diagnostics", []),
         "error": raw.get("error"),
     }
+
+
+def _ensure_account_snapshot(paper: dict, raw: dict) -> dict:
+    """Return paper dict with a virtual account snapshot.
+
+    Strategies that already emit ``cash``/``positions`` keep their own
+    numbers. Otherwise the account is replayed from the decision events
+    so every paper run exposes cash, positions and equity.
+    """
+    # A strategy that already reports a complete account (final_value or
+    # explicit cash/positions) keeps its own numbers; we only replay when
+    # the account fields are missing.
+    if "final_value" in paper or ("cash" in paper and "positions" in paper):
+        return paper
+    events = _paper_events_from_raw(raw)
+    decisions = [e for e in events if isinstance(e, dict) and e.get("action")]
+    if not decisions:
+        return paper
+    config_seed = paper.get("initial_cash", raw.get("initial_cash", 1_000_000))
+    account = PaperAccount.from_config(
+        {"initial_cash": config_seed, "commission": paper.get("commission", raw.get("commission", 0.0))}
+    )
+    for decision in decisions:
+        account.apply(decision)
+    merged = dict(paper)
+    merged.update(account.snapshot())
+    return merged
 
 
 def _paper_summary(paper: dict) -> dict:

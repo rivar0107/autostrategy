@@ -714,6 +714,8 @@ function PaperRunSummary({ result }: { result: PaperRunResponse | null }) {
   const payload = result.result || {}
   const summary = payload.summary || {}
   const replay = payload.replay || {}
+  const paper = payload.paper || {}
+  const positions = Array.isArray(paper.positions) ? paper.positions : []
   const latestDecision = payload.latest_decision
   return (
     <Card title={<Space><span>模拟运行摘要</span><Tag color="cyan">Paper Run</Tag><Tag>{payload.run_status || 'unknown'}</Tag></Space>}>
@@ -723,6 +725,21 @@ function PaperRunSummary({ result }: { result: PaperRunResponse | null }) {
         <Col span={6}><Statistic title="交易次数" value={formatMetric(summary.trade_count)} /></Col>
         <Col span={6}><Statistic title="最终资产" value={formatMetric(summary.final_value)} /></Col>
       </Row>
+      <Row gutter={[16, 16]} className="mt-16">
+        <Col span={6}><Statistic title="现金" value={formatMetric(paper.cash)} /></Col>
+        <Col span={6}><Statistic title="持仓市值/权益" value={formatMetric(paper.equity)} /></Col>
+        <Col span={6}><Statistic title="持仓数量" value={formatMetric(paper.position_count)} /></Col>
+        <Col span={6}><Statistic title="未实现盈亏" value={formatMetric(paper.unrealized_pnl)} /></Col>
+      </Row>
+      {positions.length > 0 && (
+        <Descriptions bordered column={4} className="mt-16" size="small" title="持仓">
+          {positions.map((pos: any) => (
+            <Descriptions.Item key={pos.symbol} label={pos.symbol}>
+              {`${pos.quantity} 股 @ ${formatMetric(pos.avg_price)}（市值 ${formatMetric(pos.market_value)}）`}
+            </Descriptions.Item>
+          ))}
+        </Descriptions>
+      )}
       <Progress percent={Math.round((replay.progress || 0) * 100)} className="mt-16" />
       <Descriptions bordered column={2} className="mt-16" size="small">
         <Descriptions.Item label="当前时间">{replay.current_at || 'N/A'}</Descriptions.Item>

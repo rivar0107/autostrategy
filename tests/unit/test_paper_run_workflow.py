@@ -93,3 +93,67 @@ def test_paper_replay_workflow_stops_incremental_replay(tmp_path):
     assert result["run_status"] == "stopped"
     assert result["replay"]["bars_processed"] == 1
     assert len(events_path.read_text(encoding="utf-8").splitlines()) == 1
+
+
+def test_paper_run_replays_account_from_decision_events(tmp_path):
+    """5C.2: workflow derives virtual account from buy/sell events."""
+    _write_strategy(
+        tmp_path,
+        "def run_paper(config):\n"
+        "    return {\n"
+        "        'events': [\n"
+        "            {'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', 'price': 10, 'size': 1000},\n"
+        "            {'timestamp': '2024-01-03', 'symbol': '000001.SZ', 'action': 'sell', 'price': 12, 'size': 1000},\n"
+        "        ],\n"
+        "    }\n",
+    )
+
+    result = run_paper_replay_workflow(tmp_path)
+
+    assert result["run_status"] == "completed"
+    summary = result["summary"]
+    # 1,000,000 -> buy 1000 @10 -> sell 1000 @12 => 1,002,000 (+0.2%)
+    assert summary["final_value"] == 1_002_000
+    assert summary["paper_return"] == 0.2
+    assert summary["trade_count"] == 2
+    assert summary["position_count"] == 0
+
+
+def test_paper_run_account_snapshot_in_result_file(tmp_path):
+    """5C.2: result JSON carries cash/positions/equity account snapshot."""
+    _write_strategy(
+        tmp_path,
+        "def run_paper(config):\n"
+        "    return {\n"
+        "        'events': [\n"
+        "            {'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', 'price': 10, 'size': 1000},\n"
+        "        ],\n"
+        "    }\n",
+    )
+
+    run_paper_replay_workflow(tmp_path)
+
+    persisted = json.loads((tmp_path / "paper_run" / "results" / "paper_run_result.json").read_text(encoding="utf-8"))
+    paper = persisted.get("account") or persisted.get("paper") or {}
+    assert paper.get("cash") == 990_000
+    assert paper.get("equity") == 1_000_000
+    assert paper.get("position_count") == 1
+    assert paper["positions"][0]["symbol"] == "000001.SZ"
+
+
+def test_paper_run_incremental_account_updates(tmp_path):
+    """5C.2: incremental replay also derives account state."""
+    _write_strategy(
+        tmp_path,
+        "def run_paper(config):\n"
+        "    yield {'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', 'price': 10, 'size': 1000}\n"
+        "    yield {'timestamp': '2024-01-03', 'symbol': '000001.SZ', 'action': 'hold', 'price': 11}\n",
+    )
+
+    result = run_paper_replay_workflow(tmp_path)
+
+    assert result["run_status"] == "completed"
+    summary = result["summary"]
+    # bought 1000 @10, marked @11 => equity 1,001,000
+    assert summary["final_value"] == 1_001_000
+    assert summary["position_count"] == 1
