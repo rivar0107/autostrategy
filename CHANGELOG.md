@@ -4,6 +4,7 @@
 
 ### Added
 
+- LLM 默认配置自动读取本地 Codex CLI（`~/.codex/config.toml` 的 model/base_url + `auth.json` 的 API key），用户未显式配置时开箱即用；显式配置始终优先。
 - FTShare MCP 数据源：`autostrategy.data.ftshare` 通过 streamable-HTTP MCP 客户端获取 A 股/港股/美股日线 OHLC，策略模板 fetch 脚本默认走 FTShare，不再依赖 akshare/tushare/yfinance。
 - Phase 5C 虚拟账户与持仓模型：`autostrategy.core.paper_account.PaperAccount` 维护 cash/positions/equity/realized_pnl，支持 buy/sell/hold 决策重放，现金不足或持仓不足时拒绝成交并落盘事件状态。
 - Paper run 结果新增 `paper` 账户快照（initial_cash/final_value/cash/equity/positions），前端 Paper Run 面板展示账户摘要与持仓明细。

@@ -78,7 +78,7 @@ test('renders Ant Design dashboard shell', async () => {
 
   expect(screen.getByText('您的本地策略agent工作台')).toBeInTheDocument()
   expect(await screen.findByText('策略列表')).toBeInTheDocument()
-  expect(screen.getByText('自然语言生成设计')).toBeInTheDocument()
+  expect(screen.getByText('创建策略')).toBeInTheDocument()
 })
 
 test('auto-opens LLM setup without blocking strategy rendering', async () => {
@@ -144,10 +144,10 @@ test('runtime LLM configuration error reopens setup modal', async () => {
 
   render(<App />)
 
-  await user.click(await screen.findByText('自然语言生成设计'))
+  await user.click(await screen.findByText('创建策略'))
   await user.type(screen.getByLabelText('策略名称'), 'demo')
-  await user.type(screen.getByLabelText('策略想法'), '帮我做一个策略')
-  await user.click(screen.getByText('生成设计'))
+  await user.type(screen.getByLabelText(/策略想法/), '帮我做一个策略')
+  await user.click(screen.getByRole('button', { name: '创 建' }))
 
   expect(await screen.findByText('需要配置本地 LLM API key')).toBeInTheDocument()
 })

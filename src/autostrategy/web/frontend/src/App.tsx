@@ -143,7 +143,6 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
-  const [designOpen, setDesignOpen] = useState(false)
   const [detailOpen, setDetailOpen] = useState(false)
   const [config, setConfig] = useState<ConfigResponse | null>(null)
   const [llmSetupOpen, setLlmSetupOpen] = useState(false)
@@ -152,7 +151,6 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [messageApi, contextHolder] = message.useMessage()
   const [createForm] = Form.useForm()
-  const [designForm] = Form.useForm()
   const [llmForm] = Form.useForm<LlmConfigUpdate>()
 
   const loadConfig = async (autoOpen = false) => {
@@ -351,31 +349,18 @@ function App() {
     }
   }
 
-  const createStrategy = async (values: { name: string; market: string; template?: string }) => {
+  const createStrategy = async (values: { name: string; prompt?: string; market: string; template?: string }) => {
+    const prompt = values.prompt?.trim()
     setActionLoading('create')
     try {
-      const strategy = await api.createStrategy(values)
-      messageApi.success('策略已创建')
+      const strategy = prompt
+        ? (await api.createDesign({ ...values, prompt })).strategy
+        : await api.createStrategy(values)
+      messageApi.success(prompt ? '策略已创建，设计文档已生成' : '策略已创建')
       setCreateOpen(false)
       createForm.resetFields()
       await loadInitial()
       await openDetail(strategy)
-    } catch (err) {
-      messageApi.error(errorMessage(err))
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const createDesign = async (values: { name: string; prompt: string; market: string; template?: string }) => {
-    setActionLoading('design')
-    try {
-      const result = await api.createDesign(values)
-      messageApi.success('设计文档已生成')
-      setDesignOpen(false)
-      designForm.resetFields()
-      await loadInitial()
-      await openDetail(result.strategy)
     } catch (err) {
       if (!handleLlmConfigurationError(err)) {
         messageApi.error(errorMessage(err))
@@ -516,8 +501,7 @@ function App() {
           {config && <Tag color={config.llm_ready ? 'green' : 'orange'}>{config.llm_ready ? 'LLM 已就绪' : 'LLM 未配置'}</Tag>}
           <Button onClick={openLlmSetup}>LLM 设置</Button>
           <Button onClick={loadInitial}>刷新</Button>
-          <Button onClick={() => setCreateOpen(true)}>创建策略</Button>
-          <Button type="primary" onClick={() => setDesignOpen(true)}>自然语言生成设计</Button>
+          <Button type="primary" onClick={() => setCreateOpen(true)}>创建策略</Button>
         </Space>
       </Header>
 
@@ -536,10 +520,13 @@ function App() {
         </Card>
       </Content>
 
-      <Modal title="创建空策略" open={createOpen} onCancel={() => setCreateOpen(false)} footer={null} destroyOnHidden>
+      <Modal title="创建策略" open={createOpen} onCancel={() => setCreateOpen(false)} footer={null} destroyOnHidden>
         <Form layout="vertical" form={createForm} onFinish={createStrategy} initialValues={{ market: 'A股' }}>
           <Form.Item name="name" label="策略名称" rules={[{ required: true, message: '请输入策略名称' }]}>
             <Input placeholder="例如 dual-ma-demo" />
+          </Form.Item>
+          <Form.Item name="prompt" label="策略想法（可选，填写后自动生成设计文档）">
+            <Input.TextArea rows={5} placeholder="帮我做一个 A 股双均线策略" />
           </Form.Item>
           <Form.Item name="market" label="市场" rules={[{ required: true }]}>
             <Select options={['A股', '港股', '美股'].map((value) => ({ value, label: value }))} />
@@ -548,24 +535,6 @@ function App() {
             <Select allowClear options={templates.map((value) => ({ value, label: value }))} />
           </Form.Item>
           <Button type="primary" htmlType="submit" loading={actionLoading === 'create'} block>创建</Button>
-        </Form>
-      </Modal>
-
-      <Modal title="自然语言生成策略设计" open={designOpen} onCancel={() => setDesignOpen(false)} footer={null} destroyOnHidden>
-        <Form layout="vertical" form={designForm} onFinish={createDesign} initialValues={{ market: 'A股' }}>
-          <Form.Item name="name" label="策略名称" rules={[{ required: true, message: '请输入策略名称' }]}>
-            <Input placeholder="例如 phase4b-dual-ma" />
-          </Form.Item>
-          <Form.Item name="prompt" label="策略想法" rules={[{ required: true, message: '请输入自然语言策略想法' }]}>
-            <Input.TextArea rows={5} placeholder="帮我做一个 A 股双均线策略" />
-          </Form.Item>
-          <Form.Item name="market" label="市场" rules={[{ required: true }]}>
-            <Select options={['A股', '港股', '美股'].map((value) => ({ value, label: value }))} />
-          </Form.Item>
-          <Form.Item name="template" label="参考模板">
-            <Select allowClear options={templates.map((value) => ({ value, label: value }))} />
-          </Form.Item>
-          <Button type="primary" htmlType="submit" loading={actionLoading === 'design'} block>生成设计</Button>
         </Form>
       </Modal>
 
