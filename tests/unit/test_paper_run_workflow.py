@@ -9,7 +9,9 @@ from autostrategy.core.backtest_engine import run_paper_replay_workflow
 
 def _write_strategy(strategy_dir, body: str) -> None:
     (strategy_dir / "strategy.py").write_text(body, encoding="utf-8")
-    (strategy_dir / "config.yaml").write_text("market: A股\ninitial_cash: 1000000\n", encoding="utf-8")
+    (strategy_dir / "config.yaml").write_text(
+        "market: A股\ninitial_cash: 1000000\n", encoding="utf-8"
+    )
 
 
 def test_paper_replay_workflow_writes_result_and_events(tmp_path):
@@ -17,8 +19,11 @@ def test_paper_replay_workflow_writes_result_and_events(tmp_path):
         tmp_path,
         "def run_paper(config):\n"
         "    return {\n"
-        "        'paper': {'initial_cash': 1000000, 'final_value': 1010000, 'max_drawdown': 1.2, 'trade_count': 1},\n"
-        "        'events': [{'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', 'price': 10, 'size': 100, 'cash_after': 999000, 'position_after': 100, 'reason': 'signal', 'equity_after': 1000000}],\n"
+        "        'paper': {'initial_cash': 1000000, 'final_value': 1010000, "
+        "'max_drawdown': 1.2, 'trade_count': 1},\n"
+        "        'events': [{'timestamp': '2024-01-02', 'symbol': '000001.SZ', "
+        "'action': 'buy', 'price': 10, 'size': 100, 'cash_after': 999000, "
+        "'position_after': 100, 'reason': 'signal', 'equity_after': 1000000}],\n"
         "    }\n",
     )
 
@@ -60,8 +65,10 @@ def test_paper_replay_workflow_refreshes_incremental_result(tmp_path):
     _write_strategy(
         tmp_path,
         "def run_paper(config):\n"
-        "    yield {'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', 'progress': 0.5, 'reason': 'signal'}\n"
-        "    yield {'paper': {'initial_cash': 1000000, 'final_value': 1010000}, 'replay': {'progress': 1.0}}\n",
+        "    yield {'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', "
+        "'progress': 0.5, 'reason': 'signal'}\n"
+        "    yield {'paper': {'initial_cash': 1000000, 'final_value': 1010000}, "
+        "'replay': {'progress': 1.0}}\n",
     )
 
     result = run_paper_replay_workflow(tmp_path)
@@ -104,8 +111,10 @@ def test_paper_run_replays_account_from_decision_events(tmp_path):
         "def run_paper(config):\n"
         "    return {\n"
         "        'events': [\n"
-        "            {'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', 'price': 10, 'size': 1000},\n"
-        "            {'timestamp': '2024-01-03', 'symbol': '000001.SZ', 'action': 'sell', 'price': 12, 'size': 1000},\n"
+        "            {'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', "
+        "'price': 10, 'size': 1000},\n"
+        "            {'timestamp': '2024-01-03', 'symbol': '000001.SZ', 'action': 'sell', "
+        "'price': 12, 'size': 1000},\n"
         "        ],\n"
         "    }\n",
     )
@@ -128,14 +137,17 @@ def test_paper_run_account_snapshot_in_result_file(tmp_path):
         "def run_paper(config):\n"
         "    return {\n"
         "        'events': [\n"
-        "            {'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', 'price': 10, 'size': 1000},\n"
+        "            {'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', "
+        "'price': 10, 'size': 1000},\n"
         "        ],\n"
         "    }\n",
     )
 
     run_paper_replay_workflow(tmp_path)
 
-    persisted = json.loads((tmp_path / "paper_run" / "results" / "paper_run_result.json").read_text(encoding="utf-8"))
+    persisted = json.loads(
+        (tmp_path / "paper_run" / "results" / "paper_run_result.json").read_text(encoding="utf-8")
+    )
     paper = persisted.get("account") or persisted.get("paper") or {}
     assert paper.get("cash") == 990_000
     assert paper.get("equity") == 1_000_000
@@ -148,8 +160,10 @@ def test_paper_run_incremental_account_updates(tmp_path):
     _write_strategy(
         tmp_path,
         "def run_paper(config):\n"
-        "    yield {'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', 'price': 10, 'size': 1000}\n"
-        "    yield {'timestamp': '2024-01-03', 'symbol': '000001.SZ', 'action': 'hold', 'price': 11}\n",
+        "    yield {'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', "
+        "'price': 10, 'size': 1000}\n"
+        "    yield {'timestamp': '2024-01-03', 'symbol': '000001.SZ', 'action': 'hold', "
+        "'price': 11}\n",
     )
 
     result = run_paper_replay_workflow(tmp_path)
@@ -178,7 +192,9 @@ def _write_feed_fixture(strategy_dir) -> None:
 
 def test_feed_driven_replay_without_run_paper(tmp_path):
     _write_feed_fixture(tmp_path)
-    (tmp_path / "strategy.py").write_text("def run_backtest(config):\n    return {}\n", encoding="utf-8")
+    (tmp_path / "strategy.py").write_text(
+        "def run_backtest(config):\n    return {}\n", encoding="utf-8"
+    )
     (tmp_path / "config.yaml").write_text(
         "market: A股\ninitial_cash: 100000\nsymbols: ['000300.SH']\nfeed:\n  path: data/bars.csv\n",
         encoding="utf-8",
@@ -195,9 +211,12 @@ def test_feed_driven_replay_without_run_paper(tmp_path):
     assert feed_meta["symbols"] == ["000300.SH"]
     assert feed_meta["start"] == "2024-01-02T00:00:00"
     assert feed_meta["end"] == "2024-01-04T00:00:00"
-    events = (tmp_path / "paper_run" / "results" / "paper_run_events.jsonl").read_text(
-        encoding="utf-8"
-    ).strip().splitlines()
+    events = (
+        (tmp_path / "paper_run" / "results" / "paper_run_events.jsonl")
+        .read_text(encoding="utf-8")
+        .strip()
+        .splitlines()
+    )
     assert len(events) == 3
     assert all(json.loads(line)["action"] == "hold" for line in events)
 
@@ -231,7 +250,9 @@ def test_feed_injected_into_run_paper_config(tmp_path):
 
 
 def test_feed_missing_file_fails_gracefully(tmp_path):
-    (tmp_path / "strategy.py").write_text("def run_backtest(config):\n    return {}\n", encoding="utf-8")
+    (tmp_path / "strategy.py").write_text(
+        "def run_backtest(config):\n    return {}\n", encoding="utf-8"
+    )
     (tmp_path / "config.yaml").write_text(
         "market: A股\nfeed:\n  path: data/missing.csv\n", encoding="utf-8"
     )

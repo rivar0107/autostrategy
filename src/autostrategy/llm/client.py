@@ -50,9 +50,11 @@ class LLMClient:
                 "Install it with: pip install openai"
             ) from exc
 
+        timeout = kwargs.get("timeout", 120)
         client = openai.OpenAI(
             api_key=self.api_key,
             base_url=self.config.base_url,
+            timeout=timeout,
         )
         response = client.chat.completions.create(
             model=self.config.model,

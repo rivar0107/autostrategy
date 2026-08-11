@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Final
 
@@ -46,7 +46,9 @@ class ArtifactService:
 
         meta = self._artifact_meta(slug, artifact_key)
         if not meta["exists"]:
-            raise ArtifactNotFoundError(f"Artifact '{artifact_key}' for strategy '{slug}' not found.")
+            raise ArtifactNotFoundError(
+                f"Artifact '{artifact_key}' for strategy '{slug}' not found."
+            )
 
         path = self.strategy_service.workspace.resolve_strategy_path(slug, meta["relative_path"])
         content = path.read_text(encoding="utf-8")
@@ -72,7 +74,7 @@ class ArtifactService:
         stat = path.stat() if exists else None
         modified_at = None
         if stat:
-            modified_at = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat()
+            modified_at = datetime.fromtimestamp(stat.st_mtime, tz=UTC).isoformat()
         return {
             "slug": slug,
             "artifact_key": artifact_key,

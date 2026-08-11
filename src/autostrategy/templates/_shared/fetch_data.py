@@ -1,21 +1,15 @@
-"""Fetch OHLCV data for the strategy.
-
-Reads ``data/data.csv`` first; if missing, pulls daily bars from the
-FTShare MCP gateway (https://market.ft.tech/gateway/mcp).
+"""Fetch OHLCV data for the strategy from FTShare MCP gateway.
 
 Exposes ``fetch(config)`` which returns a pandas DataFrame indexed by
 ``date`` with columns ``open, high, low, close, volume``.
+
+Data is ALWAYS fetched from the FTShare MCP gateway
+(https://market.ft.tech/gateway/mcp). No local CSV fallback.
 """
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pandas as pd
-
-
-def _csv_path() -> Path:
-    return Path(__file__).resolve().parent / "data.csv"
 
 
 def _symbol_and_type(config: dict) -> tuple[str, str]:
@@ -30,12 +24,7 @@ def _symbol_and_type(config: dict) -> tuple[str, str]:
 
 
 def fetch(config: dict) -> pd.DataFrame:
-    """Return OHLCV data for the configured symbol."""
-    csv_file = _csv_path()
-    if csv_file.exists():
-        df = pd.read_csv(csv_file, parse_dates=["date"])
-        return df.set_index("date").sort_index()
-
+    """Return OHLCV data for the configured symbol from FTShare MCP."""
     from autostrategy.data.ftshare import fetch_daily_ohlc
 
     symbol, type_ = _symbol_and_type(config)

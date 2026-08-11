@@ -6,21 +6,25 @@ API keys should be stored via keyring or environment variables, not in this file
 
 from __future__ import annotations
 
+import ipaddress
 import json
-from pathlib import Path
 import os
+import re
 import tomllib
+from pathlib import Path
 from typing import Literal
+from urllib.parse import urlparse
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from autostrategy import __version__
 
-
 DEFAULT_PROVIDER: Literal[
     "openai", "deepseek", "kimi", "qwen", "zai", "minimax", "gemini", "local"
 ] = "openai"
+
+_ENV_NAME_RE = re.compile(r"^[A-Z][A-Z0-9_]*$")
 
 
 class LLMApiKeyStatus(BaseModel):
@@ -54,11 +58,72 @@ class LLMConfig(BaseModel):
         return stripped
 
 
+class FtClientConfig(BaseModel):
+    """Safe local configuration for the FT intelligent trading client."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    enabled: bool = False
+    base_url: str = "http://127.0.0.1:11356"
+    min_client_version: str = "3.11.4"
+    confirmed_client_version: str | None = None
+    ft_account_env: str = "AUTOSTRATEGY_FT_ACCOUNT"
+    password_env: str = "AUTOSTRATEGY_FT_PASSWORD"
+    password_transform: Literal["plain", "md5_32_lower"] = "plain"
+    allowed_simulation_accounts: list[str] = Field(default_factory=list)
+    allowed_symbols: list[str] = Field(default_factory=list)
+    symbol_mapping: dict[str, str] = Field(default_factory=dict)
+    allowed_algorithms: list[str] = Field(default_factory=lambda: ["TWAP"])
+    external_id_max_length: int | None = Field(default=None, ge=1)
+    external_id_scope_confirmed: bool = False
+    poll_interval_seconds: float = Field(default=3.0, ge=1.0, le=60.0)
+    auto_resume: bool = False
+
+    @field_validator("base_url")
+    @classmethod
+    def validate_loopback_url(cls, value: str) -> str:
+        """Prevent the browser/API service from proxying credentials to remote hosts."""
+        parsed = urlparse(value.strip())
+        if parsed.scheme != "http" or not parsed.hostname or parsed.username or parsed.password:
+            raise ValueError("FT client base_url must be an unauthenticated loopback HTTP URL.")
+        hostname = parsed.hostname.lower()
+        if hostname != "localhost":
+            try:
+                if not ipaddress.ip_address(hostname).is_loopback:
+                    raise ValueError("FT client base_url must use a loopback host.")
+            except ValueError as exc:
+                if "loopback" in str(exc):
+                    raise
+                raise ValueError("FT client base_url must use a loopback host.") from exc
+        return value.strip().rstrip("/")
+
+    @field_validator("ft_account_env", "password_env")
+    @classmethod
+    def validate_credential_env_name(cls, value: str) -> str:
+        stripped = value.strip()
+        if not _ENV_NAME_RE.fullmatch(stripped):
+            raise ValueError("Credential environment variable names must be uppercase identifiers.")
+        return stripped
+
+    @field_validator("allowed_simulation_accounts", "allowed_symbols", "allowed_algorithms")
+    @classmethod
+    def normalize_string_lists(cls, values: list[str]) -> list[str]:
+        return list(dict.fromkeys(value.strip() for value in values if value.strip()))
+
+
+class BrokerConnectionsConfig(BaseModel):
+    """Supported local broker connections."""
+
+    model_config = ConfigDict(extra="forbid")
+    ft_client: FtClientConfig = Field(default_factory=FtClientConfig)
+
+
 class Settings(BaseModel):
     """Top-level application settings."""
 
     version: str = __version__
     llm: LLMConfig = Field(default_factory=LLMConfig)
+    broker_connections: BrokerConnectionsConfig = Field(default_factory=BrokerConnectionsConfig)
     default_market: str = "A股"
     data_cache_dir: str | None = None
 
@@ -105,7 +170,7 @@ def load_codex_llm_defaults() -> dict | None:
     try:
         with open(config_path, "rb") as f:
             codex_config = tomllib.load(f)
-        with open(auth_path, "r", encoding="utf-8") as f:
+        with open(auth_path, encoding="utf-8") as f:
             auth = json.load(f)
     except (OSError, ValueError, tomllib.TOMLDecodeError):
         return None
@@ -141,7 +206,7 @@ def load_settings(path: Path | None = None) -> Settings:
     """
     target = path or get_default_settings_path()
     if target.exists():
-        with open(target, "r", encoding="utf-8") as f:
+        with open(target, encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
         settings = Settings(**data)
     else:

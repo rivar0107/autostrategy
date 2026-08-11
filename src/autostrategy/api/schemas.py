@@ -2,12 +2,23 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any, Literal
 from urllib.parse import urlparse
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from autostrategy.core.backtest_result import BacktestWorkflowResult
+from autostrategy.core.research import (
+    DatasetManifest,
+    DateRange,
+    ExperimentSession,
+    StrategyVersion,
+    VersionEvent,
+)
+from autostrategy.core.strategy import StrategyStatus
+from autostrategy.services.models import OptimizationCandidateResult, OptimizationReport
 
 _ALLOWED_LLM_API_KEY_ENVS = {
     "AUTOSTRATEGY_LLM_API_KEY",
@@ -31,9 +42,7 @@ _ALLOWED_LLM_BASE_URL_HOSTS = {
     "localhost",
     "127.0.0.1",
 }
-_LLM_ENV_NAME_PATTERN = __import__("re").compile(r"^[A-Z][A-Z0-9_]*$")
-
-from autostrategy.core.strategy import StrategyStatus
+_LLM_ENV_NAME_PATTERN = re.compile(r"^[A-Z][A-Z0-9_]*$")
 
 
 class ErrorBody(BaseModel):
@@ -106,7 +115,9 @@ class LLMConfigUpdateRequest(BaseModel):
     def validate_api_key_env(cls, value: str) -> str:
         """Allow only known API key environment variable names."""
         if not _LLM_ENV_NAME_PATTERN.fullmatch(value):
-            raise ValueError("API key environment variable must be uppercase letters, numbers, and underscores.")
+            raise ValueError(
+                "API key environment variable must be uppercase letters, numbers, and underscores."
+            )
         if value not in _ALLOWED_LLM_API_KEY_ENVS:
             raise ValueError("API key environment variable is not in the allowed provider list.")
         return value
@@ -138,6 +149,10 @@ class StrategyResponse(BaseModel):
     status: StrategyStatus
     template: str | None = None
     tags: list[str] = Field(default_factory=list)
+    version: int = 1
+    content_digest: str = ""
+    current_version_id: str | None = None
+    active_version_id: str | None = None
 
 
 class StrategyCreateRequest(BaseModel):
@@ -181,6 +196,21 @@ class DesignCreateRequest(BaseModel):
     template: str | None = None
 
 
+class DesignJobStatusResponse(BaseModel):
+    """Design job state response."""
+
+    job_id: str
+    name: str
+    status: Literal["queued", "running", "succeeded", "failed"]
+    created_at: str
+    started_at: str | None = None
+    finished_at: str | None = None
+    strategy: StrategyResponse | None = None
+    design_path: Path | None = None
+    error: str | None = None
+    error_code: str | None = None
+
+
 class DesignResponse(BaseModel):
     """Design operation response."""
 
@@ -207,7 +237,121 @@ class BacktestResponse(BaseModel):
     strategy: StrategyResponse
     result_path: Path
     score: float
-    result: dict[str, Any]
+    result: BacktestWorkflowResult
+
+
+class BacktestRunSummaryResponse(BaseModel):
+    """Metadata for one persisted backtest run."""
+
+    run_id: str
+    strategy_slug: str
+    strategy_version: int
+    strategy_digest: str
+    created_at: str
+    score: float
+    result_path: Path
+    version_id: str | None = None
+    manifest_id: str | None = None
+    session_id: str | None = None
+    phase: Literal["full", "train", "validation", "test"] = "full"
+    candidate_id: str | None = None
+
+
+class BacktestRunDetailResponse(BacktestRunSummaryResponse):
+    """One persisted backtest run with its immutable result snapshot."""
+
+    result: BacktestWorkflowResult
+
+
+class OptimizationCandidateRequest(BaseModel):
+    """Named configuration override proposed for isolated evaluation."""
+
+    name: str
+    config_overrides: dict[str, Any] = Field(default_factory=dict)
+
+
+class OptimizationEvaluateRequest(BaseModel):
+    """Request an isolated comparison against the current baseline."""
+
+    candidates: list[OptimizationCandidateRequest]
+    minimum_improvement: float = Field(default=1.0, ge=0)
+
+
+class OptimizationAcceptRequest(BaseModel):
+    """Explicitly accept one eligible candidate."""
+
+    candidate_name: str
+
+
+class OptimizationReportResponse(OptimizationReport):
+    """API representation of a persisted optimization report."""
+
+    candidates: list[OptimizationCandidateResult]
+
+
+class DateRangeRequest(DateRange):
+    """Inclusive date range requested for a research split."""
+
+
+class DatasetManifestCreateRequest(BaseModel):
+    """Capture and freeze the dataset used by one strategy version."""
+
+    version_id: str
+    train: DateRangeRequest
+    validation: DateRangeRequest
+    test: DateRangeRequest
+    benchmark: str
+    data_source: str = "strategy_fetch"
+    frequency: str = "daily"
+    adjustment: str = "forward"
+    commission: float | None = Field(default=None, ge=0)
+    slippage: float | None = Field(default=None, ge=0)
+
+
+class DatasetManifestResponse(DatasetManifest):
+    """Locked dataset manifest response."""
+
+
+class StrategyVersionResponse(StrategyVersion):
+    """Immutable strategy version response."""
+
+
+class ExperimentCreateRequest(BaseModel):
+    """Bind an immutable strategy version to a locked dataset."""
+
+    base_version_id: str
+    manifest_id: str
+
+
+class ExperimentOptimizeRequest(BaseModel):
+    """Evaluate explicit candidates or generate safe candidates automatically."""
+
+    candidates: list[OptimizationCandidateRequest] | None = None
+    minimum_improvement: float = Field(default=1.0, ge=0)
+    minimum_trades: int = Field(default=30, ge=1)
+    maximum_drawdown: float = Field(default=20.0, ge=0)
+
+
+class ExperimentOOSRequest(BaseModel):
+    """Hard gates used for the one-time final sample reveal."""
+
+    minimum_trades: int = Field(default=30, ge=1)
+    maximum_drawdown: float = Field(default=20.0, ge=0)
+    maximum_score_degradation: float = Field(default=5.0, ge=0)
+
+
+class ResearchDecisionRequest(BaseModel):
+    """Explicit human rationale for accept, reject, or rollback."""
+
+    reason: str = Field(min_length=1)
+
+
+class ExperimentResponse(ExperimentSession):
+    """Persistent research experiment response."""
+
+
+class VersionEventResponse(VersionEvent):
+    """Auditable version decision response."""
 
 
 class PaperRunResponse(BaseModel):

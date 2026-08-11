@@ -23,7 +23,9 @@ class StrategyService:
 
     def list_strategies(self) -> list[StrategySummary]:
         """List strategies in the workspace."""
-        return [StrategySummary.from_strategy(strategy) for strategy in self.workspace.list_strategies()]
+        return [
+            StrategySummary.from_strategy(strategy) for strategy in self.workspace.list_strategies()
+        ]
 
     def list_templates(self) -> list[str]:
         """List built-in strategy templates."""

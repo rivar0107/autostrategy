@@ -13,8 +13,6 @@ Autostrategy 环境检测与一键安装脚本
 import argparse
 import importlib
 import json
-import os
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -23,7 +21,7 @@ from pathlib import Path
 
 SKILLS_DIRS = [
     Path.home() / ".claude" / ".agents" / "skills",  # npx skills add 安装路径
-    Path.home() / ".claude" / "skills",               # 旧版路径
+    Path.home() / ".claude" / "skills",  # 旧版路径
 ]
 PYTHON = sys.executable
 
@@ -206,7 +204,7 @@ def print_report(env: dict):
         print("   需要 Python 3.9+")
 
     # pip 包
-    print(f"\n📦 已安装的包:")
+    print("\n📦 已安装的包:")
     for pkg in env["packages"]:
         if pkg["installed"]:
             print(f"  ✓ {pkg['name']} ({pkg['version']})")
@@ -214,7 +212,7 @@ def print_report(env: dict):
             print(f"  ✗ {pkg['name']} (未安装)")
 
     # Skills
-    print(f"\n🧩 已安装的 Skill:")
+    print("\n🧩 已安装的 Skill:")
     for skill in env["skills"]:
         if skill["installed"]:
             print(f"  ✓ {skill['name']}")
@@ -227,22 +225,22 @@ def print_report(env: dict):
     print(f"\n🔌 Futu OpenD: {status}")
 
     # 推荐
-    print(f"\n💡 推荐命令:")
+    print("\n💡 推荐命令:")
     missing_pkgs = [p["name"] for p in env["packages"] if not p["installed"]]
     if missing_pkgs:
-        print(f"   python3 env_setup.py --install all")
+        print("   python3 env_setup.py --install all")
     if not opend["running"]:
-        print(f"   (如需港美股) 启动 Futu OpenD")
+        print("   (如需港美股) 启动 Futu OpenD")
 
     print()
 
 
 def main():
     parser = argparse.ArgumentParser(description="Autostrategy 环境检测与安装")
-    parser.add_argument("--market", choices=["A股", "港股", "美股"],
-                        help="目标市场")
-    parser.add_argument("--install", choices=["all"] + ["A股", "港股", "美股"],
-                        help="安装指定市场依赖 (all = 全部)")
+    parser.add_argument("--market", choices=["A股", "港股", "美股"], help="目标市场")
+    parser.add_argument(
+        "--install", choices=["all"] + ["A股", "港股", "美股"], help="安装指定市场依赖 (all = 全部)"
+    )
     args = parser.parse_args()
 
     if args.install:

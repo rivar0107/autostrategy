@@ -20,7 +20,10 @@ def test_resolve_api_key_from_env(monkeypatch):
     assert client.api_key == "test-key"
 
 
-def test_resolve_api_key_missing():
+def test_resolve_api_key_missing(monkeypatch):
+    monkeypatch.delenv("AUTOSTRATEGY_LLM_API_KEY", raising=False)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr("autostrategy.config.codex_llm_defaults", lambda: None)
     config = LLMConfig(api_key_env="NON_EXISTENT_KEY")
     client = LLMClient(config)
     assert client.api_key is None
@@ -75,6 +78,7 @@ def test_stale_api_key_env_reports_missing(monkeypatch):
     monkeypatch.delenv("AUTOSTRATEGY_LLM_API_KEY", raising=False)
     monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr("autostrategy.config.codex_llm_defaults", lambda: None)
 
     status = get_llm_api_key_status(LLMConfig(provider="deepseek", api_key_env="STALE_KEY"))
 
@@ -96,6 +100,7 @@ def test_llm_config_rejects_blank_required_fields(field):
 def test_chat_without_api_key_raises_structured_error(monkeypatch):
     monkeypatch.delenv("AUTOSTRATEGY_LLM_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr("autostrategy.config.codex_llm_defaults", lambda: None)
     config = LLMConfig(provider="openai", api_key_env="NON_EXISTENT_KEY")
     client = LLMClient(config)
 

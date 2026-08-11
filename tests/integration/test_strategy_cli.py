@@ -39,6 +39,7 @@ def test_strategy_paths(tmp_path):
     assert "Design:" in result.stdout
     assert "Backtest result:" in result.stdout
 
+
 def test_strategy_delete(tmp_path):
     runner.invoke(app, ["strategy", "create", "s1", "--workspace-root", str(tmp_path)])
     result = runner.invoke(

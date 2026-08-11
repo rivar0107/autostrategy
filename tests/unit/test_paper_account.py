@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import pytest
-
-from autostrategy.core.paper_account import PaperAccount, Position
+from autostrategy.core.paper_account import PaperAccount
 
 
 def make_account(cash: float = 1_000_000, commission: float = 0.0) -> PaperAccount:

@@ -5,7 +5,6 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
-
 TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
 
 

@@ -18,7 +18,11 @@ def _job_response(job: BacktestJob) -> BacktestJobResponse:
     return BacktestJobResponse(**job.model_dump())
 
 
-@router.post("/strategies/{slug}/paper-run", response_model=BacktestJobResponse, status_code=status.HTTP_202_ACCEPTED)
+@router.post(
+    "/strategies/{slug}/paper-run",
+    response_model=BacktestJobResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+)
 def start_paper_run(
     slug: str,
     service: PaperRunJobService = Depends(get_paper_run_job_service),

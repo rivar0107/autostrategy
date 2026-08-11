@@ -1,7 +1,5 @@
 """Tests for workspace management."""
 
-import pytest
-
 from autostrategy.core.workspace import Workspace
 
 
@@ -17,6 +15,8 @@ def test_create_strategy(tmp_path):
     assert strategy.name == "dual-ma"
     assert (tmp_path / "dual-ma" / "config.yaml").exists()
     assert (tmp_path / "dual-ma" / "STRATEGY_DESIGN.md").exists()
+    assert strategy.version == 1
+    assert strategy.content_digest
 
 
 def test_list_strategies(tmp_path):
@@ -63,3 +63,34 @@ def test_strategy_file_api_missing_strategy(tmp_path):
         assert "missing" in str(exc)
     else:
         raise AssertionError("Expected FileNotFoundError")
+
+
+def test_workspace_digest_and_version_follow_artifact_changes(tmp_path):
+    ws = Workspace(root=tmp_path)
+    created = ws.create_strategy("versioned")
+    original_digest = ws.compute_strategy_digest(created.slug)
+
+    assert original_digest == created.content_digest
+    assert ws.compute_strategy_digest(created.slug) == original_digest
+
+    ws.write_text_file(created.slug, "strategy.py", "def run_backtest(config):\n    return {}\n")
+    changed_digest = ws.compute_strategy_digest(created.slug)
+    updated = ws.bump_strategy_version(created.slug)
+
+    assert changed_digest != original_digest
+    assert updated.version == 2
+    assert updated.content_digest == changed_digest
+
+
+def test_workspace_loads_legacy_metadata_with_version_defaults(tmp_path):
+    strategy_dir = tmp_path / "legacy"
+    strategy_dir.mkdir()
+    (strategy_dir / "strategy.yaml").write_text(
+        "name: Legacy\nslug: legacy\nmarket: A股\nstatus: draft\n", encoding="utf-8"
+    )
+
+    strategy = Workspace(root=tmp_path).get_strategy("legacy")
+
+    assert strategy is not None
+    assert strategy.version == 1
+    assert strategy.content_digest == ""

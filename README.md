@@ -167,7 +167,43 @@ http://127.0.0.1:8000/
 
 你可以在浏览器里查看策略、生成设计、触发代码生成、运行回测、预览产物，并查看 LLM 配置状态。
 
+策略工作台的“研究流程”页提供完整的可复现实验闭环：冻结数据、运行基线、生成诊断、隔离评估候选、执行一次样本外验证，以及明确接受、拒绝或回滚版本。
+
 建议只监听 `127.0.0.1`。Autostrategy 是本地研究工具，不是多用户远程服务。
+
+## 可复现研究与自动优化
+
+研究流程不是直接反复修改当前策略，而是由三个持久化对象共同约束：
+
+- `StrategyVersion`：保存不可变的设计、代码、配置和数据适配器快照。候选版本在接受前不会覆盖当前策略。
+- `DatasetManifest`：冻结数据文件、数据摘要、标的、复权、基准、手续费、滑点，以及 train/validation/test 三段无重叠日期区间。
+- `ExperimentSession`：记录基线 run、结构化诊断、候选版本、样本外结果和人工决策原因；服务重启后仍可继续读取。
+
+状态只能依次推进：
+
+```text
+created
+→ baseline_completed
+→ diagnosed
+→ optimized
+→ oos_validated
+→ awaiting_decision
+→ accepted / rejected
+```
+
+核心约束：
+
+- 基线和自动优化只使用训练集与验证集，不能访问测试日期。
+- 一个候选只允许改变一个配置叶子，默认最多评估 5 个候选。
+- 候选至少需要超过基线分数、满足最小交易次数且不突破最大回撤门槛。
+- 测试集从执行开始即视为已经揭晓，即使执行失败也不能在同一实验中重试。
+- 默认样本外门槛要求至少 30 笔交易、最大回撤不超过 20%，候选分数相对基础版本退化不超过 5 分。
+- 接受要求样本外通过、基础版本和当前工作区没有变化，并且必须填写决策原因。
+- 拒绝不会修改当前策略；回滚恢复被接受的祖先版本，同时保留后续版本、回测和审计历史。
+
+普通回测历史也会记录 `version_id`；实验回测还会记录 `manifest_id`、`session_id`、`phase` 和 `candidate_id`，因此每个结果都能追溯到确切代码、数据和研究阶段。
+
+研究用 `ExperimentSession` 与 FT 客户端模拟设计中的 `SimulationSession` 完全独立：前者管理回测研究和版本决策，后者未来管理委托、成交、持仓和账户状态。研究会话不会写入或复用模拟交易状态。
 
 ## 模拟运行
 
@@ -196,7 +232,7 @@ paper_run/results/paper_run_events.jsonl
 paper_run/logs/paper_run.log
 ```
 
-当前模拟运行是 replay-first，本地重放历史数据和策略决策。它还不是实盘交易，也不连接真实 broker。
+模拟运行分为两种明确隔离的模式：默认的 `local_replay` 在本地重放历史数据；`ft_client_simulation` 只连接同机非凸智能交易终端中的白名单模拟账户。平台不提供实盘开关。
 
 #### 本地 replay 数据（feed）
 
@@ -215,19 +251,37 @@ feed:
 
 运行结束后自动生成复盘摘要：`paper_run/results/paper_run_review.md` 汇总收益、回撤、成交笔数、已实现/未实现盈亏与关键买卖/拒绝事件，可直接阅读，也可作为后续优化（Learning Agent）的结构化输入；复盘过程只读，不会修改策略代码。
 
+#### 非凸客户端模拟盘
+
+策略完成回测并暴露本地回放入口 `run_paper(config)` 和纯计算入口 `generate_intents(context)` 后，可在 Web 工作台的“模拟运行”中选择“非凸客户端模拟盘”。页面会要求客户填写：
+
+- 本机客户端地址（只允许 `localhost`/`127.0.0.1`）、客户端版本、非凸账号和密码处理方式。
+- 非凸密码；只在当前服务进程内存使用，不写入设置、日志、artifact 或 API 响应。
+- 已确认的模拟交易账户白名单、本次策略可能下单的全部沪深 A 股/ETF，以及逐标的客户端代码映射。动态选股策略须在启动前固化最大执行股票池；指数仅可作行情基准，不能下单。
+- 观察/人工确认/自动模拟模式、TWAP 结构化参数、执行窗口和仓位风控上限。
+- `external_id` 最大长度，以及可在母单查询中完整返回的联调确认（当前幂等 ID 需要至少 64 字符）。
+
+最低支持客户端版本为 3.11.4。第一次接入建议先运行观察模式；连接、账户登录、下单引擎、资金持仓、代码映射、算法和 `external_id` 任一硬检查失败时，平台不会提交母单。客户端会话 artifacts 独立保存在 `paper_run/client_sessions/<session_id>/`，不会覆盖本地 replay 结果。
+
+运行中的客户端模拟盘会通过 FTShare 读取当日一分钟价格并聚合为不跨午休的 10 分钟 K 线，以所有执行标的和基准指数共有的最新完成 K 线为计算时点。每根 10 分钟 K 线只触发一次 `generate_intents(context)`；`history_by_symbol` 仍保留截至上一交易日的日线历史，供 MA250 等中长期指标使用。自动模式仅在客户配置的执行窗口内提交，暂停状态继续对账但不生成新意图，行情时间倒退时会话进入 `needs_attention`。
+
 ## 工作流
 
 ```text
-Describe  →  Design  →  Generate  →  Backtest  →  Paper Run  →  Iterate
-想法          图纸        代码          回测          模拟观察        继续改进
+Describe → Design → Generate → Backtest → Diagnose → Optimize → OOS → Accept/Rollback
+想法         图纸       代码        基线        诊断         优化      样本外       接受/回滚
 ```
 
 1. **Describe**：用自然语言描述策略。
 2. **Design**：生成可审查的策略设计文档。
 3. **Generate**：根据设计文档生成策略代码。
 4. **Backtest**：在本地跑历史回测。
-5. **Paper Run**：重放策略决策，查看事件流和运行结果。
-6. **Iterate**：修改设计，再生成、再验证。
+5. **Diagnose**：把回测证据转换成结构化问题与改进假设。
+6. **Optimize**：在隔离候选版本上使用训练集和验证集比较单变量改动。
+7. **OOS**：候选确定后一次性揭晓测试集，检验泛化能力。
+8. **Accept/Rollback**：人工填写理由后接受、拒绝或恢复已接受的祖先版本。
+
+`Paper Run` 是独立的运行观察流程，不参与上述研究会话的样本切分或版本决策。
 
 ## 内置模板
 
@@ -251,11 +305,11 @@ Autostrategy 的设计目标覆盖：
 
 | 市场 | 状态 | 说明 |
 |---|---|---|
-| A 股 | 优先支持 | 适合个人投资者研究和验证想法 |
-| 港股 | 规划支持 | 可通过 Futu OpenD 等数据源扩展 |
-| 美股 | 规划支持 | 可通过 Futu OpenD、yfinance 等数据源扩展 |
+| A 股 | 优先支持 | 当前主要验证市场，支持股票、ETF 与指数历史行情 |
+| 港股 | 实验性 | FTShare 数据适配已具备，策略与交易规则仍需逐项验证 |
+| 美股 | 实验性 | FTShare 数据适配已具备，策略与交易规则仍需逐项验证 |
 
-策略默认通过 [FTShare MCP](https://market.ft.tech/gateway/mcp) 获取历史行情：`data/fetch_data.py` 调用 `autostrategy.data.ftshare.fetch_daily_ohlc`，返回带 `date` 索引的 OHLCV DataFrame，覆盖 A 股、港股、美股。本地 `data/data.csv` 存在时优先使用，便于离线复现。也可通过环境变量 `AUTOSTRATEGY_FTSHARE_URL` 覆盖网关地址。
+策略默认通过 [FTShare MCP](https://market.ft.tech/gateway/mcp) 获取历史行情：`data/fetch_data.py` 调用 `autostrategy.data.ftshare.fetch_daily_ohlc`，返回带 `date` 索引的 OHLCV DataFrame。也可通过环境变量 `AUTOSTRATEGY_FTSHARE_URL` 覆盖网关地址。旧策略仍可显式配置本地回放 feed，但生成器不会自动优先读取 `data/data.csv`。
 
 ## 安全边界
 

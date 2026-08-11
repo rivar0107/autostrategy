@@ -1,11 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import {
   Alert,
   Button,
   Card,
-  Col,
-  Descriptions,
-  Drawer,
   Empty,
   Form,
   Input,
@@ -13,13 +10,11 @@ import {
   Modal,
   Popconfirm,
   Progress,
-  Row,
   Select,
   Space,
   Spin,
-  Statistic,
+  Steps,
   Table,
-  Tabs,
   Tag,
   Typography,
   message,
@@ -29,14 +24,11 @@ import {
   ApiError,
   api,
 } from './api/client'
+import StrategyWorkbench from './StrategyWorkbench'
 import type {
-  ArtifactContent,
-  ArtifactMeta,
-  BacktestJobResponse,
-  BacktestResponse,
   ConfigResponse,
+  DesignJobResponse,
   LlmConfigUpdate,
-  PaperRunResponse,
   Strategy,
 } from './types'
 import './App.css'
@@ -84,30 +76,15 @@ function isJobGone(error: unknown): boolean {
 
 function formatMetric(value: unknown, suffix = ''): string {
   if (typeof value === 'number') {
+    if (suffix === '%') {
+      return `${value.toFixed(2)}%`
+    }
     return `${value.toFixed(2)}${suffix}`
   }
   if (value === null || value === undefined) {
     return 'N/A'
   }
   return String(value)
-}
-
-function backtestJobMessage(job: BacktestJobResponse): string {
-  if (job.status === 'queued') return '回测任务已提交，正在排队。'
-  if (job.status === 'running') return '回测正在独立子进程中运行。'
-  if (job.status === 'succeeded') return `回测完成，评分 ${formatMetric(job.score)}`
-  if (job.status === 'timed_out') return job.error || '回测任务超时。'
-  if (job.status === 'stopped') return '回测任务已停止。'
-  return job.error || '回测任务失败。'
-}
-
-function paperRunJobMessage(job: BacktestJobResponse): string {
-  if (job.status === 'queued') return '模拟运行任务已提交，正在排队。'
-  if (job.status === 'running') return '模拟运行正在独立子进程中 replay。'
-  if (job.status === 'succeeded') return '模拟运行完成。'
-  if (job.status === 'stopped') return '模拟运行已停止。'
-  if (job.status === 'timed_out') return job.error || '模拟运行任务超时。'
-  return job.error || '模拟运行任务失败。'
 }
 
 function setupHint(config: ConfigResponse | null): string {
@@ -134,21 +111,75 @@ function llmConfigFromError(error: ApiError, current: ConfigResponse | null): Co
   }
 }
 
+function getRouteSlug(): string | null {
+  const hash = window.location.hash
+  const match = hash.match(/^#\/strategy\/(.+)$/)
+  return match ? decodeURIComponent(match[1]) : null
+}
+
+const DESIGN_STEPS = [
+  { title: '提交任务', description: '创建策略工作区' },
+  { title: '生成设计', description: '调用 LLM 生成策略设计文档' },
+  { title: '保存结果', description: '写入本地文件并更新状态' },
+]
+
+function DesignProgress({ job, onCancel }: { job: DesignJobResponse | null; onCancel: () => void }) {
+  const [elapsed, setElapsed] = useState(0)
+
+  useEffect(() => {
+    if (!job || job.status === 'succeeded' || job.status === 'failed') return
+    const timer = setInterval(() => {
+      setElapsed((value) => value + 1)
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [job])
+
+  if (!job) return <Spin />
+
+  const currentStep = job.status === 'queued' ? 0 : job.status === 'running' ? 1 : 2
+  const percent = job.status === 'succeeded' ? 100 : job.status === 'failed' ? 100 : Math.min(90, 10 + elapsed * 2)
+
+  return (
+    <Space direction="vertical" className="full-width" size="large">
+      <Steps
+        direction="vertical"
+        current={currentStep}
+        status={job.status === 'failed' ? 'error' : job.status === 'succeeded' ? 'finish' : 'process'}
+        items={DESIGN_STEPS.map((step, index) => ({
+          title: step.title,
+          description: index === currentStep && job.status === 'running' ? `${step.description}…` : step.description,
+        }))}
+      />
+      <Progress percent={percent} status={job.status === 'failed' ? 'exception' : 'active'} />
+      <Space className="full-width design-progress-footer">
+        <Text type="secondary">已耗时 {elapsed} 秒</Text>
+        {job.status !== 'succeeded' && job.status !== 'failed' && (
+          <Button onClick={onCancel}>取消等待</Button>
+        )}
+      </Space>
+      {job.status === 'failed' && job.error && <Alert type="error" title={job.error} showIcon />}
+    </Space>
+  )
+}
+
 function App() {
   const [strategies, setStrategies] = useState<Strategy[]>([])
   const [templates, setTemplates] = useState<string[]>([])
-  const [selected, setSelected] = useState<Strategy | null>(null)
-  const [artifacts, setArtifacts] = useState<ArtifactMeta[]>([])
-  const [artifactContent, setArtifactContent] = useState<Record<string, ArtifactContent>>({})
-  const [backtestResult, setBacktestResult] = useState<BacktestResponse | null>(null)
-  const [backtestJob, setBacktestJob] = useState<BacktestJobResponse | null>(null)
-  const [paperRunResult, setPaperRunResult] = useState<PaperRunResponse | null>(null)
-  const [paperRunJob, setPaperRunJob] = useState<BacktestJobResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
-  const [detailOpen, setDetailOpen] = useState(false)
+  const [designJob, setDesignJob] = useState<DesignJobResponse | null>(null)
+  const [designProgressOpen, setDesignProgressOpen] = useState(false)
+  const designPollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const [config, setConfig] = useState<ConfigResponse | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (designPollRef.current) {
+        clearInterval(designPollRef.current)
+      }
+    }
+  }, [])
   const [llmSetupOpen, setLlmSetupOpen] = useState(false)
   const [setupAutoShown, setSetupAutoShown] = useState(false)
   const [setupNotice, setSetupNotice] = useState<string | null>(null)
@@ -156,6 +187,7 @@ function App() {
   const [messageApi, contextHolder] = message.useMessage()
   const [createForm] = Form.useForm()
   const [llmForm] = Form.useForm<LlmConfigUpdate>()
+  const [routeSlug, setRouteSlug] = useState<string | null>(getRouteSlug())
 
   const loadConfig = async (autoOpen = false) => {
     try {
@@ -193,70 +225,12 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (!selected || !backtestJob || !['queued', 'running'].includes(backtestJob.status)) return
-    const timer = window.setInterval(async () => {
-      try {
-        const nextJob = await api.backtestJob(selected.slug, backtestJob.job_id)
-        setBacktestJob(nextJob)
-        if (nextJob.status === 'succeeded') {
-          messageApi.success(backtestJobMessage(nextJob))
-          const result = await api.backtestResult(selected.slug)
-          setBacktestResult(result)
-          await loadInitial()
-          await refreshSelected(selected.slug)
-        }
-        if (nextJob.status === 'failed' || nextJob.status === 'timed_out') {
-          messageApi.error(backtestJobMessage(nextJob))
-        }
-      } catch (err) {
-        if (isJobGone(err)) {
-          setBacktestJob(null)
-          return
-        }
-        messageApi.error(errorMessage(err))
-      }
-    }, 1000)
-    return () => window.clearInterval(timer)
-  }, [backtestJob, selected, messageApi])
+    const onHashChange = () => setRouteSlug(getRouteSlug())
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
 
-  useEffect(() => {
-    if (!selected || !paperRunJob || !['queued', 'running'].includes(paperRunJob.status)) return
-    const timer = window.setInterval(async () => {
-      try {
-        const nextJob = await api.paperRunJob(selected.slug, paperRunJob.job_id)
-        setPaperRunJob(nextJob)
-        if (nextJob.status === 'running') {
-          try {
-            setPaperRunResult(await api.paperRunResult(selected.slug))
-          } catch {
-            setPaperRunResult(null)
-          }
-        }
-        if (nextJob.status === 'succeeded' || nextJob.status === 'stopped') {
-          messageApi.success(paperRunJobMessage(nextJob))
-          const result = await api.paperRunResult(selected.slug)
-          setPaperRunResult(result)
-          await loadInitial()
-          await refreshSelected(selected.slug)
-        }
-        if (nextJob.status === 'failed' || nextJob.status === 'timed_out') {
-          messageApi.error(paperRunJobMessage(nextJob))
-          try {
-            setPaperRunResult(await api.paperRunResult(selected.slug))
-          } catch {
-            setPaperRunResult(null)
-          }
-        }
-      } catch (err) {
-        if (isJobGone(err)) {
-          setPaperRunJob(null)
-          return
-        }
-        messageApi.error(errorMessage(err))
-      }
-    }, 1000)
-    return () => window.clearInterval(timer)
-  }, [paperRunJob, selected, messageApi])
+
 
   useEffect(() => {
     if (!config) return
@@ -306,154 +280,113 @@ function App() {
     }
   }
 
-  const refreshSelected = async (slug: string) => {
-    const [detail, artifactList] = await Promise.all([api.strategyDetail(slug), api.artifacts(slug)])
-    setSelected(detail.strategy)
-    setArtifacts(artifactList.artifacts)
-    const firstPreviewable = artifactList.artifacts.find((artifact) => artifact.exists)
-    if (firstPreviewable) {
+
+  const openDetail = (strategy: Strategy) => {
+    window.open(`#/strategy/${encodeURIComponent(strategy.slug)}`, '_blank')
+  }
+
+
+  const clearDesignPoll = () => {
+    if (designPollRef.current) {
+      clearInterval(designPollRef.current)
+      designPollRef.current = null
+    }
+  }
+
+  const closeDesignProgress = () => {
+    clearDesignPoll()
+    setDesignProgressOpen(false)
+    setDesignJob(null)
+  }
+
+  const startDesignPolling = (jobId: string) => {
+    clearDesignPoll()
+    designPollRef.current = setInterval(async () => {
       try {
-        const content = await api.artifact(slug, firstPreviewable.artifact_key)
-        setArtifactContent({ [firstPreviewable.artifact_key]: content })
-      } catch {
-        setArtifactContent({})
+        const job = await api.designJob(jobId)
+        setDesignJob(job)
+        if (job.status === 'succeeded') {
+          clearDesignPoll()
+          messageApi.success('策略已创建，设计文档已生成')
+          await loadInitial()
+          closeDesignProgress()
+          setCreateOpen(false)
+          createForm.resetFields()
+          if (job.strategy) {
+            openDetail(job.strategy)
+          }
+        } else if (job.status === 'failed') {
+          clearDesignPoll()
+          if (job.error_code === 'llm_not_configured') {
+            const details = job.error ? { message: job.error } : {}
+            const apiError = new ApiError(job.error || 'LLM 未配置', 'llm_not_configured', details, 400)
+            if (!handleLlmConfigurationError(apiError)) {
+              messageApi.error(job.error || '创建失败')
+            }
+          } else {
+            messageApi.error(job.error || '创建失败')
+          }
+          closeDesignProgress()
+        }
+      } catch (err) {
+        if (isJobGone(err)) {
+          clearDesignPoll()
+          messageApi.error('任务状态丢失，请刷新列表查看结果')
+          closeDesignProgress()
+        }
       }
-    } else {
-      setArtifactContent({})
-    }
-    try {
-      setBacktestResult(await api.backtestResult(slug))
-    } catch {
-      setBacktestResult(null)
-    }
-    try {
-      setPaperRunResult(await api.paperRunResult(slug))
-    } catch {
-      setPaperRunResult(null)
-    }
-  }
-
-  const openDetail = async (strategy: Strategy) => {
-    setDetailOpen(true)
-    setSelected(strategy)
-    setActionLoading('detail')
-    try {
-      await refreshSelected(strategy.slug)
-    } catch (err) {
-      messageApi.error(errorMessage(err))
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const loadArtifact = async (key: string) => {
-    if (!selected || artifactContent[key]) {
-      return
-    }
-    setActionLoading(`artifact:${key}`)
-    try {
-      const content = await api.artifact(selected.slug, key)
-      setArtifactContent((current) => ({ ...current, [key]: content }))
-    } catch (err) {
-      messageApi.error(errorMessage(err))
-    } finally {
-      setActionLoading(null)
-    }
+    }, 800)
   }
 
   const createStrategy = async (values: { name: string; prompt?: string; market: string; template?: string }) => {
     const prompt = values.prompt?.trim()
     setActionLoading('create')
     try {
-      const strategy = prompt
-        ? (await api.createDesign({ ...values, prompt })).strategy
-        : await api.createStrategy(values)
-      messageApi.success(prompt ? '策略已创建，设计文档已生成' : '策略已创建')
-      setCreateOpen(false)
-      createForm.resetFields()
-      await loadInitial()
-      await openDetail(strategy)
-    } catch (err) {
-      if (!handleLlmConfigurationError(err)) {
-        messageApi.error(errorMessage(err))
-      }
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const runCodegen = async (force = false) => {
-    if (!selected) return
-    setActionLoading('codegen')
-    try {
-      const result = await api.codegen(selected.slug, force)
-      messageApi.success(`已生成 ${result.generated_files.length} 个文件`)
-      await loadInitial()
-      await refreshSelected(selected.slug)
-    } catch (err) {
-      if (!handleLlmConfigurationError(err)) {
-        messageApi.error(errorMessage(err))
-      }
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const runBacktest = async () => {
-    if (!selected) return
-    setActionLoading('backtest')
-    try {
-      const job = await api.backtest(selected.slug)
-      setBacktestJob(job)
-      messageApi.success('回测任务已提交')
-    } catch (err) {
-      messageApi.error(errorMessage(err))
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const startPaperRun = async () => {
-    if (!selected) return
-    setActionLoading('paper-run')
-    try {
-      const job = await api.startPaperRun(selected.slug)
-      setPaperRunJob(job)
-      messageApi.success('模拟运行任务已提交')
-    } catch (err) {
-      messageApi.error(errorMessage(err))
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  const stopPaperRun = async () => {
-    if (!selected || !paperRunJob) return
-    setActionLoading('paper-stop')
-    try {
-      const job = await api.stopPaperRunJob(selected.slug, paperRunJob.job_id)
-      setPaperRunJob(job)
-      messageApi.success('已请求停止模拟运行')
-    } catch (err) {
-      if (isJobGone(err)) {
-        setPaperRunJob(null)
+      if (!prompt) {
+        const strategy = await api.createStrategy(values)
+        messageApi.success('策略已创建')
+        setCreateOpen(false)
+        createForm.resetFields()
+        await loadInitial()
+        openDetail(strategy)
         return
       }
-      messageApi.error(errorMessage(err))
+
+      const job = await api.createDesign({ ...values, prompt })
+      if (job.status === 'succeeded') {
+        messageApi.success('策略已创建，设计文档已生成')
+        setCreateOpen(false)
+        createForm.resetFields()
+        await loadInitial()
+        if (job.strategy) {
+          openDetail(job.strategy)
+        }
+        return
+      }
+      if (job.status === 'failed') {
+        throw new ApiError(job.error || '创建失败', job.error_code || 'api_error', {}, 400)
+      }
+      setDesignJob(job)
+      setDesignProgressOpen(true)
+      startDesignPolling(job.job_id)
+    } catch (err) {
+      if (!handleLlmConfigurationError(err)) {
+        messageApi.error(errorMessage(err))
+      }
     } finally {
       setActionLoading(null)
     }
   }
+
+
+
+
 
   const deleteStrategy = async (slug: string) => {
     setActionLoading(`delete:${slug}`)
     try {
       await api.deleteStrategy(slug)
       messageApi.success('策略已删除')
-      if (selected?.slug === slug) {
-        setDetailOpen(false)
-        setSelected(null)
-      }
       await loadInitial()
     } catch (err) {
       messageApi.error(errorMessage(err))
@@ -490,20 +423,14 @@ function App() {
         </Space>
       ),
     },
-  ], [actionLoading, selected])
+  ], [actionLoading])
 
-  const artifactTabs = artifacts.map((artifact) => ({
-    key: artifact.artifact_key,
-    label: (
-      <Space size={4}>
-        <span>{ARTIFACT_LABELS[artifact.artifact_key] || artifact.artifact_key}</span>
-        <Tag color={artifact.exists ? 'green' : 'default'}>{artifact.exists ? '已生成' : '缺失'}</Tag>
-      </Space>
-    ),
-    children: <ArtifactPanel artifact={artifact} content={artifactContent[artifact.artifact_key]} loading={actionLoading === `artifact:${artifact.artifact_key}`} />,
-  }))
 
   const watchedApiKeyEnv = Form.useWatch('api_key_env', llmForm) || config?.llm_api_key_env || 'AUTOSTRATEGY_LLM_API_KEY'
+
+  if (routeSlug) {
+    return <StrategyWorkbench slug={routeSlug} onBack={() => { window.location.hash = '' }} />
+  }
 
   return (
     <Layout className="app-shell">
@@ -522,7 +449,7 @@ function App() {
       </Header>
 
       <Content className="app-content">
-        {error && <Alert type="error" message="加载失败" description={error} showIcon className="mb-16" />}
+        {error && <Alert type="error" title="加载失败" description={error} showIcon className="mb-16" />}
         <Card title="策略列表" extra={<Tag>{strategies.length} 个策略</Tag>}>
           <Spin spinning={loading}>
             <Table
@@ -536,7 +463,19 @@ function App() {
         </Card>
       </Content>
 
-      <Modal title="创建策略" open={createOpen} onCancel={() => setCreateOpen(false)} footer={null} destroyOnHidden>
+      <Modal
+        title="创建策略"
+        open={createOpen}
+        onCancel={() => {
+          if (!designProgressOpen) {
+            setCreateOpen(false)
+          }
+        }}
+        footer={null}
+        destroyOnHidden
+        mask={{ closable: !designProgressOpen }}
+        keyboard={!designProgressOpen}
+      >
         <Form layout="vertical" form={createForm} onFinish={createStrategy} initialValues={{ market: 'A股' }}>
           <Form.Item name="name" label="策略名称" rules={[{ required: true, message: '请输入策略名称' }]}>
             <Input placeholder="例如 dual-ma-demo" />
@@ -554,17 +493,29 @@ function App() {
         </Form>
       </Modal>
 
+      <Modal
+        title="正在创建策略"
+        open={designProgressOpen}
+        footer={null}
+        closable={false}
+        mask={{ closable: false }}
+        keyboard={false}
+        width={520}
+      >
+        <DesignProgress job={designJob} onCancel={closeDesignProgress} />
+      </Modal>
+
       <Modal title="LLM 设置" open={llmSetupOpen} onCancel={() => setLlmSetupOpen(false)} footer={null} destroyOnHidden>
         <Space orientation="vertical" className="full-width" size="middle">
           <Alert
             type={config?.llm_ready ? 'success' : 'warning'}
-            message={config?.llm_ready ? 'LLM 已就绪' : '需要配置本地 LLM API key'}
+            title={config?.llm_ready ? 'LLM 已就绪' : '需要配置本地 LLM API key'}
             description={setupNotice || setupHint(config)}
             showIcon
           />
           <Alert
             type="info"
-            message="autostrategy 不保存 API key"
+            title="autostrategy 不保存 API key"
             description="这里只保存 provider、model、base_url 和环境变量名。真正的 API key 只从启动服务的本机 shell 环境变量读取。修改环境变量后，通常需要重启 autostrategy serve。"
             showIcon
           />
@@ -583,7 +534,7 @@ function App() {
             </Form.Item>
             <Alert
               type="info"
-              message="在启动服务的终端中执行"
+              title="在启动服务的终端中执行"
               description={<pre className="code-preview">{shellExample(watchedApiKeyEnv)}</pre>}
               showIcon
             />
@@ -591,181 +542,7 @@ function App() {
           </Form>
         </Space>
       </Modal>
-
-      <Drawer title="策略工作台" size="large" open={detailOpen} onClose={() => setDetailOpen(false)}>
-        {!selected ? <Spin /> : (
-          <Space orientation="vertical" size="large" className="full-width">
-            <Card>
-              <Descriptions title={selected.name} bordered column={2}>
-                <Descriptions.Item label="Slug">{selected.slug}</Descriptions.Item>
-                <Descriptions.Item label="市场">{selected.market}</Descriptions.Item>
-                <Descriptions.Item label="状态"><Tag color={STATUS_COLOR[selected.status]}>{selected.status}</Tag></Descriptions.Item>
-                <Descriptions.Item label="模板">{selected.template || '无'}</Descriptions.Item>
-              </Descriptions>
-              <Space className="mt-16">
-                <Button onClick={() => refreshSelected(selected.slug)} loading={actionLoading === 'detail'}>刷新详情</Button>
-                <Button onClick={() => runCodegen(false)} loading={actionLoading === 'codegen'}>生成代码</Button>
-                <Button type="primary" onClick={runBacktest} loading={actionLoading === 'backtest'}>运行回测</Button>
-                <Button onClick={startPaperRun} loading={actionLoading === 'paper-run'}>启动模拟运行</Button>
-                {paperRunJob && ['queued', 'running'].includes(paperRunJob.status) && (
-                  <Button danger onClick={stopPaperRun} loading={actionLoading === 'paper-stop'}>停止模拟运行</Button>
-                )}
-              </Space>
-            </Card>
-            <BacktestJobPanel job={backtestJob} />
-            <PaperRunJobPanel job={paperRunJob} />
-            <BacktestSummary result={backtestResult} />
-            <PaperRunSummary result={paperRunResult} />
-            <Card title="产物文件">
-              <Tabs items={artifactTabs} onChange={loadArtifact} />
-            </Card>
-          </Space>
-        )}
-      </Drawer>
     </Layout>
-  )
-}
-
-function ArtifactPanel({ artifact, content, loading }: { artifact: ArtifactMeta; content?: ArtifactContent; loading: boolean }) {
-  if (!artifact.exists) {
-    return <Empty description={`${artifact.relative_path} 不存在`} />
-  }
-  if (loading) {
-    return <Spin />
-  }
-  if (!content) {
-    return <Alert type="info" message="点击 Tab 后加载预览内容" showIcon />
-  }
-  return (
-    <Space orientation="vertical" className="full-width">
-      <Text type="secondary">{content.relative_path} · {content.size} bytes</Text>
-      <pre className="code-preview">{content.content}</pre>
-    </Space>
-  )
-}
-
-function BacktestJobPanel({ job }: { job: BacktestJobResponse | null }) {
-  if (!job) return null
-  const isActive = job.status === 'queued' || job.status === 'running'
-  const alertType = job.status === 'succeeded' ? 'success' : job.status === 'failed' || job.status === 'timed_out' ? 'error' : 'info'
-  return (
-    <Alert
-      type={alertType}
-      message={`回测任务：${job.status}`}
-      description={backtestJobMessage(job)}
-      showIcon
-      icon={isActive ? <Spin size="small" /> : undefined}
-    />
-  )
-}
-
-function PaperRunJobPanel({ job }: { job: BacktestJobResponse | null }) {
-  if (!job) return null
-  const isActive = job.status === 'queued' || job.status === 'running'
-  const alertType = job.status === 'succeeded' || job.status === 'stopped' ? 'success' : job.status === 'failed' || job.status === 'timed_out' ? 'error' : 'info'
-  return (
-    <Alert
-      type={alertType}
-      message={`模拟运行任务：${job.status}`}
-      description={paperRunJobMessage(job)}
-      showIcon
-      icon={isActive ? <Spin size="small" /> : undefined}
-    />
-  )
-}
-
-function BacktestSummary({ result }: { result: BacktestResponse | null }) {
-  if (!result) {
-    return <Alert type="info" message="暂无回测结果" description="生成代码并运行回测后，这里会展示分数与关键指标。" showIcon />
-  }
-  const backtest = result.result.backtest || {}
-  return (
-    <Card title="回测摘要">
-      <Row gutter={[16, 16]}>
-        <Col span={6}><Statistic title="评分" value={result.score} /></Col>
-        <Col span={6}><Statistic title="年化收益" value={formatMetric(backtest.annual_return, '%')} /></Col>
-        <Col span={6}><Statistic title="最大回撤" value={formatMetric(backtest.max_drawdown, '%')} /></Col>
-        <Col span={6}><Statistic title="夏普比率" value={formatMetric(backtest.sharpe)} /></Col>
-      </Row>
-      <Progress percent={Math.min(Math.max(result.score, 0), 100)} className="mt-16" />
-    </Card>
-  )
-}
-
-function PaperRunSummary({ result }: { result: PaperRunResponse | null }) {
-  if (!result) {
-    return <Alert type="info" message="暂无模拟运行结果" description="启动模拟运行后，这里会展示 replay 进度、最新决策和虚拟表现。" showIcon />
-  }
-  const payload = result.result || {}
-  const summary = payload.summary || {}
-  const replay = payload.replay || {}
-  const paper = payload.paper || {}
-  const positions = Array.isArray(paper.positions) ? paper.positions : []
-  const latestDecision = payload.latest_decision
-  const feed = replay.feed || null
-  const review = payload.review || null
-  const reviewMetrics = review?.metrics || null
-  const keyEvents = Array.isArray(review?.key_events) ? review.key_events : []
-  return (
-    <Card title={<Space><span>模拟运行摘要</span><Tag color="cyan">Paper Run</Tag><Tag>{payload.run_status || 'unknown'}</Tag></Space>}>
-      <Row gutter={[16, 16]}>
-        <Col span={6}><Statistic title="模拟收益" value={formatMetric(summary.paper_return, '%')} /></Col>
-        <Col span={6}><Statistic title="最大回撤" value={formatMetric(summary.paper_max_drawdown, '%')} /></Col>
-        <Col span={6}><Statistic title="交易次数" value={formatMetric(summary.trade_count)} /></Col>
-        <Col span={6}><Statistic title="最终资产" value={formatMetric(summary.final_value)} /></Col>
-      </Row>
-      <Row gutter={[16, 16]} className="mt-16">
-        <Col span={6}><Statistic title="现金" value={formatMetric(paper.cash)} /></Col>
-        <Col span={6}><Statistic title="持仓市值/权益" value={formatMetric(paper.equity)} /></Col>
-        <Col span={6}><Statistic title="持仓数量" value={formatMetric(paper.position_count)} /></Col>
-        <Col span={6}><Statistic title="未实现盈亏" value={formatMetric(paper.unrealized_pnl)} /></Col>
-      </Row>
-      {positions.length > 0 && (
-        <Descriptions bordered column={4} className="mt-16" size="small" title="持仓">
-          {positions.map((pos: any) => (
-            <Descriptions.Item key={pos.symbol} label={pos.symbol}>
-              {`${pos.quantity} 股 @ ${formatMetric(pos.avg_price)}（市值 ${formatMetric(pos.market_value)}）`}
-            </Descriptions.Item>
-          ))}
-        </Descriptions>
-      )}
-      <Progress percent={Math.round((replay.progress || 0) * 100)} className="mt-16" />
-      {feed && (
-        <Descriptions bordered column={2} className="mt-16" size="small" title="Replay 数据源">
-          <Descriptions.Item label="数据文件">{feed.source || 'N/A'}</Descriptions.Item>
-          <Descriptions.Item label="bars / 标的数">{`${formatMetric(feed.bar_count)} / ${formatMetric(feed.symbol_count)}`}</Descriptions.Item>
-          <Descriptions.Item label="时间范围">{`${feed.start || 'N/A'} ~ ${feed.end || 'N/A'}`}</Descriptions.Item>
-          <Descriptions.Item label="标的">{(feed.symbols || []).join(', ') || 'N/A'}</Descriptions.Item>
-        </Descriptions>
-      )}
-      <Descriptions bordered column={2} className="mt-16" size="small">
-        <Descriptions.Item label="当前时间">{replay.current_at || 'N/A'}</Descriptions.Item>
-        <Descriptions.Item label="已处理 bars">{formatMetric(replay.bars_processed)}</Descriptions.Item>
-        <Descriptions.Item label="最近动作">{latestDecision?.action || 'N/A'}</Descriptions.Item>
-        <Descriptions.Item label="原因">{latestDecision?.reason || 'N/A'}</Descriptions.Item>
-      </Descriptions>
-      {reviewMetrics && (
-        <>
-          <Row gutter={[16, 16]} className="mt-16">
-            <Col span={6}><Statistic title="复盘收益" value={formatMetric(reviewMetrics.total_return, '%')} /></Col>
-            <Col span={6}><Statistic title="复盘回撤" value={formatMetric(reviewMetrics.max_drawdown, '%')} /></Col>
-            <Col span={6}><Statistic title="已实现盈亏" value={formatMetric(reviewMetrics.realized_pnl)} /></Col>
-            <Col span={6}><Statistic title="成交额" value={formatMetric(reviewMetrics.turnover)} /></Col>
-          </Row>
-          {keyEvents.length > 0 && (
-            <Descriptions bordered column={1} className="mt-16" size="small" title="关键事件">
-              {keyEvents.slice(0, 10).map((event: any, index: number) => (
-                <Descriptions.Item key={index} label={`${event.timestamp || ''} ${event.type || ''}`}>
-                  {event.type === 'rejected'
-                    ? `拒绝 ${event.action} ${event.symbol}: ${event.reason}`
-                    : `${event.symbol} ${event.size} @ ${event.price} — ${event.reason || ''}`}
-                </Descriptions.Item>
-              ))}
-            </Descriptions>
-          )}
-        </>
-      )}
-    </Card>
   )
 }
 

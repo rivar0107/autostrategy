@@ -8,6 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
+from autostrategy.services.client_simulation_service import ClientSimulationError
 from autostrategy.services.exceptions import (
     ArtifactNotFoundError,
     AutostrategyServiceError,
@@ -29,6 +30,7 @@ _ERROR_STATUS = {
     JobNotFoundError: 404,
     LLMConfigurationRequiredError: 428,
     PaperRunServiceError: 400,
+    ClientSimulationError: 400,
 }
 
 
@@ -36,14 +38,14 @@ def register_error_handlers(app: FastAPI) -> None:
     """Register API exception handlers."""
 
     @app.exception_handler(AutostrategyServiceError)
-    async def handle_service_error(
-        request: Request, exc: AutostrategyServiceError
-    ) -> JSONResponse:
+    async def handle_service_error(request: Request, exc: AutostrategyServiceError) -> JSONResponse:
         status_code = 500
         for error_type, mapped_status in _ERROR_STATUS.items():
             if isinstance(exc, error_type):
                 status_code = mapped_status
                 break
+        if exc.code in {"session_not_found", "intent_not_found"}:
+            status_code = 404
         return JSONResponse(
             status_code=status_code,
             content={

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import subprocess
+import sys
+
 from fastapi import APIRouter, Depends
 
 from autostrategy.api.dependencies import get_strategy_service
@@ -11,6 +14,7 @@ from autostrategy.api.schemas import (
     StrategyPathsResponse,
     StrategyResponse,
 )
+from autostrategy.services.exceptions import StrategyNotFoundError
 from autostrategy.services.strategy_service import StrategyService
 
 router = APIRouter(tags=["strategies"])
@@ -23,7 +27,9 @@ def list_templates(service: StrategyService = Depends(get_strategy_service)) -> 
 
 
 @router.get("/strategies", response_model=list[StrategyResponse])
-def list_strategies(service: StrategyService = Depends(get_strategy_service)) -> list[StrategyResponse]:
+def list_strategies(
+    service: StrategyService = Depends(get_strategy_service),
+) -> list[StrategyResponse]:
     """List strategies in the workspace."""
     return [StrategyResponse(**strategy.model_dump()) for strategy in service.list_strategies()]
 
@@ -70,3 +76,17 @@ def get_strategy_paths(
 ) -> StrategyPathsResponse:
     """Get important strategy file paths."""
     return StrategyPathsResponse(**service.get_strategy_paths(slug).model_dump())
+
+
+@router.post("/strategies/{slug}/reveal", status_code=204)
+def reveal_strategy(slug: str, service: StrategyService = Depends(get_strategy_service)) -> None:
+    """Open the strategy workspace folder in the local file manager."""
+    workspace = service.get_strategy_paths(slug).workspace
+    if not workspace.exists():
+        raise StrategyNotFoundError(f"Strategy workspace for '{slug}' not found.")
+    if sys.platform == "darwin":
+        subprocess.Popen(["open", str(workspace)])
+    elif sys.platform.startswith("win"):
+        subprocess.Popen(["explorer", str(workspace)])
+    else:
+        subprocess.Popen(["xdg-open", str(workspace)])

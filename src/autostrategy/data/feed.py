@@ -15,9 +15,10 @@ from __future__ import annotations
 
 import csv
 import json
+from collections.abc import Iterable, Iterator
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Iterable, Iterator
+from typing import Any
 
 REQUIRED_BAR_FIELDS = ("at", "symbol", "open", "high", "low", "close", "volume")
 

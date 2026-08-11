@@ -9,6 +9,7 @@ def test_api_config_reports_missing_api_key(monkeypatch, tmp_path):
     monkeypatch.setenv("HOME", str(tmp_path))
     monkeypatch.delenv("AUTOSTRATEGY_LLM_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr("autostrategy.config.codex_llm_defaults", lambda: None)
     client = TestClient(create_app(workspace_root=tmp_path / "workspace"))
 
     response = client.get("/api/v1/config")
@@ -42,6 +43,7 @@ def test_api_update_llm_config_persists_only_safe_fields(monkeypatch, tmp_path):
     monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
     monkeypatch.delenv("AUTOSTRATEGY_LLM_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr("autostrategy.config.codex_llm_defaults", lambda: None)
     client = TestClient(create_app(workspace_root=tmp_path / "workspace"))
 
     response = client.put(

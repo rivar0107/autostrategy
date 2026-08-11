@@ -10,21 +10,59 @@ from autostrategy.core.review import build_review
 
 def _events():
     return [
-        {"timestamp": "2024-01-02", "symbol": "A", "action": "buy", "price": 10, "size": 100,
-         "status": "filled", "cash_after": 999000, "equity_after": 1000000, "reason": "signal"},
-        {"timestamp": "2024-01-03", "symbol": "A", "action": "hold", "price": 9, "size": 0,
-         "status": "held", "cash_after": 999000, "equity_after": 999000, "reason": "no signal"},
-        {"timestamp": "2024-01-04", "symbol": "A", "action": "sell", "price": 12, "size": 100,
-         "status": "filled", "cash_after": 1000200, "equity_after": 1000200, "reason": "take profit"},
-        {"timestamp": "2024-01-05", "symbol": "B", "action": "buy", "price": 50, "size": 10000,
-         "status": "rejected", "reject_reason": "insufficient_cash", "cash_after": 1000200,
-         "equity_after": 1000200, "reason": "signal"},
+        {
+            "timestamp": "2024-01-02",
+            "symbol": "A",
+            "action": "buy",
+            "price": 10,
+            "size": 100,
+            "status": "filled",
+            "cash_after": 999000,
+            "equity_after": 1000000,
+            "reason": "signal",
+        },
+        {
+            "timestamp": "2024-01-03",
+            "symbol": "A",
+            "action": "hold",
+            "price": 9,
+            "size": 0,
+            "status": "held",
+            "cash_after": 999000,
+            "equity_after": 999000,
+            "reason": "no signal",
+        },
+        {
+            "timestamp": "2024-01-04",
+            "symbol": "A",
+            "action": "sell",
+            "price": 12,
+            "size": 100,
+            "status": "filled",
+            "cash_after": 1000200,
+            "equity_after": 1000200,
+            "reason": "take profit",
+        },
+        {
+            "timestamp": "2024-01-05",
+            "symbol": "B",
+            "action": "buy",
+            "price": 50,
+            "size": 10000,
+            "status": "rejected",
+            "reject_reason": "insufficient_cash",
+            "cash_after": 1000200,
+            "equity_after": 1000200,
+            "reason": "signal",
+        },
     ]
 
 
 def test_build_review_metrics():
-    result = {"run_status": "completed",
-              "paper": {"initial_cash": 1000000, "final_value": 1000200, "realized_pnl": 200}}
+    result = {
+        "run_status": "completed",
+        "paper": {"initial_cash": 1000000, "final_value": 1000200, "realized_pnl": 200},
+    }
     review = build_review(result, _events())
     metrics = review["metrics"]
     assert metrics["total_return"] == 0.02
@@ -75,16 +113,19 @@ def test_workflow_writes_review_artifacts(tmp_path):
     assert result["run_status"] == "completed"
     assert result["review"]["metrics"]["trade_count"] == 1
     assert result["review"]["key_events"][0]["type"] == "buy"
-    review_md = (tmp_path / "paper_run" / "results" / "paper_run_review.md")
+    review_md = tmp_path / "paper_run" / "results" / "paper_run_review.md"
     assert review_md.exists()
     assert "# Paper Run 复盘" in review_md.read_text(encoding="utf-8")
-    on_disk = json.loads((tmp_path / "paper_run" / "results" / "paper_run_result.json").read_text(encoding="utf-8"))
+    on_disk = json.loads(
+        (tmp_path / "paper_run" / "results" / "paper_run_result.json").read_text(encoding="utf-8")
+    )
     assert on_disk["review"]["metrics"]["final_value"] == 1005000
 
 
 def test_workflow_no_review_for_running_status(tmp_path):
     (tmp_path / "strategy.py").write_text(
-        "def run_paper(config):\n    return {'paper': {'initial_cash': 1, 'final_value': 1}, 'events': []}\n",
+        "def run_paper(config):\n"
+        "    return {'paper': {'initial_cash': 1, 'final_value': 1}, 'events': []}\n",
         encoding="utf-8",
     )
     (tmp_path / "config.yaml").write_text("market: A股\n", encoding="utf-8")

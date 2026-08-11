@@ -10,7 +10,9 @@ def create_server():
     try:
         from mcp.server.fastmcp import FastMCP
     except ImportError as exc:
-        raise RuntimeError("The 'mcp' package is required. Install with: pip install -e '.[mcp]'") from exc
+        raise RuntimeError(
+            "The 'mcp' package is required. Install with: pip install -e '.[mcp]'"
+        ) from exc
 
     server = FastMCP("autostrategy")
     server.tool()(tools.list_strategies)

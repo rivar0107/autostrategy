@@ -14,14 +14,18 @@ from __future__ import annotations
 
 import json
 import os
-import urllib.request
 import urllib.error
-from datetime import datetime, timezone
+import urllib.parse
+import urllib.request
+from datetime import UTC, datetime, time, timedelta
 from typing import Any
+from zoneinfo import ZoneInfo
 
 DEFAULT_ENDPOINT = "https://market.ft.tech/gateway/mcp"
+DEFAULT_MARKET_ENDPOINT = "https://market.ft.tech/app/api/v2"
 _PROTOCOL_VERSION = "2025-03-26"
 _TIMEOUT = 60
+_SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
 
 
 class FtshareError(RuntimeError):
@@ -32,9 +36,7 @@ class FtshareClient:
     """Minimal streamable-HTTP MCP client for the FTShare gateway."""
 
     def __init__(self, endpoint: str | None = None, timeout: int = _TIMEOUT) -> None:
-        self.endpoint = endpoint or os.environ.get(
-            "AUTOSTRATEGY_FTSHARE_URL", DEFAULT_ENDPOINT
-        )
+        self.endpoint = endpoint or os.environ.get("AUTOSTRATEGY_FTSHARE_URL", DEFAULT_ENDPOINT)
         self.timeout = timeout
         self._session_id: str | None = None
         self._request_id = 0
@@ -130,9 +132,7 @@ class FtshareClient:
         if type_ == "hk_stock":
             # hk_stock requires until_date and does not accept start_date;
             # the date window is applied client-side below.
-            arguments["until_date"] = end_date or datetime.now(
-                timezone.utc
-            ).strftime("%Y-%m-%d")
+            arguments["until_date"] = end_date or datetime.now(UTC).strftime("%Y-%m-%d")
         elif type_ in ("us_stock", "hk_index", "global_index", "eastmoney_board"):
             if start_date:
                 arguments["start_date"] = start_date
@@ -148,12 +148,146 @@ class FtshareClient:
         # requested date window client-side so callers always get rows
         # inside [start_date, end_date].
         if start_date or end_date:
-            rows = [
-                row
-                for row in rows
-                if _row_in_window(row, start_date, end_date)
-            ]
+            rows = [row for row in rows if _row_in_window(row, start_date, end_date)]
         return rows
+
+
+class FtshareIntradayClient:
+    """Small REST client for FTShare's current-day one-minute prices."""
+
+    def __init__(self, endpoint: str | None = None, timeout: int = _TIMEOUT) -> None:
+        self.endpoint = (
+            endpoint
+            or os.environ.get("AUTOSTRATEGY_FTSHARE_MARKET_URL")
+            or DEFAULT_MARKET_ENDPOINT
+        ).rstrip("/")
+        self.timeout = timeout
+
+    def prices(self, symbol: str, *, asset_type: str) -> list[dict[str, Any]]:
+        collection = {
+            "stock": "stocks",
+            "etf": "etfs",
+            "index": "indices",
+        }.get(asset_type)
+        if collection is None:
+            raise FtshareError(f"Unsupported intraday asset type: {asset_type}")
+        external_symbol = to_ftshare_price_symbol(symbol)
+        query = urllib.parse.urlencode({"since": "TODAY"})
+        request = urllib.request.Request(
+            f"{self.endpoint}/{collection}/{external_symbol}/prices?{query}",
+            headers={"Accept": "application/json", "X-Client-Name": "ft-web"},
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=self.timeout) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+        except (urllib.error.URLError, json.JSONDecodeError) as exc:
+            raise FtshareError(f"FTShare intraday request failed: {exc}") from exc
+        rows = payload.get("prices") if isinstance(payload, dict) else None
+        if not isinstance(rows, list):
+            raise FtshareError("FTShare intraday response does not contain a prices list")
+        return [row for row in rows if isinstance(row, dict)]
+
+
+def to_ftshare_price_symbol(symbol: str) -> str:
+    """Convert ``600519.SH`` style symbols to FTShare REST symbols."""
+    normalized = str(symbol).strip().upper()
+    if "." not in normalized:
+        raise FtshareError(f"Exchange-qualified symbol required: {symbol}")
+    code, exchange = normalized.rsplit(".", 1)
+    suffix = {"SH": "XSHG", "SZ": "XSHE"}.get(exchange)
+    if len(code) != 6 or not code.isdigit() or suffix is None:
+        raise FtshareError(f"Unsupported Shanghai/Shenzhen symbol: {symbol}")
+    return f"{code}.{suffix}"
+
+
+def fetch_intraday_prices(
+    symbol: str,
+    *,
+    type_: str,
+    client: FtshareIntradayClient | None = None,
+) -> list[dict[str, Any]]:
+    """Fetch current-day one-minute price points for a mainland symbol."""
+    return (client or FtshareIntradayClient()).prices(symbol, asset_type=type_)
+
+
+def aggregate_ten_minute_bars(
+    rows: list[dict[str, Any]],
+    *,
+    symbol: str,
+    now: datetime | None = None,
+) -> list[dict[str, Any]]:
+    """Aggregate FTShare minute price points into completed CN-session bars."""
+    current = now or datetime.now(_SHANGHAI_TZ)
+    if current.tzinfo is None:
+        current = current.replace(tzinfo=_SHANGHAI_TZ)
+    current = current.astimezone(_SHANGHAI_TZ)
+    buckets: dict[datetime, list[tuple[datetime, float, float]]] = {}
+
+    for row in rows:
+        timestamp = _parse_intraday_timestamp(row.get("tm"))
+        if timestamp is None:
+            continue
+        session_start = _session_start(timestamp)
+        if session_start is None:
+            continue
+        elapsed_minutes = int((timestamp - session_start).total_seconds() // 60)
+        bucket_start = session_start + timedelta(minutes=(elapsed_minutes // 10) * 10)
+        bucket_end = bucket_start + timedelta(minutes=10)
+        if bucket_end > current:
+            continue
+        price = row.get("p")
+        if price is None:
+            continue
+        buckets.setdefault(bucket_end, []).append(
+            (timestamp, float(price), float(row.get("v", 0) or 0))
+        )
+
+    bars: list[dict[str, Any]] = []
+    for bucket_end, points in sorted(buckets.items()):
+        points.sort(key=lambda item: item[0])
+        prices = [point[1] for point in points]
+        bars.append(
+            {
+                "at": bucket_end.isoformat(),
+                "symbol": symbol,
+                "open": prices[0],
+                "high": max(prices),
+                "low": min(prices),
+                "close": prices[-1],
+                "volume": sum(point[2] for point in points),
+            }
+        )
+    return bars
+
+
+def _parse_intraday_timestamp(value: Any) -> datetime | None:
+    if value is None or value == "":
+        return None
+    if isinstance(value, (int, float)) or str(value).isdigit():
+        numeric = float(value)
+        if numeric > 100_000_000_000:
+            numeric /= 1000
+        try:
+            return datetime.fromtimestamp(numeric, tz=UTC).astimezone(_SHANGHAI_TZ)
+        except (OverflowError, OSError, ValueError):
+            return None
+    try:
+        parsed = datetime.fromisoformat(str(value))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=_SHANGHAI_TZ)
+    return parsed.astimezone(_SHANGHAI_TZ)
+
+
+def _session_start(timestamp: datetime) -> datetime | None:
+    local_time = timestamp.timetz().replace(tzinfo=None)
+    day = timestamp.date()
+    if time(9, 30) <= local_time < time(11, 30):
+        return datetime.combine(day, time(9, 30), tzinfo=_SHANGHAI_TZ)
+    if time(13, 0) <= local_time < time(15, 0):
+        return datetime.combine(day, time(13, 0), tzinfo=_SHANGHAI_TZ)
+    return None
 
 
 def _parse_sse_json(raw: str) -> dict[str, Any]:
@@ -173,7 +307,7 @@ def _parse_sse_json(raw: str) -> dict[str, Any]:
         line = line.strip()
         if not line.startswith("data:"):
             continue
-        chunk = line[len("data:"):].strip()
+        chunk = line[len("data:") :].strip()
         if not chunk:
             continue
         try:
@@ -197,12 +331,10 @@ def _row_date_str(row: dict[str, Any]) -> str | None:
     ts = row.get("ts_millis") or row.get("ts_millis_open")
     if ts is None:
         return None
-    return datetime.fromtimestamp(int(ts) / 1000, tz=timezone.utc).strftime("%Y-%m-%d")
+    return datetime.fromtimestamp(int(ts) / 1000, tz=UTC).strftime("%Y-%m-%d")
 
 
-def _row_in_window(
-    row: dict[str, Any], start_date: str | None, end_date: str | None
-) -> bool:
+def _row_in_window(row: dict[str, Any], start_date: str | None, end_date: str | None) -> bool:
     date = _row_date_str(row)
     if date is None:
         return False
@@ -227,7 +359,7 @@ def _rows_to_dataframe(rows: list[dict[str, Any]]):
             ts = row.get("ts_millis") or row.get("ts_millis_open")
             if ts is None:
                 continue
-            date = datetime.fromtimestamp(int(ts) / 1000, tz=timezone.utc).date()
+            date = datetime.fromtimestamp(int(ts) / 1000, tz=UTC).date()
         records.append(
             {
                 "date": date,
@@ -261,6 +393,16 @@ def fetch_daily_ohlc(
     ``backtrader.feeds.PandasData``.
     """
     client = client or FtshareClient()
+    if type_ in {"etf", "index"}:
+        rows = _fetch_candlestick_rows(
+            client,
+            symbol=symbol,
+            limit=limit,
+            asset_type=type_,
+            start_date=start_date,
+            end_date=end_date,
+        )
+        return _rows_to_dataframe(rows)
     rows = client.daily_ohlc(
         symbol=symbol,
         limit=limit,
@@ -269,3 +411,70 @@ def fetch_daily_ohlc(
         end_date=end_date,
     )
     return _rows_to_dataframe(rows)
+
+
+def _fetch_candlestick_rows(
+    client: FtshareClient,
+    *,
+    symbol: str,
+    limit: int,
+    asset_type: str,
+    start_date: str | None,
+    end_date: str | None,
+) -> list[dict[str, Any]]:
+    """Fetch ETF/index bars in small reverse pages to avoid MCP response truncation."""
+    tool_name = {
+        "etf": "ft_etf_candlesticks",
+        "index": "ft_index_candlesticks",
+    }[asset_type]
+    end_day = (
+        datetime.fromisoformat(end_date).replace(tzinfo=UTC) if end_date else datetime.now(UTC)
+    )
+    cursor = int((end_day + timedelta(days=1) - timedelta(milliseconds=1)).timestamp() * 1000)
+    since = (
+        int(datetime.fromisoformat(start_date).replace(tzinfo=UTC).timestamp() * 1000)
+        if start_date
+        else None
+    )
+    remaining = max(int(limit), 0)
+    rows: list[dict[str, Any]] = []
+
+    while remaining > 0 and (since is None or cursor >= since):
+        page_limit = min(150, remaining)
+        arguments: dict[str, Any] = {
+            "symbol": symbol,
+            "interval_unit": "Day",
+            "until_ts_millis": cursor,
+            "limit": page_limit,
+            "adjust_kind": "Forward" if asset_type == "etf" else "None",
+        }
+        if since is not None:
+            arguments["since_ts_millis"] = since
+        page = client.call_tool(tool_name, arguments) or []
+        if isinstance(page, dict):
+            page = [page]
+        page_rows = [row for row in page if isinstance(row, dict)]
+        if not page_rows:
+            break
+        rows.extend(page_rows)
+        remaining -= len(page_rows)
+        timestamps = [
+            int(row.get("ts_millis") or row.get("ts_millis_open"))
+            for row in page_rows
+            if row.get("ts_millis") is not None or row.get("ts_millis_open") is not None
+        ]
+        if not timestamps:
+            break
+        next_cursor = min(timestamps) - 1
+        if next_cursor >= cursor:
+            break
+        cursor = next_cursor
+        if len(page_rows) < page_limit:
+            break
+
+    deduplicated: dict[int, dict[str, Any]] = {}
+    for row in rows:
+        timestamp = row.get("ts_millis") or row.get("ts_millis_open")
+        if timestamp is not None:
+            deduplicated[int(timestamp)] = row
+    return list(deduplicated.values())

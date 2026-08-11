@@ -7,7 +7,9 @@ import sys
 def test_legacy_run_backtest_wrapper(tmp_path):
     strategy_dir = tmp_path / "demo"
     strategy_dir.mkdir()
-    (strategy_dir / "config.yaml").write_text("market: A股\ninitial_cash: 1000000\n", encoding="utf-8")
+    (strategy_dir / "config.yaml").write_text(
+        "market: A股\ninitial_cash: 1000000\n", encoding="utf-8"
+    )
     (strategy_dir / "STRATEGY_DESIGN.md").write_text("# Demo\n", encoding="utf-8")
     (strategy_dir / "strategy.py").write_text(
         "def run_backtest(config):\n"

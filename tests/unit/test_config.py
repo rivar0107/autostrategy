@@ -1,10 +1,19 @@
 """Tests for autostrategy.config."""
 
+import tomllib
 from pathlib import Path
 
-import pytest
-
 from autostrategy.config import Settings, get_settings_dir, load_settings, save_settings
+
+
+def test_api_extra_installs_ft_client_transport_dependencies() -> None:
+    project = tomllib.loads(
+        (Path(__file__).parents[2] / "pyproject.toml").read_text(encoding="utf-8")
+    )
+    dependencies = project["project"]["optional-dependencies"]["api"]
+
+    assert any(item.startswith("httpx") for item in dependencies)
+    assert any(item.startswith("websockets") for item in dependencies)
 
 
 def test_get_settings_dir():
@@ -53,7 +62,9 @@ def test_codex_llm_defaults_applied(monkeypatch, tmp_path):
         '[model_providers.newapi]\nbase_url = "http://127.0.0.1:15721/v1"\n',
         encoding="utf-8",
     )
-    (codex_dir / "auth.json").write_text(json.dumps({"OPENAI_API_KEY": "sk-codex-test"}), encoding="utf-8")
+    (codex_dir / "auth.json").write_text(
+        json.dumps({"OPENAI_API_KEY": "sk-codex-test"}), encoding="utf-8"
+    )
 
     monkeypatch.setattr(config_module, "_CODEX_LLM_DEFAULTS", None)
     monkeypatch.setattr(config_module, "get_codex_config_path", lambda: codex_dir / "config.toml")
@@ -76,14 +87,23 @@ def test_explicit_llm_config_overrides_codex(monkeypatch, tmp_path):
     codex_dir = tmp_path / ".codex"
     codex_dir.mkdir()
     (codex_dir / "config.toml").write_text('model = "gpt-5.6-sol"\n', encoding="utf-8")
-    (codex_dir / "auth.json").write_text(json.dumps({"OPENAI_API_KEY": "sk-codex"}), encoding="utf-8")
+    (codex_dir / "auth.json").write_text(
+        json.dumps({"OPENAI_API_KEY": "sk-codex"}), encoding="utf-8"
+    )
 
     monkeypatch.setattr(config_module, "_CODEX_LLM_DEFAULTS", None)
     monkeypatch.setattr(config_module, "get_codex_config_path", lambda: codex_dir / "config.toml")
     monkeypatch.setattr(config_module, "get_codex_auth_path", lambda: codex_dir / "auth.json")
 
     settings_path = tmp_path / "settings.yaml"
-    save_settings(Settings(llm=config_module.LLMConfig(model="deepseek-chat", base_url="https://api.deepseek.com/v1")), settings_path)
+    save_settings(
+        Settings(
+            llm=config_module.LLMConfig(
+                model="deepseek-chat", base_url="https://api.deepseek.com/v1"
+            )
+        ),
+        settings_path,
+    )
     loaded = load_settings(settings_path)
     assert loaded.llm.model == "deepseek-chat"
     assert loaded.llm.base_url == "https://api.deepseek.com/v1"

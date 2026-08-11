@@ -78,9 +78,33 @@ class DesignAgent:
         report = DesignQualityCheck.check(design_text)
         if not report.passed:
             workspace.delete_strategy(strategy.slug)
-            raise ValueError(
-                f"Generated design failed quality check: {'; '.join(report.errors)}"
-            )
+            raise ValueError(f"Generated design failed quality check: {'; '.join(report.errors)}")
+
+        design_path = workspace._strategy_dir(strategy.slug) / "STRATEGY_DESIGN.md"
+        design_path.write_text(design_text, encoding="utf-8")
+        workspace.update_strategy_status(strategy.slug, StrategyStatus.DESIGNED)
+        updated = workspace.get_strategy(strategy.slug)
+        if updated is None:
+            raise RuntimeError(f"Strategy '{strategy.slug}' disappeared after saving design.")
+        return updated
+
+    def redesign_and_save(
+        self,
+        workspace: Workspace,
+        slug: str,
+        prompt: str,
+        market: str = "A股",
+        template: str | None = None,
+    ) -> Strategy:
+        """Regenerate the design document for an existing draft strategy."""
+        strategy = workspace.get_strategy(slug)
+        if strategy is None:
+            raise FileNotFoundError(f"Strategy '{slug}' not found.")
+        design_text = self.design(prompt, market=market, template=template)
+
+        report = DesignQualityCheck.check(design_text)
+        if not report.passed:
+            raise ValueError(f"Generated design failed quality check: {'; '.join(report.errors)}")
 
         design_path = workspace._strategy_dir(strategy.slug) / "STRATEGY_DESIGN.md"
         design_path.write_text(design_text, encoding="utf-8")

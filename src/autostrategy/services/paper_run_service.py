@@ -29,7 +29,9 @@ class PaperRunService:
         self.strategy_service.workspace.update_strategy_status(slug, StrategyStatus.PAPER_RUNNING)
         result = run_paper_replay_workflow(strategy_dir, stop_requested=stop_requested)
         if result.get("run_status") == "failed":
-            raise PaperRunServiceError(str(result.get("error") or "Paper run failed."), details=result)
+            raise PaperRunServiceError(
+                str(result.get("error") or "Paper run failed."), details=result
+            )
         return self._build_paper_result(slug, result)
 
     def get_paper_result(self, slug: str) -> PaperRunResult:

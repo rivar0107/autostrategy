@@ -59,7 +59,7 @@ class PaperAccount:
     trade_count: int = 0
 
     @classmethod
-    def from_config(cls, config: dict[str, Any]) -> "PaperAccount":
+    def from_config(cls, config: dict[str, Any]) -> PaperAccount:
         initial_cash = float(config.get("initial_cash", 1_000_000) or 0)
         return cls(
             cash=initial_cash,
@@ -134,7 +134,8 @@ class PaperAccount:
                 return event
             proceeds = price * size * (1 - self.commission)
             self.realized_pnl = round(
-                self.realized_pnl + (price - position.avg_price) * size
+                self.realized_pnl
+                + (price - position.avg_price) * size
                 - price * size * self.commission,
                 2,
             )

@@ -14,23 +14,38 @@ from autostrategy.services.exceptions import (
 )
 from autostrategy.services.models import CodegenResult, StrategySummary
 from autostrategy.services.strategy_service import StrategyService
+from autostrategy.services.version_service import VersionService
 
 
 class CodegenService:
     """Application service for generating executable strategy files."""
 
-    def __init__(self, workspace_root: Path | None = None, llm_config: LLMConfig | None = None) -> None:
+    def __init__(
+        self, workspace_root: Path | None = None, llm_config: LLMConfig | None = None
+    ) -> None:
         self.strategy_service = StrategyService(workspace_root=workspace_root)
+        self.version_service = VersionService(workspace_root=workspace_root)
         self.agent = CodegenAgent(llm_config=llm_config)
 
     def generate_code(self, slug: str, force: bool = False) -> CodegenResult:
         """Generate strategy implementation files for a strategy."""
         try:
-            strategy = self.agent.codegen_and_save(
+            base_version = self.version_service.ensure_live_version(slug)
+            self.agent.codegen_and_save(
                 workspace=self.strategy_service.workspace,
                 slug=slug,
                 force=force,
             )
+            generated_version = self.version_service.create_version_from_live(
+                slug,
+                parent_version_id=base_version.version_id,
+                change_summary="Generated executable strategy artifacts",
+            )
+            strategy = self.strategy_service.workspace.get_strategy(slug)
+            if strategy is None:  # pragma: no cover - guarded by the calls above
+                raise StrategyNotFoundError(f"Strategy '{slug}' not found.")
+            if strategy.current_version_id != generated_version.version_id:
+                raise RuntimeError("Generated strategy version was not activated.")
         except FileNotFoundError as exc:
             raise StrategyNotFoundError(str(exc)) from exc
         except LLMConfigurationRequiredError:

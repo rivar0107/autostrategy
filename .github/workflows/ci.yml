@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install package and test tools
+        run: python -m pip install -e ".[dev]"
+      - name: Run tests
+        run: pytest -q -W error::ResourceWarning
+      - name: Run Ruff
+        run: ruff check src tests
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.12"
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run frontend tests
+        run: npm test -- --reporter=dot
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build dashboard
+        run: npm run build

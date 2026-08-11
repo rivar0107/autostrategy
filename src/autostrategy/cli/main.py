@@ -256,7 +256,9 @@ def codegen_create(
         typer.echo(f"Error: {e}")
         raise typer.Exit(1)
     typer.echo(f"Strategy '{strategy.slug}' coded at {strategy.workspace_dir}")
-    typer.echo("Generated files: strategy.py, config.yaml, README.md, requirements.txt, data/fetch_data.py")
+    typer.echo(
+        "Generated files: strategy.py, config.yaml, README.md, requirements.txt, data/fetch_data.py"
+    )
 
 
 backtest_app = typer.Typer(help="Run strategy backtests.")

@@ -107,7 +107,9 @@ class PaperRunJobService:
             self._stop_events[job_id] = stop_event
             slug = self._jobs[job_id].slug
         workspace = str(self.workspace_root) if self.workspace_root else None
-        process = mp.Process(target=_run_paper_worker, args=(workspace, slug, stop_event, result_queue))
+        process = mp.Process(
+            target=_run_paper_worker, args=(workspace, slug, stop_event, result_queue)
+        )
         process.start()
         try:
             process.join(self.timeout_seconds)

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
 import shutil
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
@@ -10,8 +12,29 @@ import yaml
 from autostrategy.core.strategy import Strategy, StrategyStatus
 from autostrategy.core.template_registry import TemplateRegistry
 
-
 DEFAULT_WORKSPACE_ROOT = Path.home() / ".autostrategy" / "strategies"
+VERSIONED_ARTIFACTS = (
+    "STRATEGY_DESIGN.md",
+    "strategy.py",
+    "config.yaml",
+    "data/fetch_data.py",
+    "requirements.txt",
+    "README.md",
+)
+
+
+def compute_artifact_digest(root: Path) -> str:
+    """Hash known strategy artifacts under any workspace or snapshot root."""
+    digest = hashlib.sha256()
+    for relative_path in VERSIONED_ARTIFACTS:
+        path = root / relative_path
+        if not path.is_file():
+            continue
+        digest.update(relative_path.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest()
 
 
 class Workspace:
@@ -45,10 +68,11 @@ class Workspace:
             raise FileExistsError(f"Strategy '{name}' ({strategy.slug}) already exists.")
 
         strategy_dir.mkdir(parents=True)
-        self._write_strategy_meta(strategy_dir, strategy)
         self._write_default_files(strategy_dir)
         if template:
             TemplateRegistry.apply_template(template, strategy_dir)
+        strategy.content_digest = self.compute_strategy_digest(strategy.slug)
+        self._write_strategy_meta(strategy_dir, strategy)
         return strategy
 
     def _write_strategy_meta(self, strategy_dir: Path, strategy: Strategy) -> None:
@@ -100,7 +124,7 @@ class Workspace:
         meta_path = strategy_dir / "strategy.yaml"
         if not meta_path.exists():
             return None
-        with open(meta_path, "r", encoding="utf-8") as f:
+        with open(meta_path, encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
         return Strategy(**data)
 
@@ -151,6 +175,53 @@ class Workspace:
         if not strategy:
             raise FileNotFoundError(f"Strategy '{slug}' not found.")
         strategy.status = status
+        strategy.updated_at = datetime.now(UTC)
         strategy_dir = self._strategy_dir(slug)
         self._write_strategy_meta(strategy_dir, strategy)
+        return strategy
+
+    def compute_strategy_digest(self, slug: str) -> str:
+        """Hash versioned strategy artifacts in a stable order."""
+        return compute_artifact_digest(self.get_strategy_dir(slug))
+
+    def refresh_strategy_digest(self, slug: str) -> Strategy:
+        """Store the current artifact digest without changing the version."""
+        strategy = self.get_strategy(slug)
+        if not strategy:
+            raise FileNotFoundError(f"Strategy '{slug}' not found.")
+        strategy.content_digest = self.compute_strategy_digest(slug)
+        strategy.updated_at = datetime.now(UTC)
+        self._write_strategy_meta(self._strategy_dir(slug), strategy)
+        return strategy
+
+    def bump_strategy_version(self, slug: str) -> Strategy:
+        """Advance the strategy revision and bind it to current artifacts."""
+        strategy = self.get_strategy(slug)
+        if not strategy:
+            raise FileNotFoundError(f"Strategy '{slug}' not found.")
+        strategy.version += 1
+        strategy.content_digest = self.compute_strategy_digest(slug)
+        strategy.updated_at = datetime.now(UTC)
+        self._write_strategy_meta(self._strategy_dir(slug), strategy)
+        return strategy
+
+    def set_strategy_version_pointers(
+        self,
+        slug: str,
+        *,
+        version: int,
+        content_digest: str,
+        current_version_id: str,
+        active_version_id: str,
+    ) -> Strategy:
+        """Bind the live workspace to one verified immutable version."""
+        strategy = self.get_strategy(slug)
+        if not strategy:
+            raise FileNotFoundError(f"Strategy '{slug}' not found.")
+        strategy.version = version
+        strategy.content_digest = content_digest
+        strategy.current_version_id = current_version_id
+        strategy.active_version_id = active_version_id
+        strategy.updated_at = datetime.now(UTC)
+        self._write_strategy_meta(self._strategy_dir(slug), strategy)
         return strategy

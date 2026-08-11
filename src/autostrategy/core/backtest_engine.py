@@ -7,7 +7,9 @@ import importlib.util
 import json
 import re
 import sys
+import types
 from collections.abc import Iterable
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from time import sleep
@@ -15,7 +17,9 @@ from typing import Any
 
 import numpy as np
 import yaml
+from pydantic import ValidationError
 
+from autostrategy.core.backtest_result import BacktestMetrics, assess_research_quality
 from autostrategy.core.paper_account import PaperAccount
 from autostrategy.core.review import build_review
 from autostrategy.data.feed import LocalFeed
@@ -46,13 +50,16 @@ def resolve_baseline_return(market: str, config: dict | None = None) -> float:
             market_counts[symbol_market] = market_counts.get(symbol_market, 0) + 1
         total = sum(market_counts.values())
         if total > 0:
-            weighted = sum(
-                MARKET_BENCHMARKS.get(market_name, MARKET_BENCHMARKS["A股"])[
-                    "avg_annual_return"
-                ]
-                * count
-                for market_name, count in market_counts.items()
-            ) / total
+            weighted = (
+                sum(
+                    MARKET_BENCHMARKS.get(market_name, MARKET_BENCHMARKS["A股"])[
+                        "avg_annual_return"
+                    ]
+                    * count
+                    for market_name, count in market_counts.items()
+                )
+                / total
+            )
             return weighted
     return MARKET_BENCHMARKS["A股"]["avg_annual_return"]
 
@@ -92,27 +99,43 @@ def run_diagnostics(backtest: dict) -> list[dict]:
         variance = sum((value - avg) ** 2 for value in period_returns) / len(period_returns)
         cv = (variance**0.5) / abs(avg) if avg != 0 else 999
         if cv > 3.0:
-            diagnostics.append({"item": "过拟合", "status": "⚠️", "detail": f"收益波动系数 {cv:.1f}"})
+            diagnostics.append(
+                {"item": "过拟合", "status": "⚠️", "detail": f"收益波动系数 {cv:.1f}"}
+            )
         else:
-            diagnostics.append({"item": "过拟合", "status": "✅", "detail": f"收益波动系数 {cv:.1f}"})
+            diagnostics.append(
+                {"item": "过拟合", "status": "✅", "detail": f"收益波动系数 {cv:.1f}"}
+            )
 
     universe = backtest.get("universe_size", 0)
     survivors = backtest.get("survivor_count", 0)
     if universe > 0 and survivors > 0 and survivors < universe:
         ratio = survivors / universe
         status = "⚠️" if ratio < 0.5 else "✅"
-        diagnostics.append({"item": "幸存者偏差", "status": status, "detail": f"使用 {survivors}/{universe} 只股票"})
+        diagnostics.append(
+            {
+                "item": "幸存者偏差",
+                "status": status,
+                "detail": f"使用 {survivors}/{universe} 只股票",
+            }
+        )
 
     future_leak = backtest.get("future_leak_detected", False)
     if future_leak:
-        diagnostics.append({"item": "未来函数", "status": "❌", "detail": "检测到可能使用了未来数据"})
+        diagnostics.append(
+            {"item": "未来函数", "status": "❌", "detail": "检测到可能使用了未来数据"}
+        )
     else:
-        diagnostics.append({"item": "未来函数", "status": "✅", "detail": "未检测到未来数据使用（需人工复核）"})
+        diagnostics.append(
+            {"item": "未来函数", "status": "✅", "detail": "未检测到未来数据使用（需人工复核）"}
+        )
 
     avg_volume = backtest.get("avg_daily_volume", 0)
     avg_trade_value = backtest.get("avg_trade_value", 0)
     if avg_volume > 0 and avg_trade_value / avg_volume > 0.1:
-        diagnostics.append({"item": "流动性", "status": "⚠️", "detail": "单笔交易占日均成交额比例过高"})
+        diagnostics.append(
+            {"item": "流动性", "status": "⚠️", "detail": "单笔交易占日均成交额比例过高"}
+        )
     else:
         diagnostics.append({"item": "流动性", "status": "✅", "detail": "交易量与市场流动性匹配"})
 
@@ -121,7 +144,9 @@ def run_diagnostics(backtest: dict) -> list[dict]:
     if first_half != 0 and second_half != 0:
         diff = abs(first_half - second_half) / max(abs(first_half), abs(second_half))
         status = "⚠️" if diff > 0.8 else "✅"
-        diagnostics.append({"item": "稳定性", "status": status, "detail": f"前后半段收益差异 {diff:.0%}"})
+        diagnostics.append(
+            {"item": "稳定性", "status": status, "detail": f"前后半段收益差异 {diff:.0%}"}
+        )
 
     return diagnostics
 
@@ -140,7 +165,9 @@ def check_pass_criteria(backtest: dict) -> list[dict]:
         value = backtest.get(key)
         label = labels.get(key, key)
         if value is None:
-            results.append({"metric": label, "value": "N/A", "criteria": criteria["desc"], "passed": None})
+            results.append(
+                {"metric": label, "value": "N/A", "criteria": criteria["desc"], "passed": None}
+            )
             continue
         passed = True
         if "min" in criteria and criteria["min"] is not None:
@@ -149,7 +176,9 @@ def check_pass_criteria(backtest: dict) -> list[dict]:
             passed = passed and value <= criteria["max"]
         unit = "%" if key in ("annual_return", "max_drawdown", "win_rate") else ""
         display = f"{value:.2f}{unit}" if isinstance(value, float) else str(value)
-        results.append({"metric": label, "value": display, "criteria": criteria["desc"], "passed": passed})
+        results.append(
+            {"metric": label, "value": display, "criteria": criteria["desc"], "passed": passed}
+        )
     return results
 
 
@@ -182,6 +211,27 @@ def run_backtest_workflow(strategy_dir: Path, output_path: Path | None = None) -
         save_json(output_path or output_dir / "backtest_result.json", result)
         return result
 
+    if int(backtest.get("total_trades", 0) or 0) <= 0:
+        result = {
+            "error": "回测未产生交易：数据不足、数据获取失败或策略条件在当前区间内未触发。",
+            "score": 0,
+        }
+        save_json(output_path or output_dir / "backtest_result.json", result)
+        return result
+
+    try:
+        validated = BacktestMetrics.model_validate(backtest)
+    except ValidationError as exc:
+        first_error = exc.errors(include_url=False)[0]
+        location = ".".join(str(part) for part in first_error["loc"])
+        result = {
+            "error": f"回测结果不符合契约：{location}: {first_error['msg']}",
+            "score": 0,
+        }
+        save_json(output_path or output_dir / "backtest_result.json", result)
+        return result
+    backtest = validated.model_dump(exclude_none=True)
+
     market = config.get("market", "A股")
     total_score = score_strategy(backtest, design, market, config)
     result = {
@@ -189,6 +239,7 @@ def run_backtest_workflow(strategy_dir: Path, output_path: Path | None = None) -
         "score": round(total_score, 1),
         "criteria": check_pass_criteria(backtest),
         "diagnostics": run_diagnostics(backtest),
+        "research_quality": assess_research_quality(validated).model_dump(),
     }
     save_json(output_path or output_dir / "backtest_result.json", result)
     return result
@@ -204,7 +255,9 @@ def run_paper_replay_workflow(strategy_dir: Path, stop_requested=None) -> dict:
     started_at = _utc_now()
 
     if module is None:
-        result = _paper_failed_result(started_at, f"strategy.py 不存在: {strategy_dir / 'strategy.py'}")
+        result = _paper_failed_result(
+            started_at, f"strategy.py 不存在: {strategy_dir / 'strategy.py'}"
+        )
         _write_paper_artifacts(result_path, events_path, log_path, result, [])
         return result
 
@@ -250,29 +303,118 @@ def run_paper_replay_workflow(strategy_dir: Path, stop_requested=None) -> dict:
     return result
 
 
-def _load_configured_feed(config: dict, strategy_dir: Path) -> LocalFeed | None:
-    """Build a LocalFeed from config.feed, or None when not configured."""
+class FtshareFeed:
+    """Feed that fetches bars from FTShare MCP in real-time for replay."""
+
+    def __init__(
+        self,
+        symbols: list[str],
+        start: str | None = None,
+        end: str | None = None,
+        type_: str = "stock",
+    ) -> None:
+        self.symbols = symbols
+        self.start = start
+        self.end = end
+        self.type_ = type_
+        self._bars: list[dict] = []
+        self._loaded = False
+
+    def _load(self) -> None:
+        if self._loaded:
+            return
+        from autostrategy.data.ftshare import fetch_daily_ohlc
+        frames = []
+        for symbol in self.symbols:
+            df = fetch_daily_ohlc(
+                symbol,
+                limit=500,
+                type_=self.type_,
+                start_date=self.start,
+                end_date=self.end,
+            )
+            if df.empty:
+                continue
+            df = df.reset_index()
+            df["symbol"] = symbol
+            frames.append(df)
+        if frames:
+            import pandas as pd
+            combined = pd.concat(frames, ignore_index=True)
+            combined["date"] = pd.to_datetime(combined["date"])
+            combined = combined.sort_values("date")
+            self._bars = [
+                {
+                    "at": row["date"].strftime("%Y-%m-%dT%H:%M:%S"),
+                    "symbol": row["symbol"],
+                    "open": float(row["open"]),
+                    "high": float(row["high"]),
+                    "low": float(row["low"]),
+                    "close": float(row["close"]),
+                    "volume": float(row["volume"]),
+                }
+                for _, row in combined.iterrows()
+            ]
+        self._loaded = True
+
+    def __iter__(self):
+        self._load()
+        return iter(self._bars)
+
+    def __len__(self) -> int:
+        self._load()
+        return len(self._bars)
+
+    @property
+    def bars(self) -> list[dict]:
+        self._load()
+        return list(self._bars)
+
+    def metadata(self) -> dict:
+        self._load()
+        return {
+            "source": "ftshare_mcp",
+            "symbols": self.symbols,
+            "start": self.start,
+            "end": self.end,
+            "bar_count": len(self._bars),
+            "symbol_count": len(self.symbols),
+        }
+
+
+def _load_configured_feed(config: dict, strategy_dir: Path) -> FtshareFeed | LocalFeed | None:
+    """Build a feed from config.feed, or None when not configured."""
     feed_config = config.get("feed")
-    if not isinstance(feed_config, dict) or not feed_config.get("path"):
+    if not isinstance(feed_config, dict):
         return None
-    feed_path = Path(feed_config["path"])
-    if not feed_path.is_absolute():
-        feed_path = strategy_dir / feed_path
+
     symbols = feed_config.get("symbols") or config.get("symbols")
     if isinstance(symbols, str):
         symbols = [symbols]
     if isinstance(symbols, list):
         symbols = [s.get("code") if isinstance(s, dict) else s for s in symbols]
     period = config.get("period") if isinstance(config.get("period"), dict) else {}
-    return LocalFeed(
-        feed_path,
-        symbols=symbols,
-        start=feed_config.get("start") or period.get("start"),
-        end=feed_config.get("end") or period.get("end"),
-    )
+    start = feed_config.get("start") or period.get("start")
+    end = feed_config.get("end") or period.get("end")
+
+    # If local path configured, use LocalFeed (legacy)
+    if feed_config.get("path"):
+        feed_path = Path(feed_config["path"])
+        if not feed_path.is_absolute():
+            feed_path = strategy_dir / feed_path
+        return LocalFeed(feed_path, symbols=symbols, start=start, end=end)
+
+    # FTShare MCP real-time feed when feed section exists but no path
+    market = str(config.get("market", "A股"))
+    type_ = "stock"
+    if "港" in market:
+        type_ = "hk_stock"
+    elif "美" in market:
+        type_ = "us_stock"
+    return FtshareFeed(symbols=symbols or ["000300.SH"], start=start, end=end, type_=type_)
 
 
-def _attach_feed_metadata(result: dict, feed: LocalFeed) -> dict:
+def _attach_feed_metadata(result: dict, feed: FtshareFeed | LocalFeed) -> dict:
     merged = dict(result)
     replay = dict(merged.get("replay") if isinstance(merged.get("replay"), dict) else {})
     replay["feed"] = feed.metadata()
@@ -281,7 +423,7 @@ def _attach_feed_metadata(result: dict, feed: LocalFeed) -> dict:
 
 
 def _run_feed_driven_replay(
-    feed: LocalFeed,
+    feed: FtshareFeed | LocalFeed,
     config: dict,
     started_at: str,
     result_path: Path,
@@ -335,7 +477,9 @@ def _run_incremental_paper_replay(
     stop_requested=None,
 ) -> dict:
     if isinstance(raw, dict):
-        return _finish_static_paper_replay(raw, started_at, result_path, events_path, log_path, stop_requested)
+        return _finish_static_paper_replay(
+            raw, started_at, result_path, events_path, log_path, stop_requested
+        )
     if isinstance(raw, str | bytes) or not isinstance(raw, Iterable):
         result = _paper_failed_result(started_at, "run_paper() 必须返回 dict 或可迭代 replay 事件")
         _write_paper_artifacts(result_path, events_path, log_path, result, [])
@@ -352,7 +496,9 @@ def _run_incremental_paper_replay(
 
     for item in raw:
         if stop_requested and stop_requested():
-            result = _paper_result_from_raw(_raw_with_events(final_raw, events), started_at, run_status="stopped")
+            result = _paper_result_from_raw(
+                _raw_with_events(final_raw, events), started_at, run_status="stopped"
+            )
             _write_paper_artifacts(result_path, events_path, log_path, result, events)
             return result
 
@@ -368,16 +514,24 @@ def _run_incremental_paper_replay(
             final_raw = _merge_replay_snapshot(final_raw, item, events)
             events = _paper_events_from_raw(final_raw)
 
-        result = _paper_result_from_raw(_raw_with_events(final_raw, events), started_at, run_status="running")
+        result = _paper_result_from_raw(
+            _raw_with_events(final_raw, events), started_at, run_status="running"
+        )
         _write_paper_artifacts(result_path, events_path, log_path, result, events)
         sleep(float(final_raw.get("replay_interval_seconds", 0) or 0))
 
     if "error" in final_raw:
-        result = _paper_failed_result(started_at, str(final_raw["error"]), _raw_with_events(final_raw, events))
+        result = _paper_failed_result(
+            started_at, str(final_raw["error"]), _raw_with_events(final_raw, events)
+        )
     elif stop_requested and stop_requested():
-        result = _paper_result_from_raw(_raw_with_events(final_raw, events), started_at, run_status="stopped")
+        result = _paper_result_from_raw(
+            _raw_with_events(final_raw, events), started_at, run_status="stopped"
+        )
     else:
-        result = _paper_result_from_raw(_raw_with_events(final_raw, events), started_at, run_status="completed")
+        result = _paper_result_from_raw(
+            _raw_with_events(final_raw, events), started_at, run_status="completed"
+        )
     _write_paper_artifacts(result_path, events_path, log_path, result, events)
     return result
 
@@ -422,7 +576,11 @@ def _merge_replay_snapshot(raw: dict, snapshot: dict, events: list[dict]) -> dic
     merged = dict(raw)
     for key, value in snapshot.items():
         if key == "events" and isinstance(value, list):
-            merged[key] = value
+            merged[key] = events + [
+                event
+                for event in value
+                if isinstance(event, dict) and _looks_like_event(event)
+            ]
         elif key == "replay" and isinstance(value, dict):
             replay = dict(merged.get("replay") if isinstance(merged.get("replay"), dict) else {})
             replay.update(value)
@@ -463,10 +621,20 @@ def _paper_result_from_raw(raw: dict, started_at: str, run_status: str) -> dict:
     updated_at = _utc_now()
     paper = raw.get("paper") if isinstance(raw.get("paper"), dict) else raw
     paper = _ensure_account_snapshot(paper, raw)
-    summary = raw.get("summary") if isinstance(raw.get("summary"), dict) else _paper_summary(paper)
+    raw_summary = raw.get("summary") if isinstance(raw.get("summary"), dict) else None
+    if raw_summary and (
+        raw_summary.get("trade_count")
+        or raw_summary.get("final_value") not in (None, 0)
+        or raw_summary.get("paper_return")
+    ):
+        summary = raw_summary
+    else:
+        summary = _paper_summary(paper)
     events = _paper_events_from_raw(raw)
     latest_decision = raw.get("latest_decision") or (events[-1] if events else None)
-    bars_processed = int(raw.get("bars_processed") or len(raw.get("equity_curve", [])) or len(events))
+    bars_processed = int(
+        raw.get("bars_processed") or len(raw.get("equity_curve", [])) or len(events)
+    )
     replay = raw.get("replay") if isinstance(raw.get("replay"), dict) else {}
     current_at = replay.get("current_at") or paper.get("current_at")
     if current_at is None and latest_decision:
@@ -474,7 +642,9 @@ def _paper_result_from_raw(raw: dict, started_at: str, run_status: str) -> dict:
     replay = {
         "current_at": current_at,
         "bars_processed": replay.get("bars_processed", bars_processed),
-        "progress": replay.get("progress", 1.0 if run_status in {"completed", "failed", "stopped"} else 0.0),
+        "progress": replay.get(
+            "progress", 1.0 if run_status in {"completed", "failed", "stopped"} else 0.0
+        ),
     }
     return {
         "mode": "paper_run",
@@ -500,22 +670,66 @@ def _ensure_account_snapshot(paper: dict, raw: dict) -> dict:
     # A strategy that reports a complete account (final_value or equity,
     # or explicit cash/positions with the account totals) keeps its own
     # numbers; we only replay when the account fields are missing.
-    if "final_value" in paper or "equity" in paper or (
-        "cash" in paper and "positions" in paper and "trade_count" in paper
+    if (
+        "final_value" in paper
+        or "equity" in paper
+        or ("cash" in paper and "positions" in paper and "trade_count" in paper)
     ):
-        return paper
+        return _normalize_strategy_account(paper)
     events = _paper_events_from_raw(raw)
     decisions = [e for e in events if isinstance(e, dict) and e.get("action")]
     if not decisions:
-        return paper
+        return _normalize_strategy_account(paper)
     config_seed = paper.get("initial_cash", raw.get("initial_cash", 1_000_000))
     account = PaperAccount.from_config(
-        {"initial_cash": config_seed, "commission": paper.get("commission", raw.get("commission", 0.0))}
+        {
+            "initial_cash": config_seed,
+            "commission": paper.get("commission", raw.get("commission", 0.0)),
+        }
     )
     for decision in decisions:
         account.apply(decision)
     merged = dict(paper)
     merged.update(account.snapshot())
+    return merged
+
+
+def _normalize_strategy_account(paper: dict) -> dict:
+    """Normalize a strategy-reported account into the standard snapshot shape.
+
+    Strategies may report ``positions`` as a symbol keyed mapping; the API
+    and frontend expect a list of position snapshots plus ``final_value``.
+    """
+    merged = dict(paper)
+    positions = merged.get("positions")
+    if isinstance(positions, dict):
+        normalized = []
+        for symbol, pos in positions.items():
+            if not isinstance(pos, dict):
+                continue
+            quantity = pos.get("quantity", 0) or 0
+            avg_price = pos.get("avg_price", pos.get("price", 0)) or 0
+            last_price = pos.get("last_price", avg_price) or 0
+            normalized.append(
+                {
+                    "symbol": symbol,
+                    "quantity": quantity,
+                    "avg_price": avg_price,
+                    "last_price": last_price,
+                    "market_value": pos.get("market_value", round(quantity * last_price, 2)),
+                    "unrealized_pnl": pos.get("unrealized_pnl", 0),
+                }
+            )
+        merged["positions"] = normalized
+        merged.setdefault("position_count", len(normalized))
+    if "final_value" not in merged:
+        equity = merged.get("equity")
+        if equity is None and "cash" in merged:
+            equity = float(merged.get("cash") or 0) + sum(
+                float(p.get("market_value", 0) or 0) for p in merged.get("positions", [])
+            )
+        if equity is not None:
+            merged["final_value"] = equity
     return merged
 
 
@@ -554,13 +768,16 @@ def _write_paper_artifacts(
         review_path.write_text(review["markdown"], encoding="utf-8")
     save_json(result_path, result)
     events_path.parent.mkdir(parents=True, exist_ok=True)
-    events_path.write_text("".join(json.dumps(event, ensure_ascii=False) + "\n" for event in events), encoding="utf-8")
+    events_path.write_text(
+        "".join(json.dumps(event, ensure_ascii=False) + "\n" for event in events), encoding="utf-8"
+    )
     log_path.parent.mkdir(parents=True, exist_ok=True)
     log_path.write_text(f"{result['updated_at']} {result['run_status']}\n", encoding="utf-8")
 
 
 def save_json(path: Path, data: dict) -> None:
     """Save JSON result, converting numpy scalar types."""
+
     def convert(obj):
         if isinstance(obj, np.bool_):
             return bool(obj)
@@ -581,14 +798,14 @@ def _load_strategy_module(strategy_dir: Path):
     if not strategy_file.exists():
         return None
     module_name = f"strategy_{strategy_dir.name}_{id(strategy_file)}"
-    spec = importlib.util.spec_from_file_location(module_name, strategy_file)
-    if spec is None or spec.loader is None:
-        return None
-    module = importlib.util.module_from_spec(spec)
+    module = types.ModuleType(module_name)
+    module.__file__ = str(strategy_file)
     sys.modules[module_name] = module
     try:
-        spec.loader.exec_module(module)
+        source = strategy_file.read_text(encoding="utf-8")
+        exec(compile(source, str(strategy_file), "exec"), module.__dict__)
     except Exception:
+        sys.modules.pop(module_name, None)
         return None
     return module
 
@@ -597,7 +814,8 @@ def _execute_strategy(module, config: dict, strategy_dir: Path) -> dict:
     """Execute a loaded strategy module."""
     if hasattr(module, "run_backtest"):
         try:
-            return module.run_backtest(config)
+            with _strategy_import_path(strategy_dir):
+                return module.run_backtest(config)
         except Exception as exc:
             return {"error": f"run_backtest() 执行失败: {exc}"}
     if hasattr(module, "Strategy"):
@@ -608,28 +826,46 @@ def _execute_strategy(module, config: dict, strategy_dir: Path) -> dict:
     return {"error": "strategy.py 未暴露 run_backtest() 函数或 Strategy class"}
 
 
+@contextmanager
+def _strategy_import_path(strategy_dir: Path):
+    """Make generated sibling modules importable only while a strategy executes."""
+    resolved_dir = strategy_dir.resolve()
+    path_text = str(resolved_dir)
+    modules_before = set(sys.modules)
+    sys.path.insert(0, path_text)
+    try:
+        yield
+    finally:
+        try:
+            sys.path.remove(path_text)
+        except ValueError:
+            pass
+        for name in set(sys.modules) - modules_before:
+            module_file = getattr(sys.modules.get(name), "__file__", None)
+            if not module_file:
+                continue
+            try:
+                if Path(module_file).resolve().is_relative_to(resolved_dir):
+                    sys.modules.pop(name, None)
+            except (OSError, ValueError):
+                continue
+
+
 def _run_backtrader(module, config: dict, strategy_dir: Path) -> dict:
     """Run a Backtrader Strategy class."""
     import backtrader as bt
-    import pandas as pd
 
     cerebro = bt.Cerebro()
-    data_file = strategy_dir / "data" / "data.csv"
-    if data_file.exists():
-        df = pd.read_csv(data_file, parse_dates=["date"])
-        df.set_index("date", inplace=True)
-        cerebro.adddata(bt.feeds.PandasData(dataname=df))
-    else:
-        fetch_file = strategy_dir / "data" / "fetch_data.py"
-        if fetch_file.exists():
-            spec = importlib.util.spec_from_file_location("fetch_data", fetch_file)
-            if spec is not None and spec.loader is not None:
-                fetch_module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(fetch_module)
-                if hasattr(fetch_module, "fetch"):
-                    df = fetch_module.fetch(config)
-                    if df is not None:
-                        cerebro.adddata(bt.feeds.PandasData(dataname=df))
+    fetch_file = strategy_dir / "data" / "fetch_data.py"
+    if fetch_file.exists():
+        spec = importlib.util.spec_from_file_location("fetch_data", fetch_file)
+        if spec is not None and spec.loader is not None:
+            fetch_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(fetch_module)
+            if hasattr(fetch_module, "fetch"):
+                df = fetch_module.fetch(config)
+                if df is not None:
+                    cerebro.adddata(bt.feeds.PandasData(dataname=df))
 
     initial_cash = config.get("initial_cash", 1000000)
     cerebro.broker.setcash(initial_cash)
@@ -682,13 +918,23 @@ def extract_design_complexity(strategy_dir: Path) -> dict:
     if signal_section:
         design["num_buy_conditions"] = _count_conditions_in_subsection(
             signal_section,
-            [r"条件\d+.*?(买入|BUY|开多)", r"^\d+\.\s+.*?(买入|BUY|开多)", r"[①-⓿].*?(买入|BUY|开多)"],
+            [
+                r"条件\d+.*?(买入|BUY|开多)",
+                r"^\d+\.\s+.*?(买入|BUY|开多)",
+                r"[①-⓿].*?(买入|BUY|开多)",
+            ],
         )
         design["num_sell_conditions"] = _count_conditions_in_subsection(
             signal_section,
-            [r"条件\d+.*?(卖出|SELL|平多|平空)", r"^\d+\.\s+.*?(卖出|SELL|平多|平空)", r"[①-⓿].*?(卖出|SELL|平多|平空)"],
+            [
+                r"条件\d+.*?(卖出|SELL|平多|平空)",
+                r"^\d+\.\s+.*?(卖出|SELL|平多|平空)",
+                r"[①-⓿].*?(卖出|SELL|平多|平空)",
+            ],
         )
-        design["num_filters"] = _count_conditions_in_subsection(signal_section, [r"(过滤|过滤条件)"])
+        design["num_filters"] = _count_conditions_in_subsection(
+            signal_section, [r"(过滤|过滤条件)"]
+        )
     risk_section = _extract_section_content(content, ["风控规则", "止损", "通用风控", "组合级风控"])
     if risk_section:
         design["num_risk_rules"] = _count_conditions_in_subsection(

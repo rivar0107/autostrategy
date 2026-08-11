@@ -5,6 +5,14 @@ export default defineConfig({
   plugins: [react()],
   root: 'src/autostrategy/web/frontend',
   base: '/static/',
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+      },
+    },
+  },
   build: {
     outDir: '../static',
     emptyOutDir: true,

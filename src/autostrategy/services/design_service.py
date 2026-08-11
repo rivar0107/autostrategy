@@ -18,7 +18,9 @@ from autostrategy.services.strategy_service import StrategyService
 class DesignService:
     """Application service for natural-language strategy design."""
 
-    def __init__(self, workspace_root: Path | None = None, llm_config: LLMConfig | None = None) -> None:
+    def __init__(
+        self, workspace_root: Path | None = None, llm_config: LLMConfig | None = None
+    ) -> None:
         self.strategy_service = StrategyService(workspace_root=workspace_root)
         self.agent = DesignAgent(llm_config=llm_config)
 
@@ -40,6 +42,38 @@ class DesignService:
             )
         except LLMConfigurationRequiredError:
             raise
+        except ValueError as exc:
+            raise ValidationServiceError(str(exc)) from exc
+        except RuntimeError as exc:
+            raise ValidationServiceError(str(exc)) from exc
+        except Exception as exc:
+            raise AutostrategyServiceError(f"Design generation failed: {exc}") from exc
+        paths = self.strategy_service.get_strategy_paths(strategy.slug)
+        return DesignResult(
+            strategy=StrategySummary.from_strategy(strategy),
+            design_path=paths.design,
+        )
+
+    def redesign(
+        self,
+        slug: str,
+        prompt: str,
+        market: str = "A股",
+        template: str | None = None,
+    ) -> DesignResult:
+        """Regenerate STRATEGY_DESIGN.md for an existing draft strategy."""
+        try:
+            strategy = self.agent.redesign_and_save(
+                workspace=self.strategy_service.workspace,
+                slug=slug,
+                prompt=prompt,
+                market=market,
+                template=template,
+            )
+        except LLMConfigurationRequiredError:
+            raise
+        except FileNotFoundError as exc:
+            raise ValidationServiceError(str(exc)) from exc
         except ValueError as exc:
             raise ValidationServiceError(str(exc)) from exc
         except RuntimeError as exc:

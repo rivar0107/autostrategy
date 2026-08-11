@@ -31,7 +31,9 @@ def test_api_artifacts_backtest_result_json_preview(tmp_path):
     assert create.status_code == 200
     result_path = tmp_path / "demo" / "backtest" / "results" / "backtest_result.json"
     result_path.parent.mkdir(parents=True)
-    result_path.write_text(json.dumps({"score": 80, "backtest": {"total_trades": 3}}), encoding="utf-8")
+    result_path.write_text(
+        json.dumps({"score": 80, "backtest": {"total_trades": 3}}), encoding="utf-8"
+    )
 
     response = client.get("/api/v1/strategies/demo/artifacts/backtest_result")
 

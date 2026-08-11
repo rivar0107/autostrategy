@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-
 REQUIRED_SECTIONS = [
     "策略概述",
     "买入条件",

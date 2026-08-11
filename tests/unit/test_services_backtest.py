@@ -38,6 +38,50 @@ def test_backtest_service_run_and_read_result(tmp_path):
     assert saved.result["backtest"]["total_trades"] == 10
     assert result.result_path.exists()
 
+    runs = service.list_backtest_runs("demo")
+    assert len(runs) == 1
+    assert runs[0].strategy_slug == "demo"
+    assert runs[0].strategy_version == 1
+    assert runs[0].strategy_digest
+    assert runs[0].version_id
+    persisted_strategy = service.strategy_service.workspace.get_strategy("demo")
+    assert persisted_strategy is not None
+    assert persisted_strategy.current_version_id == runs[0].version_id
+    assert persisted_strategy.active_version_id == runs[0].version_id
+    assert runs[0].result_path != result.result_path
+    assert runs[0].result_path.exists()
+
+    restarted = BacktestService(workspace_root=tmp_path)
+    persisted = restarted.get_backtest_run("demo", runs[0].run_id)
+    assert persisted.result["backtest"]["total_trades"] == 10
+
+
+def test_backtest_history_is_immutable_across_runs(tmp_path):
+    strategy_service = StrategyService(workspace_root=tmp_path)
+    strategy_service.create_strategy("demo")
+    _write_minimal_strategy(tmp_path / "demo")
+    service = BacktestService(workspace_root=tmp_path)
+
+    first = service.run_backtest("demo")
+    first_run = service.list_backtest_runs("demo")[0]
+    (tmp_path / "demo" / "strategy.py").write_text(
+        (tmp_path / "demo" / "strategy.py")
+        .read_text(encoding="utf-8")
+        .replace("12.0", "13.0"),
+        encoding="utf-8",
+    )
+    service.strategy_service.workspace.bump_strategy_version("demo")
+    second = service.run_backtest("demo")
+    runs = service.list_backtest_runs("demo")
+
+    assert first.score != second.score
+    assert len(runs) == 2
+    assert first_run.result_path.read_text(encoding="utf-8") != runs[0].result_path.read_text(
+        encoding="utf-8"
+    )
+    assert {run.strategy_version for run in runs} == {1, 2}
+    assert len({run.version_id for run in runs}) == 2
+
 
 def test_backtest_service_missing_strategy_file(tmp_path):
     strategy_service = StrategyService(workspace_root=tmp_path)

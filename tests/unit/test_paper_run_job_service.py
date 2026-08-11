@@ -9,7 +9,9 @@ from autostrategy.services.strategy_service import StrategyService
 
 def _write_strategy(strategy_dir, body: str) -> None:
     (strategy_dir / "strategy.py").write_text(body, encoding="utf-8")
-    (strategy_dir / "config.yaml").write_text("market: A股\ninitial_cash: 1000000\n", encoding="utf-8")
+    (strategy_dir / "config.yaml").write_text(
+        "market: A股\ninitial_cash: 1000000\n", encoding="utf-8"
+    )
 
 
 def _wait_for_terminal(service: PaperRunJobService, slug: str, job_id: str, timeout: float = 5.0):
@@ -36,7 +38,10 @@ def test_paper_run_job_service_succeeds(tmp_path):
 
     assert finished.status == "succeeded"
     assert finished.result_path and finished.result_path.exists()
-    assert PaperRunService(workspace_root=tmp_path).get_paper_result("demo").result["run_status"] == "completed"
+    assert (
+        PaperRunService(workspace_root=tmp_path).get_paper_result("demo").result["run_status"]
+        == "completed"
+    )
 
 
 def test_paper_run_job_service_fails_without_run_paper(tmp_path):

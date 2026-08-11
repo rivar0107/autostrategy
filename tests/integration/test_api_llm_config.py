@@ -1,5 +1,7 @@
 """LLM-backed API error integration tests."""
 
+import time
+
 from fastapi.testclient import TestClient
 
 from autostrategy.api.app import create_app
@@ -9,6 +11,7 @@ def test_api_create_design_returns_llm_configuration_error(monkeypatch, tmp_path
     monkeypatch.setenv("HOME", str(tmp_path))
     monkeypatch.delenv("AUTOSTRATEGY_LLM_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr("autostrategy.config.codex_llm_defaults", lambda: None)
     client = TestClient(create_app(workspace_root=tmp_path / "workspace"))
 
     response = client.post(
@@ -16,18 +19,26 @@ def test_api_create_design_returns_llm_configuration_error(monkeypatch, tmp_path
         json={"name": "demo", "prompt": "帮我做一个策略", "market": "A股"},
     )
 
-    assert response.status_code == 428
-    error = response.json()["error"]
-    assert error["code"] == "llm_configuration_required"
-    assert error["details"]["llm_ready"] is False
-    assert error["details"]["api_key_env"] == "AUTOSTRATEGY_LLM_API_KEY"
-    assert "api_key" not in error["details"]
+    assert response.status_code in (200, 202)
+    job = response.json()
+    assert job["job_id"]
+
+    deadline = time.monotonic() + 10
+    while job["status"] in ("queued", "running") and time.monotonic() < deadline:
+        time.sleep(0.05)
+        job = client.get(f"/api/v1/design-jobs/{job['job_id']}").json()
+
+    assert job["status"] == "failed"
+    assert job["error_code"] == "llm_not_configured"
+    assert job["error"]
+    assert job["strategy"] is None
 
 
 def test_api_codegen_returns_llm_configuration_error(monkeypatch, tmp_path):
     monkeypatch.setenv("HOME", str(tmp_path))
     monkeypatch.delenv("AUTOSTRATEGY_LLM_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.setattr("autostrategy.config.codex_llm_defaults", lambda: None)
     client = TestClient(create_app(workspace_root=tmp_path / "workspace"))
     created = client.post("/api/v1/strategies", json={"name": "demo"})
     assert created.status_code == 200

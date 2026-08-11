@@ -55,6 +55,20 @@ def test_api_backtest_run_and_read(tmp_path):
     assert result.status_code == 200
     assert result.json()["result"]["backtest"]["total_trades"] == 10
 
+    history = client.get("/api/v1/strategies/demo/backtest-runs")
+    assert history.status_code == 200
+    assert len(history.json()) == 1
+    assert history.json()[0]["version_id"]
+    assert history.json()[0]["phase"] == "full"
+    assert history.json()[0]["manifest_id"] is None
+    assert history.json()[0]["session_id"] is None
+    assert history.json()[0]["candidate_id"] is None
+    run_id = history.json()[0]["run_id"]
+
+    detail = client.get(f"/api/v1/strategies/demo/backtest-runs/{run_id}")
+    assert detail.status_code == 200
+    assert detail.json()["result"]["backtest"]["total_trades"] == 10
+
 
 def test_api_backtest_missing_strategy_file_returns_failed_job(tmp_path):
     client = TestClient(create_app(workspace_root=tmp_path))

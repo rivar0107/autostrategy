@@ -38,7 +38,9 @@ def test_normalize_bar_requires_time_and_symbol():
     with pytest.raises(ValueError, match="symbol"):
         normalize_bar({"at": "2024-01-02", "open": 1, "high": 1, "low": 1, "close": 1})
     with pytest.raises(ValueError, match="无法解析"):
-        normalize_bar({"at": "not-a-date", "symbol": "X", "open": 1, "high": 1, "low": 1, "close": 1})
+        normalize_bar(
+            {"at": "not-a-date", "symbol": "X", "open": 1, "high": 1, "low": 1, "close": 1}
+        )
 
 
 @pytest.fixture()
@@ -80,8 +82,24 @@ def test_load_bars_time_window(csv_feed):
 def test_load_bars_jsonl(tmp_path):
     path = tmp_path / "bars.jsonl"
     records = [
-        {"at": "2024-02-01T09:30:00", "symbol": "A", "open": 1, "high": 2, "low": 0.5, "close": 1.5, "volume": 10},
-        {"at": "2024-02-02T09:30:00", "symbol": "A", "open": 2, "high": 3, "low": 1.5, "close": 2.5, "volume": 20},
+        {
+            "at": "2024-02-01T09:30:00",
+            "symbol": "A",
+            "open": 1,
+            "high": 2,
+            "low": 0.5,
+            "close": 1.5,
+            "volume": 10,
+        },
+        {
+            "at": "2024-02-02T09:30:00",
+            "symbol": "A",
+            "open": 2,
+            "high": 3,
+            "low": 1.5,
+            "close": 2.5,
+            "volume": 20,
+        },
     ]
     path.write_text("".join(json.dumps(r) + "\n" for r in records), encoding="utf-8")
     bars = load_bars(path)

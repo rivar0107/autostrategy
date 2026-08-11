@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from autostrategy.services.backtest_service import BacktestService
-from autostrategy.services.models import BacktestJob, BacktestJobStatus
+from autostrategy.services.models import BacktestJob
 from autostrategy.services.strategy_service import StrategyService
 
 _ACTIVE_STATUSES = {"queued", "running"}
@@ -96,7 +96,9 @@ class BacktestJobService:
         self._update_job(job_id, status="running", started_at=_utc_now())
         result_queue: mp.Queue = mp.Queue()
         workspace = str(self.workspace_root) if self.workspace_root else None
-        process = mp.Process(target=_run_backtest_worker, args=(workspace, self._jobs[job_id].slug, result_queue))
+        process = mp.Process(
+            target=_run_backtest_worker, args=(workspace, self._jobs[job_id].slug, result_queue)
+        )
         process.start()
         try:
             process.join(self.timeout_seconds)

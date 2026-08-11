@@ -19,7 +19,6 @@ import re
 import sys
 from pathlib import Path
 
-
 # ── 检查项定义 ──────────────────────────────────────
 
 CHECKS = [
@@ -131,7 +130,7 @@ def _extract_section(content: str, markers: list[str]) -> str:
         idx = content.find(marker)
         if idx != -1:
             end = len(content)
-            for m in re.finditer(r"\n## [^#]", content[idx + 4:]):
+            for m in re.finditer(r"\n## [^#]", content[idx + 4 :]):
                 end = idx + 4 + m.start()
                 break
             return content[idx:end]
@@ -140,10 +139,20 @@ def _extract_section(content: str, markers: list[str]) -> str:
 
 def check_signal_specificity(content: str) -> tuple[bool, str]:
     """检查买卖信号是否有具体阈值"""
-    signal_section = _extract_section(content, [
-        "信号逻辑", "开仓信号", "平仓信号", "买入信号", "卖出信号",
-        "开多信号", "平多信号", "开空信号", "平空信号",
-    ])
+    signal_section = _extract_section(
+        content,
+        [
+            "信号逻辑",
+            "开仓信号",
+            "平仓信号",
+            "买入信号",
+            "卖出信号",
+            "开多信号",
+            "平多信号",
+            "开空信号",
+            "平空信号",
+        ],
+    )
 
     if not signal_section:
         return False, "未找到信号逻辑 section"
@@ -151,9 +160,13 @@ def check_signal_specificity(content: str) -> tuple[bool, str]:
     # 检查是否有具体数值（百分比、数字阈值）
     has_number = bool(re.search(r"\d+\.?\d*\s*[%]?", signal_section))
     has_operator = bool(re.search(r"[><=]", signal_section))
-    has_indicator = bool(re.search(
-        r"(RSI|MA|MACD|ATR|EMA|SMA|BOLL|KDJ|BBANDS|VWAP|CCI|OBV|DMI|PSY|TRIX|WILLR|ROC|MTM|BIAS|DMA|ARBR|CR|VR|WR|Williams|Stochastic|Momentum)",
-        signal_section, re.IGNORECASE))
+    has_indicator = bool(
+        re.search(
+            r"(RSI|MA|MACD|ATR|EMA|SMA|BOLL|KDJ|BBANDS|VWAP|CCI|OBV|DMI|PSY|TRIX|WILLR|ROC|MTM|BIAS|DMA|ARBR|CR|VR|WR|Williams|Stochastic|Momentum)",
+            signal_section,
+            re.IGNORECASE,
+        )
+    )
 
     issues = []
     if not has_indicator:
@@ -174,7 +187,7 @@ def check_risk_concrete(content: str) -> tuple[bool, str]:
     for marker in ["风控规则", "Greeks 风控", "通用风控", "组合级风控"]:
         idx = content.find(marker)
         if idx != -1:
-            risk_section = content[idx:idx + 2000]
+            risk_section = content[idx : idx + 2000]
             break
 
     if not risk_section:
@@ -202,7 +215,7 @@ def check_indicator_formula(content: str) -> tuple[bool, str]:
     if idx != -1:
         # 取到下一个顶级 section（## 但不是 ###）之前
         end = idx + 3000
-        for m in re.finditer(r"\n## [^#]", content[idx + 4:]):
+        for m in re.finditer(r"\n## [^#]", content[idx + 4 :]):
             end = idx + 4 + m.start()
             break
         indicator_section = content[idx:end]
@@ -212,7 +225,13 @@ def check_indicator_formula(content: str) -> tuple[bool, str]:
 
     # 检查公式特征
     has_formula = bool(re.search(r"[=+\-*/∑Σsqrt]", indicator_section))
-    has_function = bool(re.search(r"(SMA|EMA|RSI|MACD|ATR|STD|MEAN|SUM|MAX|MIN|LOG|abs|sqrt)\s*\(", indicator_section, re.IGNORECASE))
+    has_function = bool(
+        re.search(
+            r"(SMA|EMA|RSI|MACD|ATR|STD|MEAN|SUM|MAX|MIN|LOG|abs|sqrt)\s*\(",
+            indicator_section,
+            re.IGNORECASE,
+        )
+    )
 
     if not has_formula and not has_function:
         return False, "未检测到数学公式"
@@ -225,7 +244,7 @@ def check_prohibitions(content: str) -> tuple[bool, str]:
     if idx == -1:
         return False, "缺少禁止事项 section"
 
-    prohibition_section = content[idx:idx + 1500]
+    prohibition_section = content[idx : idx + 1500]
     # 检查是否有禁止条目（❌ 或编号列表）
     has_items = bool(re.search(r"(❌|\d+\.)", prohibition_section))
     if not has_items:
@@ -270,13 +289,15 @@ def run_check(filepath: str) -> dict:
         if not passed:
             all_passed = False
 
-        results.append({
-            "id": check_def["id"],
-            "name": check_def["name"],
-            "weight": weight,
-            "passed": passed,
-            "detail": detail,
-        })
+        results.append(
+            {
+                "id": check_def["id"],
+                "name": check_def["name"],
+                "weight": weight,
+                "passed": passed,
+                "detail": detail,
+            }
+        )
 
     return {
         "file": str(path),
@@ -309,7 +330,7 @@ def print_report(result: dict):
     print(f"\n{'─' * 50}")
     print(f"  总分: {score}/100  {status}")
     if not passed:
-        print(f"  未通过的检查项需要修复后重新检查")
+        print("  未通过的检查项需要修复后重新检查")
     print()
 
 

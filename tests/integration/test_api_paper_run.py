@@ -11,12 +11,17 @@ def _write_paper_strategy(strategy_dir):
     (strategy_dir / "strategy.py").write_text(
         "def run_paper(config):\n"
         "    return {\n"
-        "        'paper': {'initial_cash': 1000000, 'final_value': 1010000, 'max_drawdown': 1.2, 'trade_count': 1},\n"
-        "        'events': [{'timestamp': '2024-01-02', 'symbol': '000001.SZ', 'action': 'buy', 'price': 10, 'size': 100, 'cash_after': 999000, 'position_after': 100, 'reason': 'signal', 'equity_after': 1000000}],\n"
+        "        'paper': {'initial_cash': 1000000, 'final_value': 1010000, "
+        "'max_drawdown': 1.2, 'trade_count': 1},\n"
+        "        'events': [{'timestamp': '2024-01-02', 'symbol': '000001.SZ', "
+        "'action': 'buy', 'price': 10, 'size': 100, 'cash_after': 999000, "
+        "'position_after': 100, 'reason': 'signal', 'equity_after': 1000000}],\n"
         "    }\n",
         encoding="utf-8",
     )
-    (strategy_dir / "config.yaml").write_text("market: A股\ninitial_cash: 1000000\n", encoding="utf-8")
+    (strategy_dir / "config.yaml").write_text(
+        "market: A股\ninitial_cash: 1000000\n", encoding="utf-8"
+    )
 
 
 def _wait_for_job(client: TestClient, slug: str, job_id: str, timeout: float = 5.0):
@@ -52,7 +57,9 @@ def test_api_paper_run_missing_run_paper_returns_failed_job(tmp_path):
     client = TestClient(create_app(workspace_root=tmp_path))
     create = client.post("/api/v1/strategies", json={"name": "demo"})
     assert create.status_code == 200
-    (tmp_path / "demo" / "strategy.py").write_text("def run_backtest(config):\n    return {}\n", encoding="utf-8")
+    (tmp_path / "demo" / "strategy.py").write_text(
+        "def run_backtest(config):\n    return {}\n", encoding="utf-8"
+    )
 
     response = client.post("/api/v1/strategies/demo/paper-run")
 
@@ -71,10 +78,13 @@ def test_api_paper_run_stop_request_reaches_stopped_job(tmp_path):
         "def run_paper(config):\n"
         "    for index in range(5):\n"
         "        time.sleep(0.05)\n"
-        "        yield {'timestamp': f'2024-01-0{index + 1}', 'action': 'hold', 'progress': (index + 1) / 5}\n",
+        "        yield {'timestamp': f'2024-01-0{index + 1}', 'action': 'hold', "
+        "'progress': (index + 1) / 5}\n",
         encoding="utf-8",
     )
-    (tmp_path / "demo" / "config.yaml").write_text("market: A股\ninitial_cash: 1000000\n", encoding="utf-8")
+    (tmp_path / "demo" / "config.yaml").write_text(
+        "market: A股\ninitial_cash: 1000000\n", encoding="utf-8"
+    )
 
     run = client.post("/api/v1/strategies/demo/paper-run")
     assert run.status_code == 202
@@ -100,10 +110,13 @@ def test_api_paper_run_exposes_running_partial_result(tmp_path):
         "def run_paper(config):\n"
         "    yield {'timestamp': '2024-01-02', 'action': 'buy', 'progress': 0.5}\n"
         "    time.sleep(0.2)\n"
-        "    yield {'paper': {'initial_cash': 1000000, 'final_value': 1010000}, 'replay': {'progress': 1.0}}\n",
+        "    yield {'paper': {'initial_cash': 1000000, 'final_value': 1010000}, "
+        "'replay': {'progress': 1.0}}\n",
         encoding="utf-8",
     )
-    (tmp_path / "demo" / "config.yaml").write_text("market: A股\ninitial_cash: 1000000\n", encoding="utf-8")
+    (tmp_path / "demo" / "config.yaml").write_text(
+        "market: A股\ninitial_cash: 1000000\n", encoding="utf-8"
+    )
 
     run = client.post("/api/v1/strategies/demo/paper-run")
     assert run.status_code == 202

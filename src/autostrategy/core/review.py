@@ -34,22 +34,33 @@ def build_review(result: dict[str, Any], events: list[dict[str, Any]]) -> dict[s
     final_value = float(paper.get("final_value", paper.get("equity", initial_cash)) or 0)
 
     decisions = [e for e in events if isinstance(e, dict) and e.get("action")]
-    fills = [e for e in decisions if e.get("status") in (None, "filled") and e.get("action") in ("buy", "sell")]
+    fills = [
+        e
+        for e in decisions
+        if e.get("status") in (None, "filled") and e.get("action") in ("buy", "sell")
+    ]
     buys = [e for e in fills if e.get("action") == "buy"]
     sells = [e for e in fills if e.get("action") == "sell"]
     rejected = [e for e in decisions if e.get("status") == "rejected"]
 
     equity_series = [
-        float(e["equity_after"]) for e in decisions
+        float(e["equity_after"])
+        for e in decisions
         if isinstance(e.get("equity_after"), (int, float))
     ]
-    drawdown = _max_drawdown(equity_series) if equity_series else float(
-        paper.get("max_drawdown", result.get("summary", {}).get("paper_max_drawdown", 0)) or 0
+    drawdown = (
+        _max_drawdown(equity_series)
+        if equity_series
+        else float(
+            paper.get("max_drawdown", result.get("summary", {}).get("paper_max_drawdown", 0)) or 0
+        )
     )
 
     total_return = (final_value - initial_cash) / initial_cash * 100 if initial_cash else 0.0
     realized_pnl = float(paper.get("realized_pnl", 0) or 0)
-    turnover = round(sum(float(e.get("price", 0) or 0) * float(e.get("size", 0) or 0) for e in fills), 2)
+    turnover = round(
+        sum(float(e.get("price", 0) or 0) * float(e.get("size", 0) or 0) for e in fills), 2
+    )
 
     metrics = {
         "initial_cash": round(initial_cash, 2),
@@ -80,26 +91,32 @@ def _key_events(decisions: list[dict[str, Any]]) -> list[dict[str, Any]]:
         action = event.get("action")
         status = event.get("status")
         if action in ("buy", "sell") and status in (None, "filled"):
-            key.append({
-                "type": action,
-                "timestamp": event.get("timestamp"),
-                "symbol": event.get("symbol"),
-                "price": event.get("price"),
-                "size": event.get("size"),
-                "reason": event.get("reason", ""),
-            })
+            key.append(
+                {
+                    "type": action,
+                    "timestamp": event.get("timestamp"),
+                    "symbol": event.get("symbol"),
+                    "price": event.get("price"),
+                    "size": event.get("size"),
+                    "reason": event.get("reason", ""),
+                }
+            )
         elif status == "rejected":
-            key.append({
-                "type": "rejected",
-                "timestamp": event.get("timestamp"),
-                "symbol": event.get("symbol"),
-                "action": action,
-                "reason": event.get("reject_reason", event.get("reason", "")),
-            })
+            key.append(
+                {
+                    "type": "rejected",
+                    "timestamp": event.get("timestamp"),
+                    "symbol": event.get("symbol"),
+                    "action": action,
+                    "reason": event.get("reject_reason", event.get("reason", "")),
+                }
+            )
     return key
 
 
-def _render_markdown(result: dict[str, Any], metrics: dict[str, Any], key_events: list[dict[str, Any]]) -> str:
+def _render_markdown(
+    result: dict[str, Any], metrics: dict[str, Any], key_events: list[dict[str, Any]]
+) -> str:
     """Stable, human-readable review document (Learning Agent input)."""
     lines = [
         "# Paper Run 复盘",
@@ -109,7 +126,9 @@ def _render_markdown(result: dict[str, Any], metrics: dict[str, Any], key_events
         f"- 最终权益: {metrics['final_value']}",
         f"- 总收益: {metrics['total_return']}%",
         f"- 最大回撤: {metrics['max_drawdown']}%",
-        f"- 成交笔数: {metrics['trade_count']}（买 {metrics['buy_count']} / 卖 {metrics['sell_count']}，拒绝 {metrics['rejected_count']}）",
+        f"- 成交笔数: {metrics['trade_count']}"
+        f"（买 {metrics['buy_count']} / 卖 {metrics['sell_count']}，"
+        f"拒绝 {metrics['rejected_count']}）",
         f"- 已实现盈亏: {metrics['realized_pnl']}",
         f"- 未实现盈亏: {metrics['unrealized_pnl']}",
         f"- 成交额: {metrics['turnover']}",
@@ -121,7 +140,10 @@ def _render_markdown(result: dict[str, Any], metrics: dict[str, Any], key_events
         lines.append("- 无关键交易事件")
     for event in key_events:
         if event["type"] == "rejected":
-            lines.append(f"- [{event['timestamp']}] 拒绝 {event.get('action')} {event.get('symbol')}: {event.get('reason')}")
+            lines.append(
+                f"- [{event['timestamp']}] 拒绝 {event.get('action')} "
+                f"{event.get('symbol')}: {event.get('reason')}"
+            )
         else:
             lines.append(
                 f"- [{event['timestamp']}] {event['type'].upper()} {event.get('symbol')} "

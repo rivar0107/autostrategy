@@ -5,7 +5,13 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Response, status
 
 from autostrategy.api.dependencies import get_backtest_job_service, get_backtest_service
-from autostrategy.api.schemas import BacktestJobResponse, BacktestResponse, StrategyResponse
+from autostrategy.api.schemas import (
+    BacktestJobResponse,
+    BacktestResponse,
+    BacktestRunDetailResponse,
+    BacktestRunSummaryResponse,
+    StrategyResponse,
+)
 from autostrategy.services.backtest_job_service import BacktestJobService
 from autostrategy.services.backtest_service import BacktestService
 from autostrategy.services.exceptions import JobNotFoundError
@@ -18,7 +24,11 @@ def _job_response(job: BacktestJob) -> BacktestJobResponse:
     return BacktestJobResponse(**job.model_dump())
 
 
-@router.post("/strategies/{slug}/backtest", response_model=BacktestJobResponse, status_code=status.HTTP_202_ACCEPTED)
+@router.post(
+    "/strategies/{slug}/backtest",
+    response_model=BacktestJobResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+)
 def run_backtest(
     slug: str,
     response: Response,
@@ -57,3 +67,31 @@ def get_backtest_result(
         score=result.score,
         result=result.result,
     )
+
+
+@router.get(
+    "/strategies/{slug}/backtest-runs",
+    response_model=list[BacktestRunSummaryResponse],
+)
+def list_backtest_runs(
+    slug: str,
+    service: BacktestService = Depends(get_backtest_service),
+) -> list[BacktestRunSummaryResponse]:
+    """List persisted backtest runs for a strategy."""
+    return [
+        BacktestRunSummaryResponse(**run.model_dump())
+        for run in service.list_backtest_runs(slug)
+    ]
+
+
+@router.get(
+    "/strategies/{slug}/backtest-runs/{run_id}",
+    response_model=BacktestRunDetailResponse,
+)
+def get_backtest_run(
+    slug: str,
+    run_id: str,
+    service: BacktestService = Depends(get_backtest_service),
+) -> BacktestRunDetailResponse:
+    """Read one immutable backtest run snapshot."""
+    return BacktestRunDetailResponse(**service.get_backtest_run(slug, run_id).model_dump())
